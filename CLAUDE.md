@@ -92,6 +92,11 @@ Reusable templates live in `templates/`. Use `templates/session-summary.md` to c
 
 ---
 
+## Logs
+
+- `logs/sessions/` — dated session summaries created by `/work-session-to-docs`
+- `logs/changes.md` — append-only change log for files, workflows, prompts, and agent specs
+
 ## References
 
 - `references/sops/` — official process definitions and standard operating procedures
