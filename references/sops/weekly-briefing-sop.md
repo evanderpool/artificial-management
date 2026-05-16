@@ -49,7 +49,7 @@ Define how the Artificial Management Weekly Executive Briefing System operates â
 | 7 | Fill out the 8-section weekly summary template | Chief of Staff Agent |
 | 8 | Save to logs/sessions/YYYY-MM-DD-weekly-summary.md | Chief of Staff Agent |
 | 9 | Append entry to logs/changes.md | Chief of Staff Agent |
-| 10 | Create Gmail draft to erick.vanderpool2@outlook.com | Chief of Staff Agent via Gmail MCP |
+| 10 | Create Gmail draft to artifical.management@gmail.com | Chief of Staff Agent via Gmail MCP |
 | 11 | Prompt Erick: do priorities need updating in context/current-priorities.md? | Chief of Staff Agent |
 
 ---
@@ -59,7 +59,7 @@ Define how the Artificial Management Weekly Executive Briefing System operates â
 | Output | Destination | Format |
 |---|---|---|
 | Weekly summary file | `logs/sessions/YYYY-MM-DD-weekly-summary.md` | Markdown |
-| Gmail draft | erick.vanderpool2@outlook.com | Email with 8-section summary as body |
+| Gmail draft | artifical.management@gmail.com | Email with 8-section summary as body |
 | Change log entry | `logs/changes.md` | Append-only entry |
 
 **Subject line format:** `[Artificial Management] Weekly Brief â€” Week N | YYYY-MM-DD`

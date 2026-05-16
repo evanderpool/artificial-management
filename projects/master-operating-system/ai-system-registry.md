@@ -41,6 +41,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | Tool Name | Type | Status | What It Enables | Notes |
 |---|---|---|---|---|
 | Claude Code | AI coding assistant + file manager | Connected | Reads and writes all project files, runs skills, executes agent workflows | Primary work environment — all agents operate through this |
+| Anthropic API | API | Connected | Programmatic access to Claude models — client-facing demos, custom integrations, agent automation outside Claude Code | Added 2026-05-16 — pay-per-use; no monthly minimum; key needed for Week 5–6 demo builds |
 | Gmail MCP | MCP server | Connected | Claude can read, draft, label, and search emails | Used for: weekly briefing delivery, client outreach drafts |
 | Google Calendar MCP | MCP server | Connected | Claude can read/create/update calendar events, suggest meeting times | Used for: deadline tracking, daily brief scheduling |
 | Google Drive MCP | MCP server | Connected | Claude can read, create, copy, and search Drive files | Used for: storing portfolio docs, case studies, client-facing assets |
@@ -77,7 +78,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 |---|---|
 | All agents have a registry entry | 10 / 10 |
 | All agents with specs have spec file links | 9 / 9 (master-operating-system does not need a spec) |
-| All tools documented | 10 tools/systems registered (7 connected, 2 planned, 1 reference system active) |
+| All tools documented | 11 tools/systems registered (8 connected, 2 planned, 1 reference system active) |
 | All skills documented | 8 / 8 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking) |
 | No undocumented agents | Pass |
 | No rogue workflows | Pass |

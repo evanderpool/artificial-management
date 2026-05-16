@@ -176,7 +176,7 @@ If Erick confirms changes, update `context/current-priorities.md` and append one
 ## Step 8: Create Gmail Draft
 
 Create a Gmail draft using the Gmail MCP tool with:
-- **To:** erick.vanderpool2@outlook.com
+- **To:** artifical.management@gmail.com
 - **Subject:** `[Artificial Management] Weekly Brief — Week N | YYYY-MM-DD` (replace N and date with actual values)
 - **Body:** The complete formatted weekly summary from Step 6
 
@@ -194,7 +194,7 @@ Weekly summary produced.
 | Output         | Location                                                       |
 |----------------|----------------------------------------------------------------|
 | Summary file   | logs/sessions/YYYY-MM-DD-weekly-summary.md                     |
-| Gmail draft    | erick.vanderpool2@outlook.com — ready to send                  |
+| Gmail draft    | artifical.management@gmail.com — ready to send                 |
 | Decisions      | decisions/log.md (N entries this week)                         |
 | Changes        | logs/changes.md (N entries this week)                          |
 | Status         | [On Track / At Risk / Behind]                                  |

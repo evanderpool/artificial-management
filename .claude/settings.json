@@ -1,1 +1,27 @@
-{}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "New-Item -ItemType File -Path \"$env:TEMP\\claude-task-flag.txt\" -Force | Out-Null",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if (Test-Path \"$env:TEMP\\claude-task-flag.txt\") { Remove-Item \"$env:TEMP\\claude-task-flag.txt\" -Force; Write-Output '{\"systemMessage\": \"Files were changed this turn - run /task-complete to sync all tracking files.\"}' }",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ]
+  }
+}

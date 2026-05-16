@@ -56,7 +56,7 @@ The deeper problem: AI tools are powerful in isolation but disconnected. There's
 
 | Workflow | Trigger | Output |
 |---|---|---|
-| Weekly Executive Briefing | Every Friday 5pm ET (automated) | Gmail draft to erick.vanderpool2@outlook.com |
+| Weekly Executive Briefing | Every Friday 5pm ET (automated) | Gmail draft to artifical.management@gmail.com |
 | Daily Brief | On demand (`/chief-of-staff`) | Session file + inline summary |
 | Sprint Planning | On demand (`/project-manager`) | Sprint plan saved to logs/sessions/ |
 | Data Integrity Audit | Weekly / on demand (`/data-integrity`) | Integrity report with confidence scores |

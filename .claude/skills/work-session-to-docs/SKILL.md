@@ -93,7 +93,36 @@ Find the relevant project folder in `projects/`. Add a brief status note at the 
 
 ---
 
-## Step 6: Surface Portfolio Flags
+## Step 6: Update the Project Tracker (if deliverables completed)
+
+If any deliverables were completed this session, update `projects/master-operating-system/project-tracker.md`:
+
+1. In the Deliverables Checklist for this project, change `[ ]` to `[x]` for completed items.
+2. Update the `Last Updated` column for this project to today's date.
+3. If the completion changes overall project status, update `Status`. Otherwise leave it.
+4. Update `**Last Updated:**` at the top of the file to today's date.
+
+**When to skip:** If nothing was completed this session (planning/review only), skip this step.
+
+---
+
+## Step 7: Update the AI System Registry (if a skill or agent went Active)
+
+Only run this step if a skill, agent, or tool reached a new status this session.
+
+Read `projects/master-operating-system/ai-system-registry.md`.
+
+- **New/updated skill:** Update Section 3 row — `Status` → Active, `Last Updated` → today. Add row if none exists.
+- **Agent status change:** Update Section 1 row — `Status` and `Last Updated`.
+- **New tool connection:** Update Section 2 row — `Status` → Connected.
+
+Update `**Last Updated:**` at the top of the registry file to today's date.
+
+**When to skip:** If no skill, agent, or tool changed status this session, skip this step entirely.
+
+---
+
+## Step 8: Surface Portfolio Flags
 
 If anything portfolio-worthy was identified, output a formatted block for each item:
 
@@ -115,10 +144,12 @@ Session documented.
 
 | Output         | Location                                  |
 |----------------|-------------------------------------------|
-| Session log    | logs/sessions/YYYY-MM-DD-session.md       |
-| Decisions      | decisions/log.md (N new entries)          |
-| Changes        | logs/changes.md (N new entries)           |
-| Project status | projects/[name]/README.md                 |
+| Session log      | logs/sessions/YYYY-MM-DD-session.md                     |
+| Decisions        | decisions/log.md (N new entries)                        |
+| Changes          | logs/changes.md (N new entries)                         |
+| Project status   | projects/[name]/README.md                               |
+| Tracker updated  | project-tracker.md (N deliverables checked) OR Skipped  |
+| Registry updated | ai-system-registry.md (skill/agent/tool) OR Skipped     |
 
 Top next action: [#1 from the next actions list]
 ```

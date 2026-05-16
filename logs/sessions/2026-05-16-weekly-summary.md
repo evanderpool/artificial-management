@@ -78,7 +78,7 @@ Key file groups changed:
 
 ## 5. What's Next — Top Priorities for Week 5
 
-1. **Schedule weekly briefing + wire Gmail delivery** — Owner: Erick — Set up automated Friday run; email summary to erick.vanderpool2@outlook.com
+1. **Schedule weekly briefing + wire Gmail delivery** — Owner: Erick — Set up automated Friday run; email summary to artifical.management@gmail.com
 2. **Build Cost Tracking Agent skill** — Owner: Erick — `.claude/skills/cost-tracking/SKILL.md`; 2 modes (monthly-report, add-tool); registry → Active
 3. **Write 3 formal SOPs** — Owner: Erick + Documentation Agent — `references/sops/weekly-briefing-sop.md`, `data-integrity-audit-sop.md`, `change-management-sop.md`
 4. **Begin portfolio case study foundation** — Owner: Erick + Portfolio Agent — `projects/portfolio-agent/case-study-draft.md`
@@ -119,7 +119,7 @@ Key file groups changed:
 **Week 5 Theme:** First Working Automation Workflow
 **Key deliverables due:**
 - [ ] Weekly briefing scheduled (automated Friday run via /schedule)
-- [ ] Gmail delivery wired (summary auto-sent to erick.vanderpool2@outlook.com)
+- [ ] Gmail delivery wired (summary auto-sent to artifical.management@gmail.com)
 - [ ] Cost Tracking Agent skill built → Active
 - [ ] 3 SOPs written in references/sops/
 - [ ] Portfolio case study draft started at projects/portfolio-agent/case-study-draft.md

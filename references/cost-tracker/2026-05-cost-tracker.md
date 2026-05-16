@@ -2,7 +2,7 @@
 
 **Period:** May 2026
 **Owner:** Erick Vanderpool / Cost Tracking Agent
-**Last updated:** 2026-05-14
+**Last updated:** 2026-05-16
 **Status:** Active
 
 ---
@@ -11,9 +11,9 @@
 
 | Metric | Value |
 |---|---|
-| Total confirmed monthly spend | ~$47/month |
+| Total confirmed monthly spend | ~$47/month base + variable API usage |
 | Confirmed free tools | 7 |
-| Active paid tools | 3 (Claude Pro $20, ChatGPT Plus $20, Microsoft 365 Personal ~$7) |
+| Active paid tools | 3 base (Claude Pro $20, ChatGPT Plus $20, Microsoft 365 Personal ~$7) + Anthropic API (pay-per-use) |
 | Planned (not yet connected) | 4 |
 | Tools under evaluation | 0 |
 
@@ -26,6 +26,7 @@
 | Tool | Category | Monthly Cost | Purpose | Status | Notes |
 |---|---|---|---|---|---|
 | Claude (Anthropic) | AI | $20/mo | Primary AI assistant — EA Agent, all agent skills, daily operations | Active | Pro plan — core tool, highest ROI in stack |
+| Anthropic API | AI | Pay-per-use | Direct API access to Claude models — client-facing demos, programmatic agent workflows, custom integrations | Active | No monthly minimum; cost scales with token usage; needed for Week 5–6 demo builds |
 | ChatGPT (OpenAI) | AI | $20/mo | Secondary AI assistant — cross-checking, drafting | Active | Plus plan — Keep Active |
 | GitHub | Dev | Free (public) | Code hosting, version control, portfolio showcase | Active | MCP connected; 22 tools live |
 | Google Workspace | Workspace | Free | Gmail, Calendar, Drive — all MCP connected | Active | Free tier — 15GB storage; upgrade if custom domain needed for clients |
@@ -50,7 +51,7 @@
 | # | Action | Owner | Due |
 |---|---|---|---|
 | 1 | Plan: upgrade Google Workspace to Business Starter when client outreach begins (custom domain email) | Erick | Before Week 7 |
-| 2 | Plan: add Anthropic API (pay-per-use) when building client-facing AI demos | Erick | Week 5–6 |
+| 2 | ~~Plan: add Anthropic API~~ — DONE 2026-05-16 — added to Tool Registry as Active (pay-per-use) | Erick | Done |
 | 3 | Update Summary block with actuals at end of month | Erick | 2026-05-31 |
 
 ---

@@ -1,6 +1,6 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-05-16 (Week 5 kickoff)
+**Last Updated:** 2026-05-16 (Week 6 close-out)
 **Owner:** Erick Vanderpool
 **Source of truth for:** All 10 active Artificial Management project workstreams
 
@@ -25,14 +25,14 @@ Update this file after every work session. If a project has no update for 2+ ses
 
 | Project | Agent ID | Status | Week Target | Deadline | Last Updated | Blockers | Next Action |
 |---|---|---|---|---|---|---|---|
-| Master Operating System | master-operating-system | In Progress | Week 1–3 | 2026-06-30 | 2026-05-15 | None | Build architecture diagram, data flow diagram, master dashboard |
-| Chief of Staff Agent | chief-of-staff-agent | In Progress | Week 3 | 2026-06-30 | 2026-05-15 | None | Monitor Week 4 skill builds; run weekly summary end of week |
-| Project Manager Agent | project-manager-agent | In Progress | Week 3 | 2026-06-30 | 2026-05-15 | None | Sprint plan active — monitor Week 4 targets |
+| Master Operating System | master-operating-system | In Progress | Week 1–3 | 2026-06-30 | 2026-05-16 | None | Build architecture diagram, data flow diagram, master dashboard |
+| Chief of Staff Agent | chief-of-staff-agent | Active | Week 3 | 2026-06-30 | 2026-05-16 | None | Daily brief + weekly summary running; monitor Week 7 sprint |
+| Project Manager Agent | project-manager-agent | Active | Week 3 | 2026-06-30 | 2026-05-16 | None | Sprint plan active — Week 7 targets set 2026-05-16 |
 | Documentation Agent | documentation-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /documentation live; validate session summary, README update, and SOP draft modes |
 | Data Integrity Agent | data-integrity-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /data-integrity full audit; validate confidence scoring output |
 | Change Management Agent | change-management-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /change-management review to validate gap detection; integrate with session close workflow |
-| Cost Tracking Agent | cost-tracking-agent | In Progress | Week 5 | 2026-06-30 | 2026-05-14 | None | Build API cost tracking; build monthly spend report workflow |
-| Portfolio Agent | portfolio-agent | In Progress | Week 6 | 2026-06-30 | 2026-05-14 | None | Add GitHub repo URLs to v1.1; build LangChain/LlamaIndex project |
+| Cost Tracking Agent | cost-tracking-agent | Active | Week 5 | 2026-06-30 | 2026-05-16 | None | Monthly report + API tracking live; confirm 4 tool actuals by 2026-05-20 |
+| Portfolio Agent | portfolio-agent | In Progress | Week 6 | 2026-06-30 | 2026-05-16 | None | Push README to GitHub; confirm repo URL; Week 7 prep |
 | Client Services Agent | client-services-agent | Spec Complete | Week 7 | 2026-06-30 | 2026-05-14 | None | Build service packages; write discovery call script |
 | AI Engineering Build Agent | ai-engineering-build-agent | Spec Complete | Week 3–7 | 2026-06-30 | 2026-05-14 | None | Build architecture diagram and data flow diagram |
 
@@ -99,16 +99,18 @@ Update this file after every work session. If a project has no update for 2+ ses
 - [x] Project README
 - [x] Agent spec (v1.0)
 - [x] Tool cost tracker created (references/cost-tracker/) — 2026-05-13
-- [ ] API cost tracking active
-- [ ] Monthly spend report workflow
+- [x] API cost tracking active — Anthropic API added to tracker 2026-05-16 (pay-per-use)
+- [x] Monthly spend report workflow — /cost-tracking skill monthly-report mode live 2026-05-16
 
 ### Portfolio Agent
 - [x] Project README
 - [x] Agent spec (v1.0)
-- [ ] Resume bullets generated (first set)
-- [ ] First portfolio case study published
-- [ ] GitHub README written
-- [ ] LinkedIn post drafted
+- [x] Resume bullets generated (first set) — v1.3 produced 2026-05-16; estimated 72–76/100
+- [x] First portfolio case study published — case-study-draft.md created 2026-05-16
+- [x] GitHub README written — README.md at repo root 2026-05-16; Mermaid architecture diagram included
+- [x] LinkedIn post drafted — linkedin-post-draft.md created 2026-05-16; 3 alternate hooks included
+- [x] Demo script written — demo-script.md; recruiter (4–5 min) + client (7–10 min) versions
+- [x] Client proof statement written — client-proof-statement.md; 4 variants (one-liner, short, standard, extended)
 
 ### Client Services Agent
 - [x] Project README
@@ -133,7 +135,7 @@ Update this file after every work session. If a project has no update for 2+ ses
 
 **Hard deadline:** June 30, 2026
 **Today:** 2026-05-16
-**Weeks remaining:** ~3 sprint weeks (Weeks 5, 6, 7)
+**Weeks remaining:** ~1 sprint week (Week 7) — Weeks 5 & 6 completed early in same session block
 
 | Week | Theme | Status |
 |---|---|---|
@@ -141,6 +143,6 @@ Update this file after every work session. If a project has no update for 2+ ses
 | Week 2 (complete) | Core Dashboards and Tracking | Complete |
 | Week 3 (complete) | Chief of Staff + Project Manager Agent | Complete |
 | Week 4 (complete) | Documentation + Data Integrity + Change Management Agents | Complete |
-| Week 5 (current) | First Working Automation Workflow | In Progress |
-| Week 6 | Portfolio Case Study + Resume Assets | Not started |
-| Week 7 | Client Offer + AI Engineer Job Positioning | Not started |
+| Week 5 (complete) | First Working Automation Workflow | Complete |
+| Week 6 (complete) | Portfolio Case Study + Resume Assets | Complete |
+| Week 7 (current) | Client Offer + AI Engineer Job Positioning | In Progress |

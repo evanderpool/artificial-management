@@ -1,12 +1,12 @@
 # Current Priorities
 
-**Last updated:** 2026-05-16
+**Last updated:** 2026-05-16 (Week 7 sprint plan set — Weeks 5 & 6 completed early)
 
 ## System Status
 
-**Current week:** Week 5 of 7 — In Progress
-**Current phase:** First Working Automation Workflow
-**Overall status:** On Track
+**Current week:** Week 7 of 7 — In Progress
+**Current phase:** Client Offer + AI Engineer Job Positioning
+**Overall status:** On Track — Ahead of Schedule
 
 ### What's been built (Weeks 1–4 — Complete)
 - CLAUDE.md master brain, 5 context files, 2 rule files, 10 project READMEs
@@ -20,6 +20,23 @@
 - Cost tracker live at references/cost-tracker/ — $47/month baseline; 17 tools registered
 - Source-of-truth tracker built at references/source-of-truth/ — 52 authoritative sources catalogued
 - First full system integrity audit completed 2026-05-16 — 27 files, 18 issues all corrected
+
+### What's been built (Week 5 — Complete)
+- Weekly briefing automated — routine `trig_01Ed5upotVtnufPmQ9Fjbd17` runs every Friday 5pm ET; delivers to artifical.management@gmail.com; first run 2026-05-22
+- Cost Tracking Agent skill live — `/cost-tracking` with monthly-report + add-tool modes; registry updated to Active (6 agents now Active)
+- 3 formal SOPs written — `references/sops/weekly-briefing-sop.md`, `data-integrity-audit-sop.md`, `change-management-sop.md`
+- Portfolio case study foundation — `projects/portfolio-agent/case-study-draft.md` created
+- `/task-complete` skill built — cascades completions across 6 tracking files
+- Email routing corrected across 5 system files → artifical.management@gmail.com
+- 9 operational skills total (cost-tracking + task-complete added)
+
+### What's been built (Week 6 — Complete)
+- Root GitHub README created — Mermaid architecture diagram, 10-agent roster, data flows, 8 automation workflows, tech stack, build timeline
+- Resume v1.3 — estimated 72–76/100; 8 skills, 6 MCPs, cron automation + confidence scoring bullets; active submission version
+- LinkedIn post draft — primary + 3 alternate hooks; dual audience (recruiter + client)
+- Demo script — recruiter (4–5 min) + client (7–10 min) versions; Q&A section included
+- Client proof statement — 4 variants (one-liner, short, standard, extended) with usage notes
+- Anthropic API added to tool stack (pay-per-use) — cost tracker + AI System Registry
 
 ---
 
@@ -49,20 +66,28 @@
   - Showcase Artificial Management as a real AI automation service business
   - Turn the system into resume bullets, interview stories, and client-facing proof
 
-## Immediate Next Actions (Week 5)
+## Immediate Next Actions (Week 7)
 
-1. **Schedule weekly briefing + wire Gmail delivery** — Set up automated Friday run via `/schedule`; send summary to erick.vanderpool2@outlook.com
-2. **Build Cost Tracking Agent skill** — Create `.claude/skills/cost-tracking/SKILL.md`; 2 modes (monthly-report, add-tool); update registry to Active
-3. **Write 3 formal SOPs** — `references/sops/weekly-briefing-sop.md`, `data-integrity-audit-sop.md`, `change-management-sop.md`
-4. **Begin portfolio case study foundation** — Create `projects/portfolio-agent/case-study-draft.md`
-5. **Add Anthropic API to tool stack** — Pay-per-use; needed for Week 5–6 client-facing demos
+- **Push README to GitHub + confirm repo URL** — then update resume v1.3 with live link; unlocks LinkedIn post activation
+- **Build Client Services Agent** — service packages (3–4 tiers), discovery call script, proposal template, outreach messages → `projects/client-services-agent/`
+- **Update resume with GitHub URL** — v1.3 or v1.4; add live link to Projects section
+- **Post LinkedIn post** — primary post ready; publish after GitHub URL confirmed
+- **Confirm 4 tool cost actuals** — pending in cost tracker by 2026-05-20
 
-### Week 4 — All Done
-- ~~**Build Documentation Agent skill**~~ — DONE 2026-05-15 — `/documentation` skill live; 3 modes
-- ~~**Build Data Integrity Agent skill**~~ — DONE 2026-05-15 — `/data-integrity` skill live; confidence scoring 0–100
-- ~~**Build Change Management Agent skill**~~ — DONE 2026-05-15 — `/change-management` skill live; gap/orphan detection
-- ~~**Build data/source-of-truth tracker**~~ — DONE 2026-05-15 — 52 sources catalogued
-- ~~**Create resume v1.2**~~ — DONE 2026-05-14 — AI OS featured project; estimated 68–72/100
-- ~~**Run /project-manager sprint planning**~~ — DONE 2026-05-15
-- ~~**Run full system integrity audit**~~ — DONE 2026-05-16 — 18 issues corrected; all docs clean
-- ~~**Produce Week 4 weekly summary**~~ — DONE 2026-05-16 — `logs/sessions/2026-05-16-weekly-summary.md`
+### Stretch Goals (Week 7)
+- Begin LangChain or LlamaIndex project — highest-impact resume gap; v2.0 trigger
+- Upgrade Google Workspace to Business Starter — needed before client outreach (custom domain email)
+- Add client proof statement to LinkedIn About section
+
+### Weeks 5 & 6 — All Done (completed 2026-05-16)
+- ~~**Schedule weekly briefing + wire Gmail delivery**~~ — DONE 2026-05-16
+- ~~**Build Cost Tracking Agent skill**~~ — DONE 2026-05-16
+- ~~**Write 3 formal SOPs**~~ — DONE 2026-05-16
+- ~~**Build portfolio case study foundation**~~ — DONE 2026-05-16
+- ~~**Add Anthropic API to tool stack**~~ — DONE 2026-05-16
+- ~~**Build /task-complete skill**~~ — DONE 2026-05-16
+- ~~**Create root GitHub README**~~ — DONE 2026-05-16 — Mermaid diagram, full system overview
+- ~~**Create resume v1.3**~~ — DONE 2026-05-16 — estimated 72–76/100
+- ~~**Create LinkedIn post draft**~~ — DONE 2026-05-16
+- ~~**Create demo script (dual audience)**~~ — DONE 2026-05-16
+- ~~**Create client proof statement (4 variants)**~~ — DONE 2026-05-16
