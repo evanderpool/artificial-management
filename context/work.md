@@ -48,13 +48,13 @@
 | Google Calendar | Connected |
 | Google Drive | Connected |
 | Microsoft 365 | Connected |
+| GitHub | Connected (2026-05-13 — 22 tools live) |
+| Filesystem / Local | Connected (2026-05-13 — scoped to EA Agent folder) |
 
 ## MCP Servers (Recommended — Not Yet Connected)
 
 | Server | Why |
 |---|---|
-| GitHub | Portfolio projects, code tracking, version control |
-| Filesystem / Local | Let Claude read/write project files locally |
 | PostgreSQL / Supabase | Real-world database automation and analytics demos |
 | Notion or Airtable | Knowledge base, CRM, SOPs, internal docs |
 | Slack | Team communication automation (future) |
