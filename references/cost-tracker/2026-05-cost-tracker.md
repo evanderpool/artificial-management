@@ -11,11 +11,12 @@
 
 | Metric | Value |
 |---|---|
-| Total confirmed monthly spend | ~$47/month base + variable API usage |
+| Total confirmed monthly spend | ~$50/month base + variable API usage |
 | Confirmed free tools | 7 |
-| Active paid tools | 3 base (Claude Pro $20, ChatGPT Plus $20, Microsoft 365 Personal ~$7) + Anthropic API (pay-per-use) |
+| Active paid tools | 3 base (Claude Pro $20, ChatGPT Plus $20, Microsoft 365 Personal $9.99) + Anthropic API (pay-per-use, <$5 May) |
 | Planned (not yet connected) | 4 |
 | Tools under evaluation | 0 |
+| Actuals confirmed | 2026-05-16 — M365 corrected to $9.99; API May spend <$5 |
 
 > Update the summary block at the end of each month with actuals.
 
@@ -26,11 +27,11 @@
 | Tool | Category | Monthly Cost | Purpose | Status | Notes |
 |---|---|---|---|---|---|
 | Claude (Anthropic) | AI | $20/mo | Primary AI assistant — EA Agent, all agent skills, daily operations | Active | Pro plan — core tool, highest ROI in stack |
-| Anthropic API | AI | Pay-per-use | Direct API access to Claude models — client-facing demos, programmatic agent workflows, custom integrations | Active | No monthly minimum; cost scales with token usage; needed for Week 5–6 demo builds |
+| Anthropic API | AI | Pay-per-use | Direct API access to Claude models — client-facing demos, programmatic agent workflows, custom integrations | Active | No monthly minimum; cost scales with token usage; May 2026 actual: <$5 |
 | ChatGPT (OpenAI) | AI | $20/mo | Secondary AI assistant — cross-checking, drafting | Active | Plus plan — Keep Active |
 | GitHub | Dev | Free (public) | Code hosting, version control, portfolio showcase | Active | MCP connected; 22 tools live |
 | Google Workspace | Workspace | Free | Gmail, Calendar, Drive — all MCP connected | Active | Free tier — 15GB storage; upgrade if custom domain needed for clients |
-| Microsoft 365 | Workspace | ~$7/mo | MCP connected — Outlook/OneDrive integration | Active | Personal plan — Keep Active |
+| Microsoft 365 | Workspace | $9.99/mo | MCP connected — Outlook/OneDrive integration | Active | Personal plan — Keep Active |
 | VS Code | Dev | Free | Primary dev environment | Active | Free; no cost risk |
 | Node.js | Dev | Free | Runtime for all local MCP servers (npx) | Active | Free; system-wide install v24.15.0 |
 | GitHub MCP (npx) | MCP | Free | GitHub tool integration — 22 tools live | Active | Runs via npx; no additional cost |

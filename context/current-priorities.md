@@ -1,10 +1,10 @@
 # Current Priorities
 
-**Last updated:** 2026-05-16 (Week 7 sprint plan set — Weeks 5 & 6 completed early)
+**Last updated:** 2026-05-16 (Week 7 primary deliverables complete)
 
 ## System Status
 
-**Current week:** Week 7 of 7 — In Progress
+**Current week:** Week 7 of 7 — Primary goals complete
 **Current phase:** Client Offer + AI Engineer Job Positioning
 **Overall status:** On Track — Ahead of Schedule
 
@@ -38,6 +38,13 @@
 - Client proof statement — 4 variants (one-liner, short, standard, extended) with usage notes
 - Anthropic API added to tool stack (pay-per-use) — cost tracker + AI System Registry
 
+### What's been built (Week 7 — Primary Goals Complete)
+- Weeks 5 & 6 committed + pushed to GitHub — github.com/evanderpool/artificial-management live
+- Resume v1.3 updated with confirmed GitHub URL — score 74–78/100
+- LinkedIn post marked complete
+- Client Services Agent activated (7 agents now Active) — 4 service tiers, discovery call script, proposal template, 6 outreach templates, client onboarding SOP
+- Cost tracker actuals confirmed — M365 $9.99/mo (corrected from ~$7), API <$5 May, planned tools unchanged; base spend $49.99/mo + variable
+
 ---
 
 ## Top 5 Priorities
@@ -68,11 +75,11 @@
 
 ## Immediate Next Actions (Week 7)
 
-- **Push README to GitHub + confirm repo URL** — then update resume v1.3 with live link; unlocks LinkedIn post activation
-- **Build Client Services Agent** — service packages (3–4 tiers), discovery call script, proposal template, outreach messages → `projects/client-services-agent/`
-- **Update resume with GitHub URL** — v1.3 or v1.4; add live link to Projects section
-- **Post LinkedIn post** — primary post ready; publish after GitHub URL confirmed
-- **Confirm 4 tool cost actuals** — pending in cost tracker by 2026-05-20
+- ~~**Push README to GitHub + confirm repo URL**~~ — DONE 2026-05-16 — github.com/evanderpool/artificial-management
+- ~~**Build Client Services Agent**~~ — DONE 2026-05-16 — 4 tiers, discovery script, proposal template, 6 outreach templates, onboarding SOP
+- ~~**Update resume with GitHub URL**~~ — DONE 2026-05-16 — v1.3 updated, score 74–78/100
+- ~~**Post LinkedIn post**~~ — DONE 2026-05-16 — marked complete
+- ~~**Confirm 4 tool cost actuals**~~ — DONE 2026-05-16 — M365 $9.99/mo confirmed, API <$5 May, planned tools unchanged
 
 ### Stretch Goals (Week 7)
 - Begin LangChain or LlamaIndex project — highest-impact resume gap; v2.0 trigger
