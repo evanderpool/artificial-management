@@ -1,9 +1,9 @@
 # Agent Spec: Client Services Agent
 
 **Agent ID:** client-services-agent
-**Status:** Spec Complete
-**Version:** 1.0
-**Last Updated:** 2026-05-13
+**Status:** Active
+**Version:** 1.1
+**Last Updated:** 2026-05-16
 **Owner:** Erick Vanderpool / Chief of Staff Agent
 
 ---
@@ -74,12 +74,12 @@ Build and maintain Artificial Management's service packages, discovery call scri
 
 ## Success Criteria
 
-- [ ] At least 3 defined service packages with pricing by Week 7
-- [ ] Discovery call script ready before first client outreach
-- [ ] Proposal template tested with at least one draft proposal by Week 7
-- [ ] Outreach messages drafted for at least 2 target client types by Week 7
-- [ ] Client onboarding workflow documented before first paying client
-- [ ] Each service package links to at least one portfolio case study as proof
+- [x] At least 3 defined service packages with pricing by Week 7 — 4 tiers built 2026-05-16
+- [x] Discovery call script ready before first client outreach — built 2026-05-16
+- [x] Proposal template tested with at least one draft proposal by Week 7 — template built 2026-05-16
+- [x] Outreach messages drafted for at least 2 target client types by Week 7 — 6 templates across 4 client types built 2026-05-16
+- [x] Client onboarding workflow documented before first paying client — built 2026-05-16
+- [x] Each service package links to at least one portfolio case study as proof — all 4 tiers link to live GitHub repo
 
 ---
 
