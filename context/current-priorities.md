@@ -81,10 +81,14 @@
 - ~~**Post LinkedIn post**~~ — DONE 2026-05-16 — marked complete
 - ~~**Confirm 4 tool cost actuals**~~ — DONE 2026-05-16 — M365 $9.99/mo confirmed, API <$5 May, planned tools unchanged
 
+### Week 7 — Additional Completions
+- ~~**LangGraph multi-agent research workflow**~~ — DONE 2026-05-16 — github.com/evanderpool/langchain-research-agent; LangGraph + LangChain + Tavily + Claude + Streamlit; resume updated to 82–86/100
+
 ### Stretch Goals (Week 7)
-- Begin LangChain or LlamaIndex project — highest-impact resume gap; v2.0 trigger
+- ~~Begin LangChain or LlamaIndex project~~ — DONE 2026-05-16 — LangGraph multi-agent research workflow built and live at github.com/evanderpool/langchain-research-agent; resume updated to 82–86/100
 - Upgrade Google Workspace to Business Starter — needed before client outreach (custom domain email)
 - Add client proof statement to LinkedIn About section
+- Deploy research agent to HuggingFace Spaces — adds live demo link to resume
 
 ### Weeks 5 & 6 — All Done (completed 2026-05-16)
 - ~~**Schedule weekly briefing + wire Gmail delivery**~~ — DONE 2026-05-16
