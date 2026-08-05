@@ -2,3 +2,5 @@
 CLAUDE.local.md
 .claude/settings.local.json
 node_modules/
+dashboard/private/
+dashboard/private-sources.json

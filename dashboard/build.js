@@ -91,13 +91,61 @@ const decisionsMd = read("decisions/log.md");
 const changesMd = read("logs/changes.md");
 const prioritiesMd = read("context/current-priorities.md");
 
-// | Project | Agent ID | Status | Week Target | Deadline | Last Updated | Blockers | Next Action |
-const projects = parseTableRows(trackerMd, "## Project Tracker").map((c) => ({
-  name: c[0] || "?",
-  status: c[2] || "?",
-  lastUpdated: c[5] || "",
-  nextAction: c[7] || "",
-}));
+// --private: master view — includes Private rows and extra repos from
+// dashboard/private-sources.json; output goes to dashboard/private/ (gitignored).
+const PRIVATE_MODE = process.argv.includes("--private");
+
+// | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
+const parsePortfolio = (md, sourceLabel) =>
+  parseTableRows(md, "## Project Portfolio").map((c) => ({
+    name: c[0] || "?",
+    id: c[1] || "",
+    type: c[2] || "",
+    visibility: (c[3] || "Public").toLowerCase(),
+    status: c[4] || "?",
+    deadline: c[5] || "—",
+    lastUpdated: c[6] || "",
+    nextAction: c[7] || "",
+    source: sourceLabel || "",
+  }));
+
+// ### <Project Name> — Tasks   followed by | Task | Owner | Status |
+function parseTaskSections(md) {
+  const out = {};
+  const re = /^### (.+?) — Tasks\s*$/gm;
+  let m;
+  while ((m = re.exec(md))) {
+    out[m[1].trim()] = parseTableRows(md.slice(m.index), `### ${m[1]} — Tasks`).map(
+      (c) => ({ task: c[0] || "", owner: c[1] || "—", status: c[2] || "—" })
+    );
+  }
+  return out;
+}
+
+let projects = parsePortfolio(trackerMd, "");
+let taskSections = parseTaskSections(trackerMd);
+
+if (PRIVATE_MODE) {
+  try {
+    const sources = JSON.parse(
+      fs.readFileSync(path.join(ROOT, "dashboard", "private-sources.json"), "utf8")
+    );
+    for (const src of sources) {
+      const md = fs.readFileSync(src.tracker, "utf8");
+      const rows = parsePortfolio(md, src.name || src.tracker).map((p) => ({
+        ...p,
+        visibility: "private",
+      }));
+      projects = projects.concat(rows);
+      Object.assign(taskSections, parseTaskSections(md));
+    }
+  } catch (e) {
+    if (e.code !== "ENOENT") console.warn(`WARN: private-sources.json — ${e.message}`);
+  }
+}
+const visibleProjects = PRIVATE_MODE
+  ? projects
+  : projects.filter((p) => p.visibility === "public");
 
 // | Agent ID | Agent Name | Purpose | Status | Spec File | Key Inputs | Key Outputs | Dependencies | Last Updated |
 const agents = parseTableRows(registryMd, "## Section 1 — Agent Registry").map(
@@ -140,11 +188,13 @@ const decisions = [...decisionsMd.matchAll(decisionRe)].map((m) => ({
   context: scrub(stripMd(m[4] || "")),
 }));
 
-const changeRe = /^\[(\d{4}-\d{2}-\d{2})\] CHANGED: (.*?) \| TYPE: (\w[\w/ ]*?) \|/gm;
+const changeRe =
+  /^\[(\d{4}-\d{2}-\d{2})\] CHANGED: (.*?) \| TYPE: (\w[\w/ ]*?) \|(?: PROJECT: (.*?) \|)?/gm;
 const changes = [...changesMd.matchAll(changeRe)].map((m) => ({
   date: m[1],
   file: scrub(stripMd(m[2])),
   type: m[3].trim(),
+  project: (m[4] || "").trim(),
 }));
 
 let sessionFiles = [];
@@ -401,15 +451,61 @@ const skillItems = skills
   )
   .join("\n");
 
-const projectRows = projects
-  .map(
-    (p) => `<tr>
-  <td>${esc(p.name)}</td>
-  <td>${pill(p.status)}</td>
-  <td class="num">${esc(p.lastUpdated)}</td>
-  <td class="dim">${esc(truncate(p.nextAction, 80))}</td>
-</tr>`
-  )
+const projectItems = visibleProjects
+  .map((p) => {
+    const tasks = taskSections[p.name] || [];
+    const byOwner = {};
+    for (const t of tasks) (byOwner[t.owner] = byOwner[t.owner] || []).push(t);
+    const taskHtml = tasks.length
+      ? Object.entries(byOwner)
+          .map(
+            ([owner, ts]) => `<div class="task-group">
+  <div class="task-owner">${esc(owner)}</div>
+  ${ts
+    .map(
+      (t) =>
+        `<div class="task-line"><span>${esc(t.task)}</span>${pill(t.status)}</div>`
+    )
+    .join("\n")}
+</div>`
+          )
+          .join("\n")
+      : `<p class="dim">No task breakdown yet — add a "### ${esc(p.name)} — Tasks" section to the tracker.</p>`;
+    const projChanges = p.id
+      ? changes.filter((c) => c.project === p.id).slice(-4).reverse()
+      : [];
+    const changesHtml = projChanges.length
+      ? `<div class="task-owner" style="margin-top:10px">Recent changes</div>` +
+        projChanges
+          .map(
+            (c) =>
+              `<div class="task-line dim"><span><span class="num">${c.date}</span> · <span class="mono">${esc(truncate(c.file, 48))}</span></span></div>`
+          )
+          .join("\n")
+      : "";
+    const readmeRel = `projects/${p.id}/README.md`;
+    const readmeLink =
+      p.id && fs.existsSync(path.join(ROOT, readmeRel))
+        ? `<div class="row-links">${srcLink(readmeRel, "README: " + readmeRel)}</div>`
+        : "";
+    return `<details class="row">
+  <summary><span class="chev"></span><span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${
+      PRIVATE_MODE && p.visibility === "private"
+        ? `<span class="pill pill-warn">private</span>`
+        : ""
+    }${pill(p.status)}</summary>
+  <div class="row-body">
+    <div class="kv">
+      <div><span class="k">Next step</span><span>${esc(p.nextAction) || "—"}</span></div>
+      <div><span class="k">Deadline</span><span class="num">${esc(p.deadline)}</span></div>
+      <div><span class="k">Updated</span><span class="num">${esc(p.lastUpdated) || "—"}</span></div>
+    </div>
+    <div style="margin-top:10px">${taskHtml}</div>
+    ${changesHtml}
+    ${readmeLink}
+  </div>
+</details>`;
+  })
   .join("\n");
 
 const decisionItems = decisions
@@ -449,7 +545,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artificial Management — Ops Dashboard</title>
+<title>Artificial Management — Ops Dashboard${PRIVATE_MODE ? " (PRIVATE MASTER VIEW)" : ""}</title>
 <style>
 :root{
   --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
@@ -578,6 +674,12 @@ details[open]>summary .chev::before{content:"▾"}
   font-family:"Cascadia Code",Consolas,ui-monospace,monospace}
 .kv>div{display:flex;gap:8px;align-items:baseline}
 .kv span:last-child{color:var(--text)}
+.task-group{margin-bottom:8px}
+.task-owner{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;margin:6px 0 4px}
+.task-line{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  padding:3px 0;font-size:13px;border-bottom:1px dashed color-mix(in srgb,var(--line) 60%,transparent)}
+.task-line:last-child{border-bottom:none}
 .row-links{margin-top:10px;font-size:12.5px}
 .row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
 ul.feed{list-style:none;margin:0;padding:6px 0}
@@ -599,6 +701,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 </head>
 <body>
 <main class="wrap">
+${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span class="hb-label">PRIVATE</span><div>Master view — includes private and client projects. Never publish or share this file.</div></div>` : ""}
 <header>
   <div>
     <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
@@ -645,6 +748,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 </div>
 
 <div class="metrics">
+  <div class="metric"><div class="v">${visibleProjects.length}</div><div class="k">Projects</div><div class="s">${esc(countBy(visibleProjects))}</div></div>
   <div class="metric"><div class="v">${agents.length}</div><div class="k">Agents</div><div class="s">${esc(countBy(agents))}</div></div>
   <div class="metric"><div class="v">${skills.length}</div><div class="k">Skills</div><div class="s">${esc(countBy(skills))}</div></div>
   <div class="metric"><div class="v">${tools.length}</div><div class="k">Tools</div><div class="s">${esc(countBy(tools.map((t) => ({ status: t.status === "Active" ? "Connected" : t.status }))))}</div></div>
@@ -660,13 +764,8 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 ${agentItems}
     </div>
     <div class="card">
-      <h2>Project tracker <small>${srcLink("projects/master-operating-system/project-tracker.md", "source: project-tracker.md")}</small></h2>
-      <div class="scroll"><table aria-label="Project tracker">
-        <thead><tr><th scope="col">Project</th><th scope="col">Status</th><th scope="col">Updated</th><th scope="col">Next action</th></tr></thead>
-        <tbody>
-${projectRows}
-        </tbody>
-      </table></div>
+      <h2>Project portfolio — click to expand <small>${srcLink("projects/master-operating-system/project-tracker.md", "source: project-tracker.md")}</small></h2>
+${projectItems || '<p class="dim" style="padding:10px 16px">No projects registered.</p>'}
     </div>
     <div class="card">
       <h2>Skill registry — click to expand <small>${srcLink("projects/master-operating-system/ai-system-registry.md", "source: ai-system-registry.md")}</small></h2>
@@ -703,11 +802,14 @@ ${changeItems}
 </html>
 `;
 
-const outPath = path.join(ROOT, "dashboard", "index.html");
+const outPath = PRIVATE_MODE
+  ? path.join(ROOT, "dashboard", "private", "index.html")
+  : path.join(ROOT, "dashboard", "index.html");
+if (PRIVATE_MODE) fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, html);
-console.log(`OK: wrote ${outPath}`);
+console.log(`OK: wrote ${outPath}${PRIVATE_MODE ? " (PRIVATE — gitignored, do not publish)" : ""}`);
 console.log(
-  `   ${projects.length} projects · ${agents.length} agents · ${skills.length} skills · ${tools.length} tools · ${decisions.length} decisions · ${changes.length} changes · ${weeks.length} activity weeks`
+  `   ${visibleProjects.length} projects shown (${projects.length} total) · ${agents.length} agents · ${skills.length} skills · ${tools.length} tools · ${decisions.length} decisions · ${changes.length} changes · ${weeks.length} activity weeks`
 );
 if (heartbeat.level !== "good") {
   console.log(`   HEARTBEAT ${heartbeat.label}: ${heartbeat.detail}`);

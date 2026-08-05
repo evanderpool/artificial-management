@@ -17,7 +17,8 @@ redeploys it on every push to `main`.
 | Dashboard section | Source file |
 |---|---|
 | Heartbeat / staleness | git log (last commit date) — falls back to session log dates |
-| Project tracker table | `projects/master-operating-system/project-tracker.md` |
+| Project portfolio + per-project tasks | `projects/master-operating-system/project-tracker.md` (`## Project Portfolio` table + `### <Name> — Tasks` sections) |
+| Per-project recent changes | `logs/changes.md` filtered by the entry's `PROJECT:` tag matching the project ID |
 | Agent / skill / tool counts | `projects/master-operating-system/ai-system-registry.md` |
 | Decisions feed | `decisions/log.md` |
 | Changes feed | `logs/changes.md` |
@@ -38,6 +39,30 @@ free-text feed lines. If a new section is added, it must pass this whitelist.
 The heartbeat banner is the point: it computes days-since-last-commit at build
 time and goes QUIET (>7 days) or STALE (>14 days) on its own. The system
 detecting its own silence is the feature the rest of the page hangs off.
+
+## Public vs private views
+
+The public build includes only portfolio rows marked `Visibility: Public`.
+Client work never appears on the public page.
+
+**Private master view** — everything, including private rows and client repos:
+
+```
+node dashboard/build.js --private
+# writes dashboard/private/index.html (gitignored — never publish)
+```
+
+To merge client repos into the private view, create `dashboard/private-sources.json`
+(also gitignored):
+
+```json
+[
+  { "name": "Acme Construction", "tracker": "C:\\path\\to\\client-repo\\projects\\master-operating-system\\project-tracker.md" }
+]
+```
+
+Each client repo uses the same tracker format; its `## Project Portfolio` rows
+and task sections merge into the private page, forced to private visibility.
 
 ## Run locally
 
