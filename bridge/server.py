@@ -440,7 +440,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._deny(401, "bad key")
         try:
             length = min(int(self.headers.get("Content-Length", 0)), 64_000)
-            body = json.loads(self.rfile.read(length) or b"{}")
+            raw = self.rfile.read(length) or b"{}"
+            try:
+                body = json.loads(raw)
+            except UnicodeDecodeError:
+                body = json.loads(raw.decode("cp1252", "replace"))
         except Exception:
             return self._deny(400, "bad json")
 
