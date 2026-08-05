@@ -1118,6 +1118,18 @@ for (const d of projectData) {
   pageCount++;
 }
 
+// Private mode: project manifest for the mobile bridge (/api/projects)
+if (PRIVATE_MODE) {
+  fs.writeFileSync(
+    path.join(path.dirname(outPath), "projects.json"),
+    JSON.stringify({
+      ok: true,
+      built: now.toISOString(),
+      projects: sortedProjects.map((p) => ({ name: p.name, id: p.id, status: p.status })),
+    })
+  );
+}
+
 console.log(`OK: wrote ${outPath}${PRIVATE_MODE ? " (PRIVATE — gitignored, do not publish)" : ""}`);
 console.log(`   ${pageCount} project sub-page${pageCount === 1 ? "" : "s"} in ${pagesDir}`);
 console.log(

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>EA Bridge</title>
+<style>
+:root{--ink:#0e1418;--panel:#151d23;--panel-2:#1a242b;--line:#243139;--text:#e7eceb;
+  --dim:#8ca1a3;--accent:#56a8a2;--good:#53b788;--warn:#d9a441;--crit:#d96459;--info:#6fa8c9}
+*{box-sizing:border-box}
+body{margin:0;background:
+  radial-gradient(700px 360px at 80% -10%, color-mix(in srgb,var(--accent) 9%,transparent), transparent 60%),var(--ink);
+  color:var(--text);font:15px/1.5 "Segoe UI",system-ui,sans-serif;padding:14px 14px 40px}
+.mono{font-family:"Cascadia Code",Consolas,ui-monospace,monospace}
+h1{font-size:17px;margin:2px 0 12px;letter-spacing:.02em}
+h1 span{color:var(--accent)}
+.card{background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;margin-bottom:12px;backdrop-filter:blur(8px)}
+.eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);
+  font-family:"Cascadia Code",Consolas,monospace;margin-bottom:8px}
+.status{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12.5px}
+.pill{font-family:"Cascadia Code",Consolas,monospace;font-size:11px;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.p-good{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.p-warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.p-crit{background:color-mix(in srgb,var(--crit) 18%,transparent);color:var(--crit)}
+.p-dim{background:color-mix(in srgb,var(--dim) 15%,transparent);color:var(--dim)}
+button{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:8px;
+  padding:10px 12px;font:600 13.5px "Segoe UI",system-ui;cursor:pointer;width:100%}
+button.secondary{background:transparent;color:var(--dim);border-color:var(--line)}
+button.danger{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit);
+  border-color:color-mix(in srgb,var(--crit) 40%,transparent)}
+button:active{transform:scale(.98)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input,select,textarea{width:100%;background:var(--panel-2);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:10px;font:14px "Segoe UI",system-ui;margin:4px 0}
+textarea{min-height:64px;resize:vertical}
+label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+.q-item{border-top:1px solid var(--line);padding:9px 0;font-size:13px}
+.q-item:first-of-type{border-top:none}
+.q-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.q-sum{color:var(--dim);margin-top:3px}
+.q-question{margin-top:6px;padding:8px;border-left:3px solid var(--info);
+  background:color-mix(in srgb,var(--info) 8%,transparent);border-radius:0 6px 6px 0}
+.hide{display:none}
+.toast{position:fixed;left:14px;right:14px;bottom:14px;background:var(--panel-2);
+  border:1px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:13.5px;
+  box-shadow:0 8px 30px -8px rgba(0,0,0,.6);z-index:9}
+a{color:var(--accent)}
+.rowbtns{display:flex;gap:8px;margin-top:6px}
+.rowbtns button{width:auto;padding:6px 12px;font-size:12px}
+</style>
+</head>
+<body>
+<h1>EA Bridge <span>// mobile control</span></h1>
+
+<div class="card" id="keyCard">
+  <div class="eyebrow">Access key</div>
+  <input id="keyInput" type="password" placeholder="paste the access key (shown on the PC)">
+  <button onclick="saveKey()">Unlock</button>
+</div>
+
+<div id="main" class="hide">
+<div class="card">
+  <div class="eyebrow">System status</div>
+  <div class="status" id="statusStrip">loading…</div>
+  <div class="rowbtns">
+    <button class="secondary" onclick="openDash()">Open dashboard</button>
+    <button class="secondary" onclick="api('/api/rebuild',{}).then(toastR)">Rebuild</button>
+    <button class="danger" id="pauseBtn" onclick="togglePause()">Pause bridge</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="eyebrow">Project</div>
+  <select id="proj"></select>
+  <div class="grid2">
+    <button onclick="act('proceed')">▶ Proceed — next step</button>
+    <button class="secondary" onclick="act('project_status')">Where are we?</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="eyebrow">Add task</div>
+  <input id="taskText" placeholder="task description">
+  <div class="grid2">
+    <input id="taskOwner" placeholder="owner (default: Erick)">
+    <input id="taskDue" type="date">
+  </div>
+  <div class="grid2">
+    <button onclick="addTask()">Add task</button>
+    <button class="secondary" onclick="completeTask()">Mark complete (match text)</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="eyebrow">Capture</div>
+  <textarea id="capText" placeholder="note, idea, or decision — dictate with the mic key"></textarea>
+  <div class="grid2">
+    <button onclick="capture('add_note')">Save note</button>
+    <button class="secondary" onclick="capture('capture_idea')">Save idea</button>
+  </div>
+  <button class="secondary" style="margin-top:8px" onclick="logDecision()">Log as decision</button>
+</div>
+
+<div class="card">
+  <div class="eyebrow">Session actions</div>
+  <button class="secondary" onclick="act('run_brief','')">Run daily brief</button>
+</div>
+
+<div class="card">
+  <div class="eyebrow">Queue</div>
+  <div id="queue">empty</div>
+</div>
+</div>
+
+<div id="toast" class="toast hide"></div>
+
+<script>
+"use strict";
+var KEY = localStorage.getItem("ea_bridge_key") || "";
+function saveKey(){KEY=document.getElementById("keyInput").value.trim();
+  localStorage.setItem("ea_bridge_key",KEY);boot();}
+function headers(){return {"Content-Type":"application/json","X-App-Key":KEY};}
+function api(path,body){
+  var opt = body?{method:"POST",headers:headers(),body:JSON.stringify(body)}
+                :{headers:headers()};
+  return fetch(path,opt).then(function(r){return r.json();})
+    .catch(function(){return {ok:false,error:"PC unreachable"};});
+}
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;
+  t.classList.remove("hide");setTimeout(function(){t.classList.add("hide");},3500);}
+function toastR(r){toast(r.summary||r.error||"done");refresh();}
+function uuid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+
+function openDash(){location.href="/index.html";}
+var paused=false;
+function togglePause(){api(paused?"/api/resume":"/api/pause",{}).then(toastR);}
+
+function act(type){
+  var proj=document.getElementById("proj").value;
+  api("/api/action",{type:type,project:proj,uuid:uuid()}).then(toastR);
+}
+function addTask(){
+  var t=document.getElementById("taskText").value.trim();if(!t)return toast("empty task");
+  api("/api/action",{type:"add_task",project:document.getElementById("proj").value,
+    task:t,owner:document.getElementById("taskOwner").value,
+    due:document.getElementById("taskDue").value,uuid:uuid()})
+  .then(function(r){document.getElementById("taskText").value="";toastR(r);});
+}
+function completeTask(){
+  var t=document.getElementById("taskText").value.trim();if(!t)return toast("type part of the task text first");
+  api("/api/action",{type:"complete_task",project:document.getElementById("proj").value,
+    task:t,uuid:uuid()}).then(function(r){
+      if(r.resolved)toast("Completed: "+r.resolved);else toastR(r);refresh();});
+}
+function capture(type){
+  var t=document.getElementById("capText").value.trim();if(!t)return toast("empty");
+  api("/api/action",{type:type,project:document.getElementById("proj").value,
+    text:t,uuid:uuid()}).then(function(r){document.getElementById("capText").value="";toastR(r);});
+}
+function logDecision(){
+  var t=document.getElementById("capText").value.trim();if(!t)return toast("empty");
+  api("/api/action",{type:"log_decision",decision:t,reasoning:"",uuid:uuid()})
+  .then(function(r){document.getElementById("capText").value="";toastR(r);});
+}
+function answer(threadId,qid){
+  var el=document.getElementById("ans-"+qid);var t=el.value.trim();if(!t)return;
+  api("/api/answer",{thread:threadId,answer_to:qid,text:t,
+    project:document.getElementById("proj").value}).then(toastR);
+}
+function cancelReq(id){api("/api/cancel",{id:id}).then(toastR);}
+
+function renderQueue(items){
+  var el=document.getElementById("queue");
+  if(!items.length){el.textContent="empty";return;}
+  el.innerHTML=items.slice(-8).reverse().map(function(i){
+    var pillCls=i.state==="done"?"p-good":i.state==="queued"?"p-warn":
+      i.state==="question"?"p-warn":i.state==="stale"?"p-dim":"p-crit";
+    var html='<div class="q-item"><div class="q-head"><span>'+
+      esc(i.action)+(i.project?" · "+esc(i.project):"")+
+      '</span><span class="pill '+pillCls+'">'+esc(i.state)+"</span></div>";
+    if(i.summary)html+='<div class="q-sum">'+esc(i.summary)+"</div>";
+    if(i.state==="question"&&i.question){
+      html+='<div class="q-question">'+esc(i.question)+
+        '<input id="ans-'+esc(i.id)+'" placeholder="answer…">'+
+        '<div class="rowbtns"><button onclick="answer(\''+esc(i.id)+'\',\''+esc(i.id)+
+        '\')">Send answer</button></div></div>';}
+    if(i.state==="queued")html+='<div class="rowbtns"><button class="secondary" '+
+      'onclick="cancelReq(\''+esc(i.id)+'\')">Cancel</button></div>';
+    return html+"</div>";}).join("");
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+
+function refresh(){
+  api("/api/health").then(function(h){
+    paused=!!h.paused;
+    document.getElementById("pauseBtn").textContent=paused?"Resume bridge":"Pause bridge";
+    var w=h.watcher||{state:"unknown"};
+    var cls=w.state==="live"?"p-good":w.state==="stale"?"p-warn":"p-crit";
+    var label=w.state==="live"?"session listening":w.state==="stale"?"watcher lagging":
+      "watcher dead — requests will wait";
+    document.getElementById("statusStrip").innerHTML=
+      '<span class="pill '+cls+'">● '+label+"</span>"+
+      (h.pending?'<span class="pill p-warn">'+h.pending+" pending</span>":"")+
+      (paused?'<span class="pill p-crit">PAUSED</span>':"");
+  });
+  api("/api/queue").then(function(q){if(q.items)renderQueue(q.items);});
+}
+function boot(){
+  if(!KEY)return;
+  document.getElementById("keyCard").classList.add("hide");
+  document.getElementById("main").classList.remove("hide");
+  api("/api/projects").then(function(p){
+    var sel=document.getElementById("proj");
+    var list=(p.projects||[]);
+    sel.innerHTML=list.map(function(x){
+      return '<option value="'+esc(x.name)+'">'+esc(x.name)+" — "+esc(x.status)+"</option>";
+    }).join("")||'<option value="">(no projects)</option>';
+  });
+  refresh();setInterval(refresh,6000);
+}
+boot();
+</script>
+</body>
+</html>

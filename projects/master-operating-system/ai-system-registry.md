@@ -50,6 +50,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | Filesystem/Local MCP | MCP server | Connected | Claude can read/write local files outside VS Code — true file automation | Connected 2026-05-13 — scoped to EA Agent folder only |
 | PostgreSQL/Supabase MCP | MCP server | Not Connected | Claude can query databases, inspect schemas, generate reports from real data | Planned — core to Data Management service offering and live demos |
 | Notion or Airtable MCP | MCP server | Not Connected | Claude can read/write a knowledge base, CRM, or SOP tracker | Planned — replaces markdown trackers with a proper system of record |
+| Mobile Bridge (Tailscale) | Local server | Active | Phone control — private dashboard + server-templated actions + session queue over the tailnet; fail-closed bind, header auth, HMAC queue, audit log | Built 2026-08-05 — `bridge/server.py` (stdlib); SOP `references/sops/mobile-bridge-sop.md`; port 8100 |
 | Source-of-Truth Tracker | Reference system | Active | Formal catalog of all 52 authoritative sources — priority levels, owners, update cadence, status | Built 2026-05-15 — `references/source-of-truth/`; primary audit list for Data Integrity Agent |
 
 ---
@@ -80,7 +81,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 |---|---|
 | All agents have a registry entry | 10 / 10 |
 | All agents with specs have spec file links | 9 / 9 (master-operating-system does not need a spec) |
-| All tools documented | 11 tools/systems registered (8 connected, 2 planned, 1 reference system active) |
+| All tools documented | 12 tools/systems registered (8 connected, 2 planned, 1 reference system, 1 local server) |
 | All skills documented | 9 / 9 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking, ad-directors-vision) |
 | No undocumented agents | Pass |
 | No rogue workflows | Pass |
