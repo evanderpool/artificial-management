@@ -42,6 +42,23 @@ When in conflict, higher-priority sources win. Flag and resolve conflicts — do
 - Every meaningful decision gets logged in `decisions/log.md`
 - Every system change gets logged in the Change Log
 
+## Public / Private Repo Split (2026-08-05)
+
+This repo is **public** — it is the portfolio showcase. Business-sensitive
+content lives in the **private** repo `artificial-management-private`
+(github.com/evanderpool/artificial-management-private), and future client work
+lives in **per-client private repos**.
+
+**Never commit to the public repo:** personal PII (address, phone, personal
+email), resume content, service pricing, outreach/proposal templates, client
+names, or any client data. When creating a file that contains any of these,
+create it in the private repo and leave only a pointer here if needed.
+
+Currently in the private repo: `references/resume/`,
+`references/examples/outreach/`, `references/sops/service-packages.md`,
+`templates/proposal-template.md` (moved + purged from public history
+2026-08-05).
+
 ## Fortune 500 Operating Standard
 
 Design everything as if Artificial Management is a real enterprise company. That means:

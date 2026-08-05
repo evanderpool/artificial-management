@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "New-Item -ItemType File -Path \"$env:TEMP\\claude-task-flag.txt\" -Force | Out-Null",
+            "command": "$in = [Console]::In.ReadToEnd() | ConvertFrom-Json; $p = \"$($in.tool_input.file_path)\"; if ($p -like '*EA Agent*' -and $p -notmatch '\\\\logs\\\\|\\\\dashboard\\\\index\\.html$') { New-Item -ItemType File -Path \"$env:TEMP\\claude-task-flag-ea-agent.txt\" -Force | Out-Null }",
             "shell": "powershell"
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if (Test-Path \"$env:TEMP\\claude-task-flag.txt\") { Remove-Item \"$env:TEMP\\claude-task-flag.txt\" -Force; Write-Output '{\"systemMessage\": \"Files were changed this turn - run /task-complete to sync all tracking files.\"}' }",
+            "command": "if (Test-Path \"$env:TEMP\\claude-task-flag-ea-agent.txt\") { Remove-Item \"$env:TEMP\\claude-task-flag-ea-agent.txt\" -Force; Write-Output '{\"systemMessage\": \"Files were changed this turn - run /task-complete to sync all tracking files.\"}' }",
             "shell": "powershell"
           }
         ]

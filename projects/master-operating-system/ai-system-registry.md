@@ -1,6 +1,6 @@
 # AI System Registry
 
-**Last Updated:** 2026-05-16
+**Last Updated:** 2026-08-05
 **Owner:** Erick Vanderpool
 **Source of truth for:** All agents and tools in the Artificial Management AI operating system
 
@@ -29,10 +29,10 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | data-integrity-agent | Data Integrity Agent | Validates consistency across all system documents, flags conflicts and outdated info, maintains system trustworthiness | Active | `projects/data-integrity-agent/spec.md` | All context files, all project READMEs, all agent specs, decision log, change log | Inconsistency report, missing fields report, outdated info flags, confidence scores | All context files, Documentation Agent | 2026-05-15 |
 | change-management-agent | Change Management Agent | Tracks everything that changes inside Artificial Management — what changed, when, and why | Active | `projects/change-management-agent/spec.md` | System changes, updated files, new workflows, modified prompts | Change log entries, version diff summaries, rollback docs, outdated reference flags | logs/changes.md | 2026-05-15 |
 | cost-tracking-agent | Cost Tracking Agent | Tracks all tools, APIs, subscriptions, and compute costs for Artificial Management | Active | `projects/cost-tracking-agent/spec.md` | Tool subscriptions, API costs, software licenses, storage costs | Monthly spend summary, cost change alerts, waste flags, pricing recommendations | External billing data | 2026-05-16 |
-| portfolio-agent | Portfolio Agent | Converts every technical project and workflow into job-search and client-facing proof | In Progress | `projects/portfolio-agent/spec.md` | Completed tasks, agent specs, automation workflows, business outcomes | Resume bullets, case studies, LinkedIn posts, GitHub READMEs, interview stories | All project deliverables | 2026-05-14 |
+| portfolio-agent | Portfolio Agent | Converts every technical project and workflow into job-search and client-facing proof | Active | `projects/portfolio-agent/spec.md` | Completed tasks, agent specs, automation workflows, business outcomes | Resume bullets, case studies, LinkedIn posts, GitHub READMEs, interview stories | All project deliverables | 2026-08-05 |
 | client-services-agent | Client Services Agent | Packages Artificial Management's capabilities into marketable service offers for SMB clients | Active | `projects/client-services-agent/spec.md` | Services list, market feedback, portfolio work, pain points, pricing logic | Service packages (4 tiers), discovery call script, proposal template, outreach templates (6), client onboarding SOP | Portfolio Agent | 2026-05-16 |
-| ai-engineering-build-agent | AI Engineering Build Agent | Designs and implements the technical architecture of the Artificial Management AI system | Spec Complete | `projects/ai-engineering-build-agent/spec.md` | Business requirements, agent specs, data flows, tool constraints | Architecture diagrams, tool selection rationale, database schemas, workflow specs | All agent specs | 2026-05-14 |
-| master-operating-system | Master Operating System | The central system that connects all agents, projects, documentation, dashboards, and workflows | In Progress | — | All system files | Project tracker, AI system registry, weekly exec summary, architecture docs | All agents and tools | 2026-05-15 |
+| ai-engineering-build-agent | AI Engineering Build Agent | Designs and implements the technical architecture of the Artificial Management AI system | Active | `projects/ai-engineering-build-agent/spec.md` | Business requirements, agent specs, data flows, tool constraints | Architecture diagrams, tool selection rationale, database schemas, workflow specs | All agent specs | 2026-08-05 |
+| master-operating-system | Master Operating System | The central system that connects all agents, projects, documentation, dashboards, and workflows | Active | — | All system files | Project tracker, AI system registry, weekly exec summary, architecture docs, ops dashboard | All agents and tools | 2026-08-05 |
 
 ---
 
@@ -50,7 +50,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | Filesystem/Local MCP | MCP server | Connected | Claude can read/write local files outside VS Code — true file automation | Connected 2026-05-13 — scoped to EA Agent folder only |
 | PostgreSQL/Supabase MCP | MCP server | Not Connected | Claude can query databases, inspect schemas, generate reports from real data | Planned — core to Data Management service offering and live demos |
 | Notion or Airtable MCP | MCP server | Not Connected | Claude can read/write a knowledge base, CRM, or SOP tracker | Planned — replaces markdown trackers with a proper system of record |
-| Source-of-Truth Tracker | Reference system | Active | Formal catalog of all 49 authoritative sources — priority levels, owners, update cadence, status | Built 2026-05-15 — `references/source-of-truth/`; primary audit list for Data Integrity Agent |
+| Source-of-Truth Tracker | Reference system | Active | Formal catalog of all 52 authoritative sources — priority levels, owners, update cadence, status | Built 2026-05-15 — `references/source-of-truth/`; primary audit list for Data Integrity Agent |
 
 ---
 
@@ -88,4 +88,4 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | README Last Updated fields present and current | Pass |
 | master-operating-system Last Updated current | Pass — corrected 2026-05-13 → 2026-05-15 |
 
-**Next audit:** Start of Week 5 — after Cost Tracking Agent build begins
+**Next audit:** Q3 Phase 2 — after Session 3 (scripts/audit.js) lands, audits become script-assisted

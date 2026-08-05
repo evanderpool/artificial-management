@@ -13,26 +13,17 @@ Type `/chief-of-staff` — no arguments needed. The skill reads all source files
 Read both files in full:
 
 - `context/current-priorities.md` — top 5 priorities, immediate next actions, system status
-- `context/goals.md` — which week of the 7-week plan we are in, the June 30 deadline, and Q2 success criteria
+- `context/goals.md` — the current quarter, working deadline, and success criteria
 
-Extract: current week number, overall system status, and the full list of immediate next actions.
+Extract: current phase, working deadline (compute days remaining from today — never hardcode), overall system status, and the full list of immediate next actions.
 
 ---
 
-## Step 2: Read All 10 Project READMEs
+## Step 2: Read Every Project README
 
-Read each of the following files:
-
-- `projects/master-operating-system/README.md`
-- `projects/chief-of-staff-agent/README.md`
-- `projects/project-manager-agent/README.md`
-- `projects/documentation-agent/README.md`
-- `projects/data-integrity-agent/README.md`
-- `projects/change-management-agent/README.md`
-- `projects/cost-tracking-agent/README.md`
-- `projects/portfolio-agent/README.md`
-- `projects/client-services-agent/README.md`
-- `projects/ai-engineering-build-agent/README.md`
+List all directories in `projects/` and read the `README.md` in each one. Do
+not use a fixed list — new projects must appear automatically, and a project
+folder without a README is itself a finding to flag.
 
 For each project extract: current status, last updated date, any blockers, and next action.
 
@@ -44,7 +35,7 @@ For each project extract: current status, last updated date, any blockers, and n
 
 Read `projects/master-operating-system/project-tracker.md` in full.
 
-Extract: the status of all 10 projects from the tracker table, any flagged blockers, and the Deadline Tracker week status.
+Extract: the status of every project in the tracker table and any flagged blockers.
 
 Cross-check against the READMEs from Step 2. If the tracker and a README disagree on status, flag the conflict.
 
@@ -66,16 +57,18 @@ Extract all entries from the last 30 days. Note what was created, updated, or de
 
 ---
 
-## Step 6: Read the Most Recent Session Logs
+## Step 6: Read Recent Sessions and the Latest Sprint Plan
 
-List all files in `logs/sessions/`. Read the 3 most recent files (by date in filename).
+List all files in `logs/sessions/` (human work-session records only — agent
+output lives in `logs/reports/` and must NOT be treated as session input).
+Read the 3 most recent files (by date in filename).
 
 From each session log extract:
 - What got done
 - Open items and blockers
 - Next actions listed
 
-**PM Agent integration:** If any of the 3 most recent files is a sprint plan (filename contains `sprint-plan`), treat it as a primary input — its "This Week's Targets" table becomes the primary source for the Next Actions list in Step 7. If no sprint plan exists in the recent logs, derive next actions from session logs and `context/current-priorities.md` as normal.
+**PM Agent integration:** Check `logs/reports/` for the most recent `sprint-plan` file. If one exists and is newer than the last session log, its "This Week's Targets" table becomes the primary source for the Next Actions list in Step 7. Otherwise derive next actions from session logs and `context/current-priorities.md` as normal. Never read prior daily briefs or weekly summaries as input — summarizing your own output is an echo loop.
 
 ---
 
@@ -83,7 +76,7 @@ From each session log extract:
 
 Using all data gathered in Steps 1–6, produce the daily brief.
 
-**Deadline risk rule:** Any project or action that could jeopardize the June 30, 2026 deadline must be flagged at the top of the brief with **RED FLAG**.
+**Deadline risk rule:** Any project or action that could jeopardize the current working deadline in `context/goals.md` must be flagged at the top of the brief with **RED FLAG**.
 
 **Data integrity rules:**
 - Cite which file each fact comes from
@@ -97,8 +90,8 @@ Use this exact format:
 ## Daily Brief — [YYYY-MM-DD]
 
 **Overall Status:** [On Track / At Risk / Behind]
-**Week:** [N] of 7 — [Week theme from goals.md]
-**Weeks Remaining:** [N] until June 30, 2026
+**Phase:** [phase label from current-priorities.md]
+**Working Deadline:** [date from goals.md] — [N] days remaining
 
 [RED FLAG: description — only include if deadline is at risk]
 
@@ -144,7 +137,9 @@ Use this exact format:
 ## Step 8: Save the Brief to File
 
 Save the completed brief to:
-`logs/sessions/YYYY-MM-DD-daily-brief.md`
+`logs/reports/YYYY-MM-DD-daily-brief.md`
+
+(`logs/reports/` holds agent-generated output; never write agent output into `logs/sessions/`.)
 
 Use today's date. If a daily brief already exists for today, append `-2`, `-3`, etc.
 
@@ -155,7 +150,7 @@ Use today's date. If a daily brief already exists for today, append `-2`, `-3`, 
 Append one entry to `logs/changes.md`:
 
 ```
-[YYYY-MM-DD] CHANGED: logs/sessions/YYYY-MM-DD-daily-brief.md | TYPE: new | PROJECT: master-operating-system | NOTES: Chief of Staff daily brief produced
+[YYYY-MM-DD] CHANGED: logs/reports/YYYY-MM-DD-daily-brief.md | TYPE: new | PROJECT: master-operating-system | NOTES: Chief of Staff daily brief produced
 ```
 
 ---
@@ -169,9 +164,9 @@ Daily brief produced.
 
 | Output      | Location                                        |
 |-------------|-------------------------------------------------|
-| Brief file  | logs/sessions/YYYY-MM-DD-daily-brief.md         |
+| Brief file  | logs/reports/YYYY-MM-DD-daily-brief.md          |
 | Status      | [On Track / At Risk / Behind]                   |
-| Projects    | [N] / 10 reviewed                               |
+| Projects    | [N] reviewed (every folder in projects/)        |
 
 Top next action: [#1 from the Next Actions list]
 ```

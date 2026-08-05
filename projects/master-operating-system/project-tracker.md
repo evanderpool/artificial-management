@@ -1,6 +1,6 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-05-16 (Week 6 close-out)
+**Last Updated:** 2026-08-05 (v1 close-out + Phase 2 restart)
 **Owner:** Erick Vanderpool
 **Source of truth for:** All 10 active Artificial Management project workstreams
 
@@ -25,16 +25,17 @@ Update this file after every work session. If a project has no update for 2+ ses
 
 | Project | Agent ID | Status | Week Target | Deadline | Last Updated | Blockers | Next Action |
 |---|---|---|---|---|---|---|---|
-| Master Operating System | master-operating-system | In Progress | Week 1–3 | 2026-06-30 | 2026-05-16 | None | Build architecture diagram, data flow diagram, master dashboard |
+| Master Operating System | master-operating-system | Active | v1 complete | — | 2026-08-05 | None | Operate: heartbeat live via dashboard; next audit per Q3 plan |
 | Chief of Staff Agent | chief-of-staff-agent | Active | Week 3 | 2026-06-30 | 2026-05-16 | None | Daily brief + weekly summary running; monitor Week 7 sprint |
 | Project Manager Agent | project-manager-agent | Active | Week 3 | 2026-06-30 | 2026-05-16 | None | Sprint plan active — Week 7 targets set 2026-05-16 |
 | Documentation Agent | documentation-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /documentation live; validate session summary, README update, and SOP draft modes |
 | Data Integrity Agent | data-integrity-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /data-integrity full audit; validate confidence scoring output |
 | Change Management Agent | change-management-agent | Active | Week 4 | 2026-06-30 | 2026-05-15 | None | Run /change-management review to validate gap detection; integrate with session close workflow |
 | Cost Tracking Agent | cost-tracking-agent | Active | Week 5 | 2026-06-30 | 2026-05-16 | None | Monthly report + API tracking live; confirm 4 tool actuals by 2026-05-20 |
-| Portfolio Agent | portfolio-agent | In Progress | Week 6 | 2026-06-30 | 2026-05-16 | None | Push README to GitHub; confirm repo URL; Week 7 prep |
-| Client Services Agent | client-services-agent | Spec Complete | Week 7 | 2026-06-30 | 2026-05-14 | None | Build service packages; write discovery call script |
-| AI Engineering Build Agent | ai-engineering-build-agent | Spec Complete | Week 3–7 | 2026-06-30 | 2026-05-14 | None | Build architecture diagram and data flow diagram |
+| Portfolio Agent | portfolio-agent | Active | v1 complete | — | 2026-08-05 | None | Add ops dashboard + LangGraph project to case study; resume refresh in private repo |
+| Client Services Agent | client-services-agent | Active | v1 complete | — | 2026-08-05 | None | Write client-data-handling SOP before first outreach; packages/proposal now in private repo |
+| AI Engineering Build Agent | ai-engineering-build-agent | Active | v1 complete | — | 2026-08-05 | None | Architecture diagram + dashboard delivered 2026-08-05; next: scripts/audit.js (Session 3) |
+| Portfolio Website | portfolio-website | In Progress | Phase 2 | 2026-09-30 | 2026-08-05 | Awaiting project data + decisions | Contact form UI, social links, project questionnaire (see projects/portfolio-website/README.md) |
 
 ---
 
@@ -52,11 +53,11 @@ Update this file after every work session. If a project has no update for 2+ ses
 - [x] AI System Registry
 - [x] Weekly Executive Summary template
 - [x] Weekly Executive Summary skill
-- [ ] Architecture diagram
+- [x] Architecture diagram — dashboard explainer SVG + README Mermaid (2026-08-05)
 - [x] Source-of-truth map
 - [ ] Agent ownership model
-- [ ] Data flow diagram
-- [ ] Master dashboard
+- [x] Data flow diagram — README data-flow section + dashboard architecture SVG (2026-08-05)
+- [x] Master dashboard — dashboard/ static generator, GitHub Pages, daily heartbeat (2026-08-05)
 
 ### Chief of Staff Agent
 - [x] Project README
@@ -115,10 +116,11 @@ Update this file after every work session. If a project has no update for 2+ ses
 ### Client Services Agent
 - [x] Project README
 - [x] Agent spec (v1.0)
-- [ ] Service packages defined
-- [ ] Discovery call script written
-- [ ] Proposal template created
-- [ ] Outreach messages drafted
+- [x] Service packages defined — 2026-05-16 (4 tiers; now in private repo)
+- [x] Discovery call script written — 2026-05-16 (`references/sops/discovery-call-script.md`)
+- [x] Proposal template created — 2026-05-16 (now in private repo)
+- [x] Outreach messages drafted — 2026-05-16 (6 variants; now in private repo)
+- [ ] Client data handling SOP (required before first outreach)
 
 ### AI Engineering Build Agent
 - [x] Project README
@@ -131,18 +133,13 @@ Update this file after every work session. If a project has no update for 2+ ses
 
 ---
 
-## Deadline Tracker
+## v1 Build — Complete (archived)
 
-**Hard deadline:** June 30, 2026
-**Today:** 2026-05-16
-**Weeks remaining:** ~1 sprint week (Week 7) — Weeks 5 & 6 completed early in same session block
+The 7-week v1 build (2026-05-13 → 2026-05-17) is closed: all 7 weekly themes
+delivered, ahead of schedule. Retrospective in `decisions/log.md` (2026-08-05).
+Current deadlines live in `context/goals.md` (Q3) — this file no longer tracks
+a build calendar; per-project deadlines are in the tracker table above.
 
 | Week | Theme | Status |
 |---|---|---|
-| Week 1 (complete) | Foundation and System Architecture | Complete |
-| Week 2 (complete) | Core Dashboards and Tracking | Complete |
-| Week 3 (complete) | Chief of Staff + Project Manager Agent | Complete |
-| Week 4 (complete) | Documentation + Data Integrity + Change Management Agents | Complete |
-| Week 5 (complete) | First Working Automation Workflow | Complete |
-| Week 6 (complete) | Portfolio Case Study + Resume Assets | Complete |
-| Week 7 (current) | Client Offer + AI Engineer Job Positioning | In Progress |
+| Weeks 1–7 | Foundation → Client Offer (full plan in `archives/2026-q2-goals.md`) | Complete |

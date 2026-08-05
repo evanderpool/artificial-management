@@ -1,6 +1,6 @@
 # Source-of-Truth Map
 
-**Last Updated:** 2026-05-16
+**Last Updated:** 2026-08-05
 **Owner:** Data Integrity Agent
 **Verified By:** Erick Vanderpool
 
@@ -141,10 +141,10 @@ Structured reference directories. Each has its own README and data files.
 |---|---|---|---|---|---|---|---|
 | Cost Tracker Directory | `references/cost-tracker/` | All tool/API/subscription costs — monthly trackers, ROI flags, action items | Cost Tracking Agent | Monthly + when tools change | 2026-05-15 | Current | Cost Tracking Agent, Chief of Staff Agent |
 | Cost Tracker (May 2026) | `references/cost-tracker/2026-05-cost-tracker.md` | May 2026 spend: ~$47/month, 17 tools registered, 3 active paid tools | Cost Tracking Agent | Monthly | 2026-05-15 | Current | Cost Tracking Agent |
-| Resume Directory | `references/resume/` | All resume versions, master source, recruiter analysis | Portfolio Agent | Per resume version update | 2026-05-15 | Current | Portfolio Agent, Erick |
-| Resume Master Source | `references/resume/master-source.md` | Full uncut resume content inventory — never modified | Portfolio Agent | Rarely (preserves original) | 2026-05-15 | Current | Portfolio Agent |
-| Resume Current Best | `references/resume/versions/v1.2-ai-engineering-mos.md` | Current best submission version — AI OS featured, score 68–72/100 | Portfolio Agent | Per version update | 2026-05-15 | Current | Portfolio Agent, Erick |
-| Resume Analysis | `references/resume/analysis/recruiter-analysis-v1.md` | AI engineering recruiter scoring — 58/100 baseline, 9 gaps, rescore triggers | Portfolio Agent | When resume is rescored | 2026-05-15 | Current | Portfolio Agent |
+| Resume Directory | private repo: `artificial-management-private/references/resume/` | All resume versions, master source, recruiter analysis | Portfolio Agent | Per resume version update | 2026-05-15 | Current | Portfolio Agent, Erick |
+| Resume Master Source | private repo: `references/resume/master-source.md` | Full uncut resume content inventory — never modified | Portfolio Agent | Rarely (preserves original) | 2026-05-15 | Current | Portfolio Agent |
+| Resume Current Best | private repo: `references/resume/versions/` (latest) | Current best submission version — AI OS featured, score 68–72/100 | Portfolio Agent | Per version update | 2026-05-15 | Current | Portfolio Agent, Erick |
+| Resume Analysis | private repo: `references/resume/analysis/recruiter-analysis-v1.md` | AI engineering recruiter scoring — 58/100 baseline, 9 gaps, rescore triggers | Portfolio Agent | When resume is rescored | 2026-05-15 | Current | Portfolio Agent |
 | Source-of-Truth Directory | `references/source-of-truth/` | All authoritative sources — this tracker (self-referencing) | Data Integrity Agent | When new sources are added | 2026-05-15 | Current | Data Integrity Agent, all agents |
 
 ---

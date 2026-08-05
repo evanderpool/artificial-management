@@ -1,45 +1,48 @@
-# Goals — Q2 2026
+# Goals — Q3 2026
 
-> Update this file at the start of each quarter.
+> Update this file at the start of each quarter. Q2 archived at `archives/2026-q2-goals.md`.
 
-**Quarter:** Q2 2026 (April – June 2026)
-**Hard deadline:** June 30, 2026
-
----
-
-## Main Q2 Goal
-
-Build the **first complete version of the Artificial Management AI Operating System** — an enterprise-level automated assistant system with multi-agent workflows, documentation, tracking, and portfolio-ready case studies.
+**Quarter:** Q3 2026 (July – September 2026)
+**Working deadline:** September 30, 2026
+**Status note:** Q3 started late — the system was dark 2026-05-20 → 2026-08-05.
+The v1 build finished ahead of schedule; the June 30 outcome goals (job + clients)
+carried forward unmet. Q3 is the launch quarter: fewer build goals, more outcome goals.
 
 ---
 
-## Q2 Success Criteria
+## Main Q3 Goal
 
-- [ ] Documented AI system architecture
-- [ ] Defined agent roster with responsibilities
-- [ ] Master project tracker (active and maintained)
-- [ ] AI system registry (all agents and tools logged)
-- [ ] Decision log (append-only, in use)
-- [ ] Change log (active)
-- [ ] Cost tracker (tools, APIs, subscriptions)
-- [ ] Data / source-of-truth tracker
-- [ ] At least one working automation workflow
-- [ ] At least one portfolio case study
-- [ ] Resume bullets describing the system
-- [ ] Client-facing service offer for Artificial Management
-- [ ] Small business automation pitch
-- [ ] Roadmap for expanding the system
+**Convert the finished v1 system into outcomes:** active job applications with
+the system as flagship proof, first client conversations, and a public live
+demo surface (dashboard + portfolio website).
 
 ---
 
-## 7-Week Build Plan
+## Q3 Success Criteria
 
-| Week | Goal | Key Deliverables |
-|---|---|---|
-| 1 | Foundation and System Architecture | Operating model, agent roster, architecture diagram, project tracker structure, source-of-truth rules, documentation standards |
-| 2 | Core Dashboards and Tracking | Project tracker, AI system registry, change log, decision log, cost tracker, data/source tracker |
-| 3 | Chief of Staff + Project Manager Agent | Agent prompts/specs, weekly executive summary workflow, next-action workflow, priority scoring logic |
-| 4 | Documentation + Data Integrity Agents | Agent prompts/specs, SOP templates, hallucination-reduction checklist, project documentation workflow |
-| 5 | First Working Automation Workflow | AI Executive Weekly Briefing System — pulls from trackers/logs, generates what got done, what changed, what's blocked, what's next |
-| 6 | Portfolio Case Study + Resume Assets | Case study, GitHub README, resume bullets, interview explanation, LinkedIn post, demo script |
-| 7 | Client Offer + AI Engineer Job Positioning | Service menu, 3–4 client packages, discovery call script, proposal template, resume bullets, outreach messages |
+### Outcomes (the point of the quarter)
+- [ ] 10–15 AI engineering applications per week, sustained (target: 60+ total)
+- [ ] 3–4 client discovery conversations booked
+- [ ] At least 1 paid engagement or signed pilot
+- [ ] Portfolio website deployed to production
+
+### System (supporting, not the focus)
+- [x] Ops dashboard live on GitHub Pages with daily heartbeat (2026-08-05)
+- [x] Public/private repo split — no PII or pricing in the public repo (2026-08-05)
+- [ ] Client-data-handling SOP written (required before first outreach)
+- [ ] Disaster-recovery / second-operator runbook written
+- [ ] Session 3 credibility work: scripts/audit.js, run log, tests + eval fixtures, skill frontmatter
+- [ ] Second AI project shipped (leading candidate: Supabase canonical-store migration for this system — doubles as the RAG/pgvector resume piece)
+
+### Standing decisions needed (Erick)
+- [ ] Confirm business Gmail spelling (`artifical.management@gmail.com` — as-registered or typo?)
+- [ ] Google Workspace Business Starter upgrade (gates client outreach with custom domain)
+
+---
+
+## Operating cadence
+
+No week-numbered build plan this quarter — the system is in operations mode.
+Cadence: work in named sessions, close each with `/documentation`; weekly
+briefing routine covers the summary; dashboard heartbeat enforces liveness
+(QUIET at 7 days, STALE at 14).

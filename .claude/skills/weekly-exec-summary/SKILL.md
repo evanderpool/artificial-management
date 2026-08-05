@@ -62,7 +62,7 @@ From each session log extract:
 Determine overall status using this logic:
 - **On Track** — all Week N deliverables complete or progressing as planned
 - **At Risk** — one or more Week N deliverables incomplete, blocked, or significantly behind
-- **Behind** — major gap between plan and actual; June 30 deadline is in jeopardy
+- **Behind** — major gap between plan and actual; the working deadline in context/goals.md is in jeopardy
 
 Fill out the template at `templates/weekly-exec-summary.md` with real data. Every section must cite its source file. Replace all placeholder text. If a section has nothing to report, use the "(None this week)" line — do not delete the section.
 
@@ -81,7 +81,7 @@ Fill out the template at `templates/weekly-exec-summary.md` with real data. Ever
 
 **Status:** [On Track / At Risk / Behind]
 **Reason:** [One sentence — cite the key win or key gap]
-**Weeks Remaining:** [N] of 7 (deadline: June 30, 2026)
+**Working Deadline:** [date from goals.md] — [N] days remaining
 
 ---
 
@@ -156,13 +156,13 @@ Fill out the template at `templates/weekly-exec-summary.md` with real data. Ever
 ## Step 7: Save the Summary and Check Priorities
 
 Save the completed summary to:
-`logs/sessions/YYYY-MM-DD-weekly-summary.md`
+`logs/reports/YYYY-MM-DD-weekly-summary.md`
 (Use the last day of the work week or today's date if mid-week.)
 
 Then append to `logs/changes.md`:
 
 ```
-[YYYY-MM-DD] CHANGED: logs/sessions/YYYY-MM-DD-weekly-summary.md | TYPE: new | PROJECT: master-operating-system | NOTES: Weekly executive summary for Week N of 7
+[YYYY-MM-DD] CHANGED: logs/reports/YYYY-MM-DD-weekly-summary.md | TYPE: new | PROJECT: master-operating-system | NOTES: Weekly executive summary produced
 ```
 
 Then ask Erick:
@@ -193,7 +193,7 @@ Weekly summary produced.
 
 | Output         | Location                                                       |
 |----------------|----------------------------------------------------------------|
-| Summary file   | logs/sessions/YYYY-MM-DD-weekly-summary.md                     |
+| Summary file   | logs/reports/YYYY-MM-DD-weekly-summary.md                     |
 | Gmail draft    | artifical.management@gmail.com — ready to send                 |
 | Decisions      | decisions/log.md (N entries this week)                         |
 | Changes        | logs/changes.md (N entries this week)                          |

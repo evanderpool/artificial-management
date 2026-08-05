@@ -18,7 +18,7 @@ No argument defaults to full audit. Read the argument (if any) before Step 1 and
 
 Read the following before doing anything else:
 - `.claude/rules/ai-system-standards.md` — required field definitions, source-of-truth hierarchy, documentation standard
-- `references/source-of-truth/source-of-truth-map.md` — the primary audit list (49 catalogued sources)
+- `references/source-of-truth/source-of-truth-map.md` — the primary audit list (count the catalogued sources at read time — never hardcode the number)
 
 Extract the 7 required fields every agent spec must have:
 `Purpose · Inputs · Outputs · Owner · Dependencies · Success Criteria · Registry Entry`
