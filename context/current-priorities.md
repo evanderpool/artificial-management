@@ -1,11 +1,11 @@
 # Current Priorities
 
-**Last updated:** 2026-05-16 (Week 7 primary deliverables complete)
+**Last updated:** 2026-05-17 (Week 7 fully closed — entering Phase 2: Launch)
 
 ## System Status
 
-**Current week:** Week 7 of 7 — Primary goals complete
-**Current phase:** Client Offer + AI Engineer Job Positioning
+**Current week:** Week 8 — Phase 2: Active Launch
+**Current phase:** Portfolio Breadth + Job Applications + Client Outreach Prep
 **Overall status:** On Track — Ahead of Schedule
 
 ### What's been built (Weeks 1–4 — Complete)
@@ -86,9 +86,18 @@
 
 ### Stretch Goals (Week 7)
 - ~~Begin LangChain or LlamaIndex project~~ — DONE 2026-05-16 — LangGraph multi-agent research workflow built and live at github.com/evanderpool/langchain-research-agent; resume updated to 82–86/100
-- Upgrade Google Workspace to Business Starter — needed before client outreach (custom domain email)
-- Add client proof statement to LinkedIn About section
-- Deploy research agent to HuggingFace Spaces — adds live demo link to resume
+- ~~Deploy research agent to HuggingFace Spaces~~ — DONE 2026-05-17 — live demo link active; added to resume
+- Upgrade Google Workspace to Business Starter — deferred (needed before client outreach, not blocking now)
+- Add client proof statement to LinkedIn About section — deferred
+
+## Phase 2: Active Launch (Week 8+)
+
+### Immediate Next Actions
+
+- **Build second AI project** — CrewAI multi-agent workflow or RAG pipeline with Supabase/pgvector; target: deployed + in resume by June 7; estimated resume score → 88–92/100
+- **Finalize portfolio case study** — complete `projects/portfolio-agent/case-study-draft.md`; add architecture diagram, publish to GitHub
+- **Start job applications** — 10–15 roles/week; resume, GitHub, and demo script are ready now
+- **Client outreach** (after Google Workspace upgrade) — send 6 outreach templates to 10–15 qualified targets; goal: 3–4 conversations by June 30
 
 ### Weeks 5 & 6 — All Done (completed 2026-05-16)
 - ~~**Schedule weekly briefing + wire Gmail delivery**~~ — DONE 2026-05-16

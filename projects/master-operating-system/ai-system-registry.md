@@ -66,12 +66,14 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | data-integrity | Data Integrity Agent | Validates system document consistency — 3 modes: full audit, quick check, conflict resolution; confidence scoring (0–100) | Active | `.claude/skills/data-integrity/SKILL.md` | Data Integrity Agent, Erick | 2026-05-15 |
 | change-management | Change Management Agent | Logs, reviews, and flags all system changes — 3 modes: log changes (default), review (gap/orphan detection), flag [topic] | Active | `.claude/skills/change-management/SKILL.md` | Change Management Agent, Erick | 2026-05-15 |
 | cost-tracking | Cost Tracking Agent | Monthly spend report and add-tool workflow — 2 modes: monthly-report (default), add-tool | Active | `.claude/skills/cost-tracking/SKILL.md` | Cost Tracking Agent, Erick | 2026-05-16 |
+| ad-directors-vision | Ad Director's Vision | Produces a full Director's Vision document for conversion-focused video ads — 7 sections covering brand focus, emotional arc, cinematography, scene structure, pacing, ad manager strategy, and affiliate/conversion — for TikTok, Reels, YouTube Shorts, UGC, and performance marketing content | Active | `.claude/skills/ad-directors-vision/SKILL.md` | Erick | 2026-05-20 |
 
 ---
 
 ## Registry Audit
 
 **Last audit:** 2026-05-16 (Week 5 kickoff — cost-tracking-agent Spec Complete → Active; cost-tracking skill added (8 skills total); weekly briefing routine registered; 18 integrity issues corrected this session)
+**Last updated:** 2026-05-20 (ad-directors-vision skill added — 9 skills total)
 **Audit performed by:** Erick Vanderpool + Claude Code
 
 | Check | Result |
@@ -79,7 +81,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | All agents have a registry entry | 10 / 10 |
 | All agents with specs have spec file links | 9 / 9 (master-operating-system does not need a spec) |
 | All tools documented | 11 tools/systems registered (8 connected, 2 planned, 1 reference system active) |
-| All skills documented | 8 / 8 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking) |
+| All skills documented | 9 / 9 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking, ad-directors-vision) |
 | No undocumented agents | Pass |
 | No rogue workflows | Pass |
 | All Week 4 active skills status accurate | Pass — documentation, data-integrity, change-management all Active across README / registry / tracker |
