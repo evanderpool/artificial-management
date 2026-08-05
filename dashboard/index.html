@@ -138,6 +138,13 @@ details[open]>summary .chev::before{content:"▾"}
 .task-line{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
   padding:3px 0;font-size:13px;border-bottom:1px dashed color-mix(in srgb,var(--line) 60%,transparent)}
 .task-line:last-child{border-bottom:none}
+.progress{display:inline-block;width:120px;height:6px;border-radius:3px;vertical-align:middle;
+  background:color-mix(in srgb,var(--dim) 18%,transparent);overflow:hidden}
+.progress.mini{width:56px;height:5px;flex:none}
+.progress-fill{display:block;height:100%;background:var(--accent);border-radius:3px}
+.overdue{color:var(--crit)}
+ul.risk-list{margin:4px 0 0;padding-left:18px;font-size:13px}
+ul.risk-list li{margin-bottom:3px;color:var(--text)}
 .row-links{margin-top:10px;font-size:12.5px}
 .row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
 ul.feed{list-style:none;margin:0;padding:6px 0}
@@ -165,7 +172,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
     <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
     <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
   </div>
-  <div class="eyebrow num">built 2026-08-05 21:36 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+  <div class="eyebrow num">built 2026-08-05 21:56 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
 </header>
 
 <details class="explainer" open>
@@ -228,7 +235,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <div class="heartbeat good">
   <span class="hb-label">● ACTIVE</span>
   <div>
-    <div>System heartbeat — last commit <span class="num">2026-08-05</span> · <span class="mono dim">Gmail spelling confirmed as-registered; sync decision + trackers</span></div>
+    <div>System heartbeat — last commit <span class="num">2026-08-05</span> · <span class="mono dim">Project Portfolio restructure — tracker models real work, agents are…</span></div>
     <div class="hb-detail">Last commit 0 days ago. Recomputed at every build — rebuilt daily by CI.</div>
   </div>
 </div>
@@ -236,7 +243,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <div class="activity">
   <div class="a-title">Activity — changes logged per week <span class="a-src">· sqrt scale · source: <a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">logs/changes.md</a></span></div>
   <svg viewBox="0 0 276 80" width="276" height="80" role="img"
-    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 32 this week. Square-root scale.">
+    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 41 this week. Square-root scale.">
     <line x1="16" y1="64" x2="260" y2="64" class="baseline"/>
     <rect x="16" y="16" width="16" height="48" rx="2"
         class="bar"><title>Week of 2026-05-11: 193 changes logged</title></rect><text x="24" y="12" class="bar-label">193</text>
@@ -252,20 +259,20 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <rect x="187" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-13: no changes logged</title></rect>
 <rect x="206" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-20: no changes logged</title></rect>
 <rect x="225" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-27: no changes logged</title></rect>
-<rect x="244" y="44" width="16" height="20" rx="2"
-        class="bar bar-end"><title>Week of 2026-08-03: 32 changes logged</title></rect><text x="252" y="40" class="bar-label">32</text>
+<rect x="244" y="42" width="16" height="22" rx="2"
+        class="bar bar-end"><title>Week of 2026-08-03: 41 changes logged</title></rect><text x="252" y="38" class="bar-label">41</text>
     <text x="16" y="77" class="axis-label">2026-05</text>
     <text x="260" y="77" class="axis-label" text-anchor="end">2026-08</text>
   </svg>
 </div>
 
 <div class="metrics">
-  <div class="metric"><div class="v">3</div><div class="k">Projects</div><div class="s">1 In Progress · 1 Complete · 1 Planning</div></div>
+  <div class="metric"><div class="v">1</div><div class="k">Projects</div><div class="s">1 Planning</div></div>
   <div class="metric"><div class="v">10</div><div class="k">Agents</div><div class="s">10 Active</div></div>
   <div class="metric"><div class="v">9</div><div class="k">Skills</div><div class="s">9 Active</div></div>
   <div class="metric"><div class="v">11</div><div class="k">Tools</div><div class="s">9 Connected · 2 Not Connected</div></div>
-  <div class="metric"><div class="v">55</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
-  <div class="metric"><div class="v">228</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">57</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">237</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
   <div class="metric"><div class="v">~$50/mo</div><div class="k">Monthly spend</div><div class="s">base + variable API usage · as of 2026-08-05</div></div>
 </div>
 
@@ -288,7 +295,7 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <details class="row">
   <summary><span class="chev"></span><span class="row-name">Project Manager Agent</span><span class="pill pill-good">Active</span></summary>
   <div class="row-body">
-    <p>Tracks all workstreams, tasks, deadlines, and blockers across 10 active projects and produces weekly sprint plans</p>
+    <p>Tracks all workstreams, tasks, deadlines, and blockers across all registered projects and produces weekly sprint plans</p>
     <div class="kv">
       <div><span class="k">Reads</span><span>goals.md, current-priorities.md, all project READMEs, change log</span></div>
       <div><span class="k">Produces</span><span>Sprint plan, status report, deadline risk report, blocker escalation</span></div>
@@ -397,69 +404,44 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
     <div class="card">
       <h2>Project portfolio — click to expand <small><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/master-operating-system/project-tracker.md" target="_blank" rel="noopener">source: project-tracker.md</a></small></h2>
 <details class="row">
-  <summary><span class="chev"></span><span class="row-name">Portfolio Website</span><span class="dim" style="font-size:12px">Portfolio build</span><span class="pill pill-info">In Progress</span></summary>
+  <summary><span class="chev"></span><span class="row-name">AI OS v2 — Canonical Store</span><span class="dim" style="font-size:12px">System upgrade</span><span class="progress mini" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="AI OS v2 — Canonical Store tasks complete"><span class="progress-fill" style="width:0%"></span></span><span class="num dim" style="font-size:11px">0%</span><span class="pill pill-muted">56d left</span><span class="pill pill-muted">Planning</span></summary>
   <div class="row-body">
     <div class="kv">
-      <div><span class="k">Next step</span><span>Contact form UI + social links (no decisions needed); project questionnaire × 12 needs Erick</span></div>
-      <div><span class="k">Deadline</span><span class="num">2026-09-30</span></div>
-      <div><span class="k">Updated</span><span class="num">2026-08-05</span></div>
+      <div><span class="k">Next step</span><span>Schema design kickoff — blocked on Session 3 audit script (parsers feed the migration)</span></div>
+<div><span class="k">Description</span><span>Migrate the operating system's status data from markdown trackers to a Supabase/Postgres canonical store. Markdown becomes generated views for humans and git history; the dashboard and skills read live data. Doubles as the pgvector/RAG-ready foundation and the second flagship portfolio project.</span></div>
+<div><span class="k">Priority</span><span>High</span></div>
+<div><span class="k">Client</span><span>Internal (Artificial Management)</span></div>
+<div><span class="k">Start</span><span>2026-08-05</span></div>
+<div><span class="k">Deadline</span><span>2026-09-30 <span class="pill pill-muted">56d left</span></span></div>
+<div><span class="k">Next milestone</span><span>Session 3 complete — scripts/audit.js + tests exist <span class="num dim">(2026-08-15)</span></span></div>
+<div><span class="k">Updated</span><span>2026-08-05 </span></div>
+<div><span class="k">Team</span><span><span class="pill pill-muted">AI Engineering Build Agent</span> <span class="pill pill-muted">Data Integrity Agent</span> <span class="pill pill-muted">Portfolio Agent</span></span></div>
+<div><span class="k">Links</span><span><a href="https://evanderpool.github.io/artificial-management/" target="_blank" rel="noopener">Ops Dashboard</a> · <a href="https://github.com/evanderpool/artificial-management" target="_blank" rel="noopener">Public repo</a></span></div>
     </div>
+    <div style="margin:10px 0 4px"><span class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="tasks complete"><span class="progress-fill" style="width:0%"></span></span> <span class="num dim" style="font-size:12px">0/7 tasks · 0% · 0/6 milestones</span></div>
+    <div style="margin-top:8px"><div class="task-owner">Milestones</div><div class="task-line"><span>Session 3 complete — scripts/audit.js + tests exist</span><span class="num dim" style="white-space:nowrap">2026-08-15</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Supabase project created + MCP connected</span><span class="num dim" style="white-space:nowrap">2026-08-20</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Schema designed + logged to decision log</span><span class="num dim" style="white-space:nowrap">2026-08-25</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Migration script runs clean against live repo</span><span class="num dim" style="white-space:nowrap">2026-09-05</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Dashboard reads canonical store</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Case study published</span><span class="num dim" style="white-space:nowrap">2026-09-30</span><span class="pill pill-muted">Planning</span></div></div>
     <div style="margin-top:10px"><div class="task-group">
   <div class="task-owner">AI Engineering Build Agent</div>
-  <div class="task-line"><span>Contact form UI (glass card, structured fields, no backend)</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Social + contact links in Contact.tsx + Footer.tsx</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Mobile QA at 375px + clean build</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Deploy to Vercel + analytics</span><span class="pill pill-muted">Planning</span></div>
-</div>
-<div class="task-group">
-  <div class="task-owner">Erick</div>
-  <div class="task-line"><span>Project data questionnaire × 12</span><span class="pill pill-crit">Blocked</span></div>
-<div class="task-line"><span>/work standalone page decision</span><span class="pill pill-crit">Blocked</span></div>
-</div>
-<div class="task-group">
-  <div class="task-owner">Portfolio Agent</div>
-  <div class="task-line"><span>Project cover images (12)</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Launch case study + resume bullets</span><span class="pill pill-muted">Planning</span></div>
-</div></div>
-    
-    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/portfolio-website/README.md" target="_blank" rel="noopener">README: projects/portfolio-website/README.md</a></div>
-  </div>
-</details>
-<details class="row">
-  <summary><span class="chev"></span><span class="row-name">LangGraph Research Agent</span><span class="dim" style="font-size:12px">Portfolio build</span><span class="pill pill-good">Complete</span></summary>
-  <div class="row-body">
-    <div class="kv">
-      <div><span class="k">Next step</span><span>Done — live at github.com/evanderpool/langchain-research-agent + HuggingFace demo</span></div>
-      <div><span class="k">Deadline</span><span class="num">—</span></div>
-      <div><span class="k">Updated</span><span class="num">2026-05-17</span></div>
-    </div>
-    <div style="margin-top:10px"><p class="dim">No task breakdown yet — add a "### LangGraph Research Agent — Tasks" section to the tracker.</p></div>
-    
-    
-  </div>
-</details>
-<details class="row">
-  <summary><span class="chev"></span><span class="row-name">AI OS v2 — Canonical Store</span><span class="dim" style="font-size:12px">System upgrade</span><span class="pill pill-muted">Planning</span></summary>
-  <div class="row-body">
-    <div class="kv">
-      <div><span class="k">Next step</span><span>Scope Supabase schema for projects/tasks/statuses; Session 3 audit script is the prerequisite</span></div>
-      <div><span class="k">Deadline</span><span class="num">2026-09-30</span></div>
-      <div><span class="k">Updated</span><span class="num">2026-08-05</span></div>
-    </div>
-    <div style="margin-top:10px"><div class="task-group">
-  <div class="task-owner">AI Engineering Build Agent</div>
-  <div class="task-line"><span>Schema design — projects, tasks, statuses, logs</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Supabase project + MCP connection</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Dashboard reads from canonical store</span><span class="pill pill-muted">Planning</span></div>
+  <div class="task-line"><span>Build scripts/audit.js from dashboard parsers (Session 3)</span><span class="num dim" style="white-space:nowrap">2026-08-15</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Create Supabase project + connect MCP</span><span class="num dim" style="white-space:nowrap">2026-08-20</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Schema design — projects, tasks, milestones, statuses, logs</span><span class="num dim" style="white-space:nowrap">2026-08-25</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Dashboard reads from canonical store</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div>
 </div>
 <div class="task-group">
   <div class="task-owner">Data Integrity Agent</div>
-  <div class="task-line"><span>Migration script: markdown trackers → tables</span><span class="pill pill-muted">Planning</span></div>
+  <div class="task-line"><span>Schema review + decision log entries</span><span class="num dim" style="white-space:nowrap">2026-08-25</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span>Migration script: markdown trackers → tables</span><span class="num dim" style="white-space:nowrap">2026-09-05</span><span class="pill pill-muted">Planning</span></div>
 </div>
 <div class="task-group">
   <div class="task-owner">Portfolio Agent</div>
-  <div class="task-line"><span>Case study write-up</span><span class="pill pill-muted">Planning</span></div>
+  <div class="task-line"><span>Case study write-up</span><span class="num dim" style="white-space:nowrap">2026-09-30</span><span class="pill pill-muted">Planning</span></div>
 </div></div>
+    <div class="task-owner" style="color:var(--warn)">Risks &amp; Blockers</div><ul class="risk-list"><li>Supabase project + MCP connection not yet set up — gates all schema work</li><li>Session 3 audit script is a prerequisite (its parsers become the migration source of truth)</li><li>Single-operator risk: no second reviewer for schema decisions (mitigate: decision-log every schema choice)</li></ul>
     
     
   </div>
@@ -470,14 +452,14 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <details class="row">
   <summary><span class="chev"></span><span class="row-name mono">/chief-of-staff</span><span class="pill pill-good">Active</span></summary>
   <div class="row-body">
-    <p>Reads all 10 project READMEs, logs, and priorities and produces a daily brief — saved to file and displayed in chat</p>
+    <p>Reads all project READMEs (dynamic), logs, and priorities and produces a daily brief — saved to file and displayed in chat</p>
     <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/chief-of-staff/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/chief-of-staff/SKILL.md</a><span class="dim">· used by Erick</span></div>
   </div>
 </details>
 <details class="row">
   <summary><span class="chev"></span><span class="row-name mono">/project-manager</span><span class="pill pill-good">Active</span></summary>
   <div class="row-body">
-    <p>Produces sprint plans, status checks, and blocker reviews across all 10 projects — 3 modes (sprint/status/blockers)</p>
+    <p>Produces sprint plans, status checks, and blocker reviews across all registered projects — 3 modes (sprint/status/blockers)</p>
     <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/project-manager/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/project-manager/SKILL.md</a><span class="dim">· used by Chief of Staff Agent, Erick</span></div>
   </div>
 </details>
@@ -542,11 +524,31 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
 <li>Write client-data-handling SOP</li>
 <li>Write disaster-recovery runbook</li>
 <li>Start job applications</li>
-<li>Resume portfolio website build</li>
+<li>Scope the new projects with Erick</li>
       </ul>
     </div>
     <div class="card">
-      <h2>Recent decisions — click for reasoning <small><a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md" target="_blank" rel="noopener">55 total</a></small></h2>
+      <h2>Recent decisions — click for reasoning <small><a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md" target="_blank" rel="noopener">57 total</a></small></h2>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">Per-project PM detail format added to the tracker — Detail (description, priority, client, star…</span></summary>
+  <div class="row-body">
+    <p>Per-project PM detail format added to the tracker — Detail (description, priority, client, start, links, risks), Milestones (target dates), Tasks (owner + due date); dashboard computes progress %, deadline countdown, overdue tasks/milestones, per-project staleness, and team chips at build time</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>The project drill-down should give everything a project manager needs at a glance; computed fields (progress, overdue, countdown) come from raw dates so they can never go stale like hardcoded numbers</span></div>
+      <div><span class="k">Context</span><span>Erick request 2026-08-05 — dashboard as full PM view; format documented in the tracker's How to Register a Project section</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">Portfolio Website and LangGraph Research Agent removed from the project portfolio at Erick's di…</span></summary>
+  <div class="row-body">
+    <p>Portfolio Website and LangGraph Research Agent removed from the project portfolio at Erick's direction — new project slate incoming</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Erick is redefining the active project set; per the archive rule nothing is deleted — the portfolio-website plan is archived and the LangGraph repo remains live on GitHub as portfolio proof, both just leave the tracked portfolio</span></div>
+      <div><span class="k">Context</span><span>archives/2026-08-portfolio-website-plan.md; tracker Removed/Archived Projects section records both</span></div>
+    </div>
+  </div>
+</details>
 <details class="row">
   <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">Master Project Tracker restructured into a Project Portfolio — agents removed from the tracker…</span></summary>
   <div class="row-body">
@@ -627,38 +629,18 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
     </div>
   </div>
 </details>
-<details class="row">
-  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">LangGraph multi-agent research workflow built as portfolio project — LangChain + LangGraph + Ta…</span></summary>
-  <div class="row-body">
-    <p>LangGraph multi-agent research workflow built as portfolio project — LangChain + LangGraph + Tavily + Claude Haiku + Streamlit</p>
-    <div class="kv">
-      <div><span class="k">Reasoning</span><span>LangChain/LangGraph appeared in 70%+ of AI engineering postings and was the top identified resume gap; parallel Send API pattern, structured output, and streaming UI demonstrate production-grade LangGraph skills that close the gap; resume score updated to 82–86/100 (was 74–78)</span></div>
-      <div><span class="k">Context</span><span>Week 7 stretch goal — github.com/evanderpool/langchain-research-agent</span></div>
-    </div>
-  </div>
-</details>
-<details class="row">
-  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">GitHub README identified as the keystone Week 6 asset — all other Week 6 portfolio assets built…</span></summary>
-  <div class="row-body">
-    <p>GitHub README identified as the keystone Week 6 asset — all other Week 6 portfolio assets built from its narrative</p>
-    <div class="kv">
-      <div><span class="k">Reasoning</span><span>README is the only public, permanently linkable proof; every other asset (LinkedIn post, demo script, proof statement) needs the same core narrative; writing README first forced clarity on the system description that sharpened all downstream assets</span></div>
-      <div><span class="k">Context</span><span>Week 6 planning — portfolio-agent asset sequencing</span></div>
-    </div>
-  </div>
-</details>
     </div>
     <div class="card">
-      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">228 total</a></small></h2>
+      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">237 total</a></small></h2>
       <ul class="feed">
-<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/README.md</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">.gitignore</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">.github/workflows/dashboard.yml</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">archives/2026-q2-agent-build-checklists.md</span><span class="pill pill-muted">new</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">projects/master-operating-system/project-tracker.md</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-05</span><span class="mono dim">context/goals.md</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-05</span><span class="mono dim">context/current-priorities.md</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">logs/sessions/2026-08-05-session.md</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">projects/master-operating-system/ai-system-registry.md</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">projects/master-operating-system/project-tracker.md</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">archives/2026-08-portfolio-website-plan.md</span><span class="pill pill-muted">new</span></li>
       </ul>
     </div>
   </div>

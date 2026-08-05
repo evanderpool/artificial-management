@@ -18,11 +18,11 @@
 
 ## Top Priorities (Q3)
 
-1. **Job applications** — 10–15/week; system + dashboard + LangGraph project are the proof stack
+1. **Job applications** — 10–15/week; system + live dashboard are the proof stack
 2. **Client readiness, then outreach** — client-data-handling SOP first, then 6-template outreach to 10–15 targets
 3. **Session 3 credibility work** — scripts/audit.js, run log, tests + eval fixtures, skill frontmatter/versions
 4. **Second AI project** — leading candidate: Supabase canonical-store migration (doubles as pgvector/RAG resume piece)
-5. **Portfolio website** — contact form, project data, deploy to Vercel
+5. **Define the new project slate** — portfolio-website and LangGraph removed from the portfolio 2026-08-05; new projects to be scoped with Erick and registered in the tracker
 
 ### Immediate Next Actions
 
@@ -31,7 +31,7 @@
 - **Write client-data-handling SOP** — gates all client outreach; doubles as sales asset
 - **Write disaster-recovery runbook** — inventory of non-repo assets (PAT, routines, connectors, local overrides)
 - **Start job applications** — resume lives in private repo (`artificial-management-private/references/resume/`); add dashboard + close-out story to it first
-- **Resume portfolio website build** — contact form UI + social links need no decisions; project questionnaire × 12 needs Erick
+- **Scope the new projects with Erick** — define, then register each via the tracker's How-to-Register steps
 
 ## Standing rules carried forward
 

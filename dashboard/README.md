@@ -1,6 +1,6 @@
-# Ops Dashboard (v1)
+# Ops Dashboard (v2)
 
-**Status:** Built 2026-08-05
+**Status:** Built 2026-08-05 — PM detail views added same day
 **Type:** Read-only static view — the markdown repo remains the single source of truth
 **Live URL:** GitHub Pages (enable in repo Settings → Pages → Source: "GitHub Actions")
 
@@ -17,7 +17,8 @@ redeploys it on every push to `main`.
 | Dashboard section | Source file |
 |---|---|
 | Heartbeat / staleness | git log (last commit date) — falls back to session log dates |
-| Project portfolio + per-project tasks | `projects/master-operating-system/project-tracker.md` (`## Project Portfolio` table + `### <Name> — Tasks` sections) |
+| Project portfolio + per-project detail | `projects/master-operating-system/project-tracker.md` — `## Project Portfolio` table + per-project `### <Name> — Detail` / `— Milestones` / `— Tasks` sections (exact names incl. the em-dash; dates `YYYY-MM-DD`; Detail keys rendered: Description, Priority, Client, Start, Links, Risks/Blockers) |
+| Computed per project (build time) | task progress %, milestone x/y, deadline countdown chips, overdue tasks + milestones (due date inclusive, UTC date-only), 14-day per-project staleness, team chips, attention-first sort (Blocked → In Progress → Planning → Complete, then deadline) |
 | Per-project recent changes | `logs/changes.md` filtered by the entry's `PROJECT:` tag matching the project ID |
 | Agent / skill / tool counts | `projects/master-operating-system/ai-system-registry.md` |
 | Decisions feed | `decisions/log.md` |

@@ -61,7 +61,7 @@ const scrub = (s) =>
     );
 
 const srcLink = (rel, label) =>
-  `<a href="${GH}${rel}" target="_blank" rel="noopener">${esc(label || rel)}</a>`;
+  `<a href="${GH}${esc(rel)}" target="_blank" rel="noopener">${esc(label || rel)}</a>`;
 
 // ---------------------------------------------------------------- parsers
 
@@ -80,6 +80,8 @@ function parseTableRows(md, sectionHeading) {
       rows.push(cells);
     } else if (inTable && t !== "") {
       break;
+    } else if (!inTable && t.startsWith("#")) {
+      break; // next heading before any table — empty section, don't swallow the next table
     }
   }
   return rows.slice(1); // drop header row
@@ -97,50 +99,119 @@ const PRIVATE_MODE = process.argv.includes("--private");
 
 // | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 const parsePortfolio = (md, sourceLabel) =>
-  parseTableRows(md, "## Project Portfolio").map((c) => ({
-    name: c[0] || "?",
-    id: c[1] || "",
-    type: c[2] || "",
-    visibility: (c[3] || "Public").toLowerCase(),
-    status: c[4] || "?",
-    deadline: c[5] || "—",
-    lastUpdated: c[6] || "",
-    nextAction: c[7] || "",
-    source: sourceLabel || "",
-  }));
+  parseTableRows(md, "## Project Portfolio").map((c) => {
+    const vis = (c[3] || "").trim().toLowerCase();
+    // fail CLOSED: anything that isn't explicitly "public" is treated as private
+    if (vis !== "public" && vis !== "private")
+      console.warn(`WARN: project "${c[0]}" has visibility "${c[3] || ""}" — treating as private`);
+    return {
+      name: scrub(c[0] || "?"),
+      id: (c[1] || "").replace(/[^\w-]/g, ""),
+      type: scrub(c[2] || ""),
+      visibility: vis === "public" ? "public" : "private",
+      status: c[4] || "?",
+      deadline: c[5] || "—",
+      lastUpdated: c[6] || "",
+      nextAction: scrub(c[7] || ""),
+      source: sourceLabel || "",
+      sectionKey: scrub(c[0] || "?"),
+    };
+  });
 
-// ### <Project Name> — Tasks   followed by | Task | Owner | Status |
+// ### <Project Name> — Tasks   followed by | Task | Owner | Status | Due |
 function parseTaskSections(md) {
   const out = {};
   const re = /^### (.+?) — Tasks\s*$/gm;
   let m;
   while ((m = re.exec(md))) {
-    out[m[1].trim()] = parseTableRows(md.slice(m.index), `### ${m[1]} — Tasks`).map(
-      (c) => ({ task: c[0] || "", owner: c[1] || "—", status: c[2] || "—" })
+    const key = stripMd(m[1].trim());
+    if (out[key]) console.warn(`WARN: duplicate Tasks section for "${key}" — last one wins`);
+    out[key] = parseTableRows(md.slice(m.index), `### ${m[1]} — Tasks`).map((c) => ({
+      task: scrub(c[0] || ""),
+      owner: scrub(c[1] || "—"),
+      status: c[2] || "—",
+      due: c[3] || "",
+    }));
+  }
+  return out;
+}
+
+// ### <Project Name> — Milestones   followed by | Milestone | Target | Status |
+function parseMilestoneSections(md) {
+  const out = {};
+  const re = /^### (.+?) — Milestones\s*$/gm;
+  let m;
+  while ((m = re.exec(md))) {
+    out[stripMd(m[1].trim())] = parseTableRows(md.slice(m.index), `### ${m[1]} — Milestones`).map(
+      (c) => ({ milestone: scrub(c[0] || ""), target: c[1] || "", status: c[2] || "—" })
     );
+  }
+  return out;
+}
+
+// ### <Project Name> — Detail   bold key-value lines + risk bullets
+function parseDetailSections(md) {
+  const out = {};
+  const re = /^### (.+?) — Detail\s*$/gm;
+  let m;
+  while ((m = re.exec(md))) {
+    const name = stripMd(m[1].trim());
+    const rest = md.slice(re.lastIndex);
+    const endIdx = rest.search(/^###? /m);
+    const block = endIdx === -1 ? rest : rest.slice(0, endIdx);
+    const d = { fields: {}, risks: [] };
+    let inRisks = false;
+    for (const line of block.split("\n")) {
+      const kv = line.match(/^\*\*([\w /]+):\*\*\s*(.*)$/);
+      if (kv) {
+        inRisks = /risks/i.test(kv[1]);
+        if (!inRisks && kv[2].trim()) d.fields[kv[1].trim()] = scrub(kv[2].trim());
+        continue;
+      }
+      const bullet = line.match(/^- (.+)$/);
+      if (bullet && inRisks) d.risks.push(scrub(bullet[1].trim()));
+    }
+    out[name] = d;
   }
   return out;
 }
 
 let projects = parsePortfolio(trackerMd, "");
 let taskSections = parseTaskSections(trackerMd);
+let milestoneSections = parseMilestoneSections(trackerMd);
+let detailSections = parseDetailSections(trackerMd);
 
 if (PRIVATE_MODE) {
+  let sources = [];
   try {
-    const sources = JSON.parse(
+    sources = JSON.parse(
       fs.readFileSync(path.join(ROOT, "dashboard", "private-sources.json"), "utf8")
     );
-    for (const src of sources) {
+  } catch (e) {
+    if (e.code !== "ENOENT") console.warn(`WARN: private-sources.json unreadable — ${e.message}`);
+  }
+  for (const src of sources) {
+    // per-source isolation: one bad path must not silently drop the rest
+    try {
       const md = fs.readFileSync(src.tracker, "utf8");
-      const rows = parsePortfolio(md, src.name || src.tracker).map((p) => ({
+      const label = src.name || src.tracker;
+      const ns = (k) => `${label}::${k}`;
+      const rows = parsePortfolio(md, label).map((p) => ({
         ...p,
         visibility: "private",
+        sectionKey: ns(p.sectionKey),
       }));
       projects = projects.concat(rows);
-      Object.assign(taskSections, parseTaskSections(md));
+      for (const [k, v] of Object.entries(parseTaskSections(md))) {
+        if (taskSections[ns(k)]) console.warn(`WARN: task-section collision ${ns(k)}`);
+        taskSections[ns(k)] = v;
+      }
+      for (const [k, v] of Object.entries(parseMilestoneSections(md)))
+        milestoneSections[ns(k)] = v;
+      for (const [k, v] of Object.entries(parseDetailSections(md))) detailSections[ns(k)] = v;
+    } catch (e) {
+      console.warn(`WARN: private source "${src.name || src.tracker}" FAILED — ${e.message} — its projects are MISSING from this build`);
     }
-  } catch (e) {
-    if (e.code !== "ENOENT") console.warn(`WARN: private-sources.json — ${e.message}`);
   }
 }
 const visibleProjects = PRIVATE_MODE
@@ -412,7 +483,7 @@ const fmtDate = (d) =>
 // Cross-check: registry status vs tracker status for the same name.
 // A mismatch is surfaced as a visible conflict pill — drift is shown, not hidden.
 const trackerStatusByName = {};
-for (const p of projects) trackerStatusByName[p.name.toLowerCase()] = p.status;
+for (const p of visibleProjects) trackerStatusByName[p.name.toLowerCase()] = p.status;
 const conflictPill = (a) => {
   const ts = trackerStatusByName[a.name.toLowerCase()];
   if (!ts || ts.toLowerCase() === a.status.toLowerCase()) return "";
@@ -451,9 +522,116 @@ const skillItems = skills
   )
   .join("\n");
 
-const projectItems = visibleProjects
+// ---- PM computations -------------------------------------------------
+// Date convention: all comparisons are date-only in UTC; a due date is
+// inclusive — an item is overdue only when today is strictly past it.
+const DAY = 86400000;
+const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+const parseISO = (s) => {
+  const m = String(s).match(/(\d{4}-\d{2}-\d{2})/);
+  return m ? new Date(m[1] + "T00:00:00Z") : null;
+};
+const daysFromNow = (d) => Math.round((d - todayUTC) / DAY);
+const isDone = (status) => /^(complete|completed|done)\b/i.test(status.trim());
+const isBlocked = (status) => /^blocked\b/i.test(status.trim());
+// Only http(s) hrefs survive; anything else renders as plain text (no javascript: injection)
+const mdLinks = (s) =>
+  esc(s).replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, (full, label, href) =>
+    /^https?:\/\//i.test(href)
+      ? `<a href="${href}" target="_blank" rel="noopener">${label}</a>`
+      : label
+  );
+
+const deadlineChip = (dateStr, doneOverall) => {
+  const d = parseISO(dateStr);
+  if (!d || doneOverall) return "";
+  const n = daysFromNow(d);
+  if (n < 0) return `<span class="pill pill-crit">${-n}d overdue</span>`;
+  if (n <= 7) return `<span class="pill pill-warn">${n}d left</span>`;
+  return `<span class="pill pill-muted">${n}d left</span>`;
+};
+
+// Attention-first ordering: Blocked, In Progress, Planning, Complete; then by deadline
+const STATUS_ORDER = { blocked: 0, "in progress": 1, planning: 2, stale: 2, complete: 3 };
+const sortedProjects = [...visibleProjects].sort((a, b) => {
+  const so =
+    (STATUS_ORDER[a.status.toLowerCase()] ?? 2) - (STATUS_ORDER[b.status.toLowerCase()] ?? 2);
+  if (so !== 0) return so;
+  const da = parseISO(a.deadline),
+    db = parseISO(b.deadline);
+  return (da ? da.getTime() : Infinity) - (db ? db.getTime() : Infinity);
+});
+
+// Orphan detection: sections with no portfolio row are silently invisible — warn instead
+const rowKeys = new Set(projects.map((p) => p.sectionKey));
+for (const k of Object.keys(taskSections))
+  if (!rowKeys.has(k)) console.warn(`WARN: Tasks section "${k}" matches no portfolio row (name/em-dash mismatch?)`);
+
+const projectItems = sortedProjects
   .map((p) => {
-    const tasks = taskSections[p.name] || [];
+    const tasks = taskSections[p.sectionKey] || [];
+    const milestones = milestoneSections[p.sectionKey] || [];
+    const detail = detailSections[p.sectionKey] || { fields: {}, risks: [] };
+    const doneOverall = isDone(p.status);
+
+    // progress
+    const doneCount = tasks.filter((t) => isDone(t.status)).length;
+    const pct = tasks.length ? Math.round((doneCount / tasks.length) * 100) : doneOverall ? 100 : 0;
+    const blockedCount = tasks.filter((t) => isBlocked(t.status)).length;
+    const lateBy = (dateStr, status) => {
+      const d = parseISO(dateStr);
+      return d && daysFromNow(d) < 0 && !isDone(status);
+    };
+    const overdueCount =
+      tasks.filter((t) => lateBy(t.due, t.status)).length +
+      milestones.filter((ms) => lateBy(ms.target, ms.status)).length;
+    const msDone = milestones.filter((ms) => isDone(ms.status)).length;
+    const nextMilestone = milestones
+      .filter((ms) => !isDone(ms.status) && parseISO(ms.target))
+      .sort((a, b) => parseISO(a.target) - parseISO(b.target))[0];
+
+    // staleness (own 2-week rule, independent of repo heartbeat)
+    const lu = parseISO(p.lastUpdated);
+    const staleDays = lu ? -daysFromNow(lu) : null;
+    const staleChip =
+      staleDays !== null && staleDays > 14 && !doneOverall
+        ? `<span class="pill pill-warn">stale ${staleDays}d</span>`
+        : "";
+
+    const agentsInvolved = [...new Set(tasks.map((t) => t.owner).filter((o) => o && o !== "—"))];
+
+    const progressBar = (mini) => `<span class="progress${mini ? " mini" : ""}" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="${mini ? esc(p.name) + " tasks complete" : "tasks complete"}"><span class="progress-fill" style="width:${pct}%"></span></span>`;
+
+    // detail fields
+    const fieldRows = [
+      ["Description", detail.fields["Description"]],
+      ["Priority", detail.fields["Priority"]],
+      ["Client", detail.fields["Client"]],
+      ["Start", detail.fields["Start"]],
+      ["Deadline", p.deadline !== "—" ? `${esc(p.deadline)} ${deadlineChip(p.deadline, doneOverall)}` : null],
+      ["Next milestone", nextMilestone ? `${esc(nextMilestone.milestone)} <span class="num dim">(${esc(nextMilestone.target)})</span>` : null],
+      ["Updated", p.lastUpdated ? `${esc(p.lastUpdated)} ${staleChip}` : null],
+      ["Team", agentsInvolved.length ? agentsInvolved.map((a) => `<span class="pill pill-muted">${esc(a)}</span>`).join(" ") : null],
+      ["Links", detail.fields["Links"] ? mdLinks(detail.fields["Links"]) : null],
+    ]
+      .filter(([, v]) => v)
+      .map(([k, v]) => {
+        const isHtml = ["Deadline", "Next milestone", "Updated", "Team", "Links"].includes(k);
+        return `<div><span class="k">${k}</span><span>${isHtml ? v : esc(v)}</span></div>`;
+      })
+      .join("\n");
+
+    const milestoneHtml = milestones.length
+      ? `<div class="task-owner">Milestones</div>` +
+        milestones
+          .map((ms) => {
+            const d = parseISO(ms.target);
+            const late = d && daysFromNow(d) < 0 && !isDone(ms.status);
+            return `<div class="task-line"><span${late ? ' class="overdue"' : ""}>${esc(ms.milestone)}</span><span class="num dim" style="white-space:nowrap">${esc(ms.target)}</span>${late ? '<span class="pill pill-crit">late</span>' : pill(ms.status)}</div>`;
+          })
+          .join("\n")
+      : "";
+
     const byOwner = {};
     for (const t of tasks) (byOwner[t.owner] = byOwner[t.owner] || []).push(t);
     const taskHtml = tasks.length
@@ -462,15 +640,23 @@ const projectItems = visibleProjects
             ([owner, ts]) => `<div class="task-group">
   <div class="task-owner">${esc(owner)}</div>
   ${ts
-    .map(
-      (t) =>
-        `<div class="task-line"><span>${esc(t.task)}</span>${pill(t.status)}</div>`
-    )
+    .map((t) => {
+      const d = parseISO(t.due);
+      const late = d && daysFromNow(d) < 0 && !isDone(t.status);
+      return `<div class="task-line"><span${late ? ' class="overdue"' : ""}>${esc(t.task)}</span>${t.due ? `<span class="num dim" style="white-space:nowrap">${esc(t.due)}</span>` : ""}${late ? '<span class="pill pill-crit">late</span>' : pill(t.status)}</div>`;
+    })
     .join("\n")}
 </div>`
           )
           .join("\n")
       : `<p class="dim">No task breakdown yet — add a "### ${esc(p.name)} — Tasks" section to the tracker.</p>`;
+
+    const riskHtml = detail.risks.length
+      ? `<div class="task-owner" style="color:var(--warn)">Risks &amp; Blockers</div><ul class="risk-list">` +
+        detail.risks.map((r) => `<li>${esc(r)}</li>`).join("") +
+        `</ul>`
+      : "";
+
     const projChanges = p.id
       ? changes.filter((c) => c.project === p.id).slice(-4).reverse()
       : [];
@@ -483,13 +669,17 @@ const projectItems = visibleProjects
           )
           .join("\n")
       : "";
+
     const readmeRel = `projects/${p.id}/README.md`;
     const readmeLink =
       p.id && fs.existsSync(path.join(ROOT, readmeRel))
         ? `<div class="row-links">${srcLink(readmeRel, "README: " + readmeRel)}</div>`
         : "";
+
     return `<details class="row">
-  <summary><span class="chev"></span><span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${
+  <summary><span class="chev"></span><span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${tasks.length ? progressBar(true) + `<span class="num dim" style="font-size:11px">${pct}%</span>` : ""}${
+      blockedCount ? `<span class="pill pill-crit">${blockedCount} blocked</span>` : ""
+    }${overdueCount ? `<span class="pill pill-crit">${overdueCount} overdue</span>` : ""}${deadlineChip(p.deadline, doneOverall)}${staleChip}${
       PRIVATE_MODE && p.visibility === "private"
         ? `<span class="pill pill-warn">private</span>`
         : ""
@@ -497,10 +687,12 @@ const projectItems = visibleProjects
   <div class="row-body">
     <div class="kv">
       <div><span class="k">Next step</span><span>${esc(p.nextAction) || "—"}</span></div>
-      <div><span class="k">Deadline</span><span class="num">${esc(p.deadline)}</span></div>
-      <div><span class="k">Updated</span><span class="num">${esc(p.lastUpdated) || "—"}</span></div>
+${fieldRows}
     </div>
+    ${tasks.length ? `<div style="margin:10px 0 4px">${progressBar(false)} <span class="num dim" style="font-size:12px">${doneCount}/${tasks.length} tasks · ${pct}%${milestones.length ? ` · ${msDone}/${milestones.length} milestones` : ""}</span></div>` : ""}
+    ${milestoneHtml ? `<div style="margin-top:8px">${milestoneHtml}</div>` : ""}
     <div style="margin-top:10px">${taskHtml}</div>
+    ${riskHtml}
     ${changesHtml}
     ${readmeLink}
   </div>
@@ -680,6 +872,13 @@ details[open]>summary .chev::before{content:"▾"}
 .task-line{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
   padding:3px 0;font-size:13px;border-bottom:1px dashed color-mix(in srgb,var(--line) 60%,transparent)}
 .task-line:last-child{border-bottom:none}
+.progress{display:inline-block;width:120px;height:6px;border-radius:3px;vertical-align:middle;
+  background:color-mix(in srgb,var(--dim) 18%,transparent);overflow:hidden}
+.progress.mini{width:56px;height:5px;flex:none}
+.progress-fill{display:block;height:100%;background:var(--accent);border-radius:3px}
+.overdue{color:var(--crit)}
+ul.risk-list{margin:4px 0 0;padding-left:18px;font-size:13px}
+ul.risk-list li{margin-bottom:3px;color:var(--text)}
 .row-links{margin-top:10px;font-size:12.5px}
 .row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
 ul.feed{list-style:none;margin:0;padding:6px 0}

@@ -1,15 +1,29 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-08-05 (restructured: project portfolio — agents moved to registry-only)
+**Last Updated:** 2026-08-05 (PM detail format — portfolio-website + langgraph removed at Erick's direction; archived)
 **Owner:** Erick Vanderpool
 **Source of truth for:** the portfolio of real project work.
 
 **Structure rule:** Agents are departments, not projects — their operational
 status lives only in `ai-system-registry.md`. This tracker holds actual work:
 portfolio builds, system upgrades, and (in private repos) client engagements.
-A project is registered when it has a `projects/<id>/README.md` (or its own
-repo) plus a row here. Tasks are assigned to owner agents — that is how work
-is distributed across departments.
+Tasks are assigned to owner agents — that is how work is distributed across
+departments.
+
+---
+
+## How to Register a Project
+
+1. Add a row to the **Project Portfolio** table (ID is the change-log `PROJECT:` tag).
+2. Add the per-project sections below, named exactly:
+   - `### <Project Name> — Detail` — bold key-value lines + risk bullets
+   - `### <Project Name> — Milestones` — `| Milestone | Target | Status |`
+   - `### <Project Name> — Tasks` — `| Task | Owner | Status | Due |`
+3. Client projects: same structure in the client's private repo, merged into
+   the private master view via `dashboard/private-sources.json`. Never here.
+
+The dashboard computes per-project progress, days-to-deadline, overdue tasks,
+and staleness from these sections — dates must be `YYYY-MM-DD`.
 
 ---
 
@@ -33,47 +47,53 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
-| Portfolio Website | portfolio-website | Portfolio build | Public | In Progress | 2026-09-30 | 2026-08-05 | Contact form UI + social links (no decisions needed); project questionnaire × 12 needs Erick |
-| LangGraph Research Agent | langchain-research-agent | Portfolio build | Public | Complete | — | 2026-05-17 | Done — live at github.com/evanderpool/langchain-research-agent + HuggingFace demo |
-| AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | Planning | 2026-09-30 | 2026-08-05 | Scope Supabase schema for projects/tasks/statuses; Session 3 audit script is the prerequisite |
-
-> Client projects (e.g., a client website build or client AI OS) get their own
-> private repo using this same structure and are merged into the private
-> master view via `dashboard/private-sources.json`. They never appear here.
+| AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | Planning | 2026-09-30 | 2026-08-05 | Schema design kickoff — blocked on Session 3 audit script (parsers feed the migration) |
 
 ---
 
-## Tasks by Project
+## Project Details
 
-### Portfolio Website — Tasks
+### AI OS v2 — Canonical Store — Detail
 
-| Task | Owner | Status |
+**Description:** Migrate the operating system's status data from markdown trackers to a Supabase/Postgres canonical store. Markdown becomes generated views for humans and git history; the dashboard and skills read live data. Doubles as the pgvector/RAG-ready foundation and the second flagship portfolio project.
+**Priority:** High
+**Start:** 2026-08-05
+**Client:** Internal (Artificial Management)
+**Links:** [Ops Dashboard](https://evanderpool.github.io/artificial-management/) · [Public repo](https://github.com/evanderpool/artificial-management)
+**Risks/Blockers:**
+- Supabase project + MCP connection not yet set up — gates all schema work
+- Session 3 audit script is a prerequisite (its parsers become the migration source of truth)
+- Single-operator risk: no second reviewer for schema decisions (mitigate: decision-log every schema choice)
+
+### AI OS v2 — Canonical Store — Milestones
+
+| Milestone | Target | Status |
 |---|---|---|
-| Contact form UI (glass card, structured fields, no backend) | AI Engineering Build Agent | Planning |
-| Social + contact links in Contact.tsx + Footer.tsx | AI Engineering Build Agent | Planning |
-| Project data questionnaire × 12 | Erick | Blocked |
-| /work standalone page decision | Erick | Blocked |
-| Project cover images (12) | Portfolio Agent | Planning |
-| Mobile QA at 375px + clean build | AI Engineering Build Agent | Planning |
-| Deploy to Vercel + analytics | AI Engineering Build Agent | Planning |
-| Launch case study + resume bullets | Portfolio Agent | Planning |
+| Session 3 complete — scripts/audit.js + tests exist | 2026-08-15 | Planning |
+| Supabase project created + MCP connected | 2026-08-20 | Planning |
+| Schema designed + logged to decision log | 2026-08-25 | Planning |
+| Migration script runs clean against live repo | 2026-09-05 | Planning |
+| Dashboard reads canonical store | 2026-09-20 | Planning |
+| Case study published | 2026-09-30 | Planning |
 
 ### AI OS v2 — Canonical Store — Tasks
 
-| Task | Owner | Status |
-|---|---|---|
-| Schema design — projects, tasks, statuses, logs | AI Engineering Build Agent | Planning |
-| Supabase project + MCP connection | AI Engineering Build Agent | Planning |
-| Migration script: markdown trackers → tables | Data Integrity Agent | Planning |
-| Dashboard reads from canonical store | AI Engineering Build Agent | Planning |
-| Case study write-up | Portfolio Agent | Planning |
+| Task | Owner | Status | Due |
+|---|---|---|---|
+| Build scripts/audit.js from dashboard parsers (Session 3) | AI Engineering Build Agent | Planning | 2026-08-15 |
+| Create Supabase project + connect MCP | AI Engineering Build Agent | Planning | 2026-08-20 |
+| Schema design — projects, tasks, milestones, statuses, logs | AI Engineering Build Agent | Planning | 2026-08-25 |
+| Schema review + decision log entries | Data Integrity Agent | Planning | 2026-08-25 |
+| Migration script: markdown trackers → tables | Data Integrity Agent | Planning | 2026-09-05 |
+| Dashboard reads from canonical store | AI Engineering Build Agent | Planning | 2026-09-20 |
+| Case study write-up | Portfolio Agent | Planning | 2026-09-30 |
 
 ---
 
-## Agent Build History (v1)
+## Removed / Archived Projects
 
-The v1 build's per-agent deliverables checklists are archived at
-`archives/2026-q2-agent-build-checklists.md`. Open items from that archive
-(agent ownership model, skill live-run validation, AI Eng Build docs) roll
-into Session 3 and the AI OS v2 project. Operational agent status:
-`projects/master-operating-system/ai-system-registry.md`.
+| Project | Removed | Where |
+|---|---|---|
+| Portfolio Website | 2026-08-05 | Plan archived at `archives/2026-08-portfolio-website-plan.md`; codebase (outside this repo) untouched |
+| LangGraph Research Agent | 2026-08-05 | Removed from portfolio at Erick's direction; repo remains live at github.com/evanderpool/langchain-research-agent |
+| v1 agent builds | 2026-08-05 | `archives/2026-q2-agent-build-checklists.md` |

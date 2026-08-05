@@ -224,3 +224,7 @@ Gather these before the next build session:
 - `public/fonts/fraunces.json` is a placeholder (helvetiker font) — the GlassMark "EV" 3D text will look wrong until replaced
 - All project images 404 — this is expected until images are provided
 - Pre-existing TS error in `animated-shader-hero.tsx` line 85 — ignore, unrelated to current work
+
+---
+
+**ARCHIVED 2026-08-05** — Portfolio Website and LangGraph Research Agent removed from the project portfolio at Erick's direction (new projects incoming to replace them). Plan retained here per the archive rule; the Next.js codebase itself lives outside this repo and is untouched.

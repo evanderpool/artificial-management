@@ -28,9 +28,13 @@ jobs:
           node-version: 20
       - name: Generate dashboard
         run: node dashboard/build.js
+      - name: Stage public files only (defense in depth — never ship private/)
+        run: |
+          mkdir -p _site
+          cp dashboard/index.html _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dashboard
+          path: _site
   deploy:
     needs: build
     runs-on: ubuntu-latest

@@ -24,7 +24,7 @@ demo surface (dashboard + portfolio website).
 - [ ] 10–15 AI engineering applications per week, sustained (target: 60+ total)
 - [ ] 3–4 client discovery conversations booked
 - [ ] At least 1 paid engagement or signed pilot
-- [ ] Portfolio website deployed to production
+- [ ] New project slate defined and first project shipped (portfolio-website + LangGraph rows removed 2026-08-05 — replacements incoming)
 
 ### System (supporting, not the focus)
 - [x] Ops dashboard live on GitHub Pages with daily heartbeat (2026-08-05)
