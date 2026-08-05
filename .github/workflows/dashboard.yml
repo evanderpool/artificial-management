@@ -33,6 +33,7 @@ jobs:
           mkdir -p _site
           cp dashboard/index.html _site/
           if [ -d dashboard/projects ]; then cp -r dashboard/projects _site/projects; fi
+          if [ -d dashboard/assets ]; then cp -r dashboard/assets _site/assets; fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
