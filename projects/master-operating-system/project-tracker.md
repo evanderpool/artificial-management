@@ -87,7 +87,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Migration script: markdown trackers → tables | Data Integrity Agent | Planning | 2026-09-05 |
 | Dashboard reads from canonical store | AI Engineering Build Agent | Planning | 2026-09-20 |
 | Case study write-up | Portfolio Agent | Planning | 2026-09-30 |
-| TEST bridge task / Visibility / hack [price redacted] [address redacted] | Erick | Complete |  |
+| TEST bridge task / Visibility / hack [price redacted] [address redacted] | Erick | Planning |  |
 
 ---
 
