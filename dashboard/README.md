@@ -28,7 +28,7 @@ redeploys it on every push to `main`.
 
 ## Data whitelist (security rule)
 
-The page is public. It may show: statuses, counts, dates, decision/change log
+The pages are public (index + per-project sub-pages at `projects/<id>.html`). It may show: statuses, counts, dates, decision/change log
 lines, aggregate monthly spend, next-action titles.
 
 It must never show: resume content, service-tier pricing, outreach templates,

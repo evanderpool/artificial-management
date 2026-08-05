@@ -567,7 +567,7 @@ const rowKeys = new Set(projects.map((p) => p.sectionKey));
 for (const k of Object.keys(taskSections))
   if (!rowKeys.has(k)) console.warn(`WARN: Tasks section "${k}" matches no portfolio row (name/em-dash mismatch?)`);
 
-const projectItems = sortedProjects
+const projectData = sortedProjects
   .map((p) => {
     const tasks = taskSections[p.sectionKey] || [];
     const milestones = milestoneSections[p.sectionKey] || [];
@@ -602,7 +602,6 @@ const projectItems = sortedProjects
 
     const progressBar = (mini) => `<span class="progress${mini ? " mini" : ""}" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="${mini ? esc(p.name) + " tasks complete" : "tasks complete"}"><span class="progress-fill" style="width:${pct}%"></span></span>`;
 
-    // detail fields
     const fieldRows = [
       ["Description", detail.fields["Description"]],
       ["Priority", detail.fields["Priority"]],
@@ -622,11 +621,9 @@ const projectItems = sortedProjects
       .join("\n");
 
     const milestoneHtml = milestones.length
-      ? `<div class="task-owner">Milestones</div>` +
-        milestones
+      ? milestones
           .map((ms) => {
-            const d = parseISO(ms.target);
-            const late = d && daysFromNow(d) < 0 && !isDone(ms.status);
+            const late = lateBy(ms.target, ms.status);
             return `<div class="task-line"><span${late ? ' class="overdue"' : ""}>${esc(ms.milestone)}</span><span class="num dim" style="white-space:nowrap">${esc(ms.target)}</span>${late ? '<span class="pill pill-crit">late</span>' : pill(ms.status)}</div>`;
           })
           .join("\n")
@@ -641,8 +638,7 @@ const projectItems = sortedProjects
   <div class="task-owner">${esc(owner)}</div>
   ${ts
     .map((t) => {
-      const d = parseISO(t.due);
-      const late = d && daysFromNow(d) < 0 && !isDone(t.status);
+      const late = lateBy(t.due, t.status);
       return `<div class="task-line"><span${late ? ' class="overdue"' : ""}>${esc(t.task)}</span>${t.due ? `<span class="num dim" style="white-space:nowrap">${esc(t.due)}</span>` : ""}${late ? '<span class="pill pill-crit">late</span>' : pill(t.status)}</div>`;
     })
     .join("\n")}
@@ -652,17 +648,14 @@ const projectItems = sortedProjects
       : `<p class="dim">No task breakdown yet — add a "### ${esc(p.name)} — Tasks" section to the tracker.</p>`;
 
     const riskHtml = detail.risks.length
-      ? `<div class="task-owner" style="color:var(--warn)">Risks &amp; Blockers</div><ul class="risk-list">` +
-        detail.risks.map((r) => `<li>${esc(r)}</li>`).join("") +
-        `</ul>`
+      ? `<ul class="risk-list">` + detail.risks.map((r) => `<li>${esc(r)}</li>`).join("") + `</ul>`
       : "";
 
     const projChanges = p.id
-      ? changes.filter((c) => c.project === p.id).slice(-4).reverse()
+      ? changes.filter((c) => c.project === p.id).slice(-6).reverse()
       : [];
     const changesHtml = projChanges.length
-      ? `<div class="task-owner" style="margin-top:10px">Recent changes</div>` +
-        projChanges
+      ? projChanges
           .map(
             (c) =>
               `<div class="task-line dim"><span><span class="num">${c.date}</span> · <span class="mono">${esc(truncate(c.file, 48))}</span></span></div>`
@@ -676,28 +669,23 @@ const projectItems = sortedProjects
         ? `<div class="row-links">${srcLink(readmeRel, "README: " + readmeRel)}</div>`
         : "";
 
-    return `<details class="row">
-  <summary><span class="chev"></span><span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${tasks.length ? progressBar(true) + `<span class="num dim" style="font-size:11px">${pct}%</span>` : ""}${
+    const summaryBits = `<span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${tasks.length ? progressBar(true) + `<span class="num dim" style="font-size:11px">${pct}%</span>` : ""}${
       blockedCount ? `<span class="pill pill-crit">${blockedCount} blocked</span>` : ""
     }${overdueCount ? `<span class="pill pill-crit">${overdueCount} overdue</span>` : ""}${deadlineChip(p.deadline, doneOverall)}${staleChip}${
       PRIVATE_MODE && p.visibility === "private"
         ? `<span class="pill pill-warn">private</span>`
         : ""
-    }${pill(p.status)}</summary>
-  <div class="row-body">
-    <div class="kv">
-      <div><span class="k">Next step</span><span>${esc(p.nextAction) || "—"}</span></div>
-${fieldRows}
-    </div>
-    ${tasks.length ? `<div style="margin:10px 0 4px">${progressBar(false)} <span class="num dim" style="font-size:12px">${doneCount}/${tasks.length} tasks · ${pct}%${milestones.length ? ` · ${msDone}/${milestones.length} milestones` : ""}</span></div>` : ""}
-    ${milestoneHtml ? `<div style="margin-top:8px">${milestoneHtml}</div>` : ""}
-    <div style="margin-top:10px">${taskHtml}</div>
-    ${riskHtml}
-    ${changesHtml}
-    ${readmeLink}
-  </div>
-</details>`;
-  })
+    }${pill(p.status)}`;
+
+    return { p, tasks, milestones, pct, doneCount, msDone, blockedCount, overdueCount, doneOverall, staleChip, nextMilestone, fieldRows, milestoneHtml, taskHtml, riskHtml, changesHtml, readmeLink, summaryBits };
+  });
+
+const projectItems = projectData
+  .map((d) =>
+    d.p.id
+      ? `<a class="row-link" href="projects/${d.p.id}.html"><span class="chev"></span>${d.summaryBits}<span class="go">open →</span></a>`
+      : `<div class="row-link"><span class="chev"></span>${d.summaryBits}</div>`
+  )
   .join("\n");
 
 const decisionItems = decisions
@@ -732,13 +720,7 @@ const changeItems = changes
 
 const nextActionItems = nextActions.map((a) => `<li>${esc(a)}</li>`).join("\n");
 
-const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artificial Management — Ops Dashboard${PRIVATE_MODE ? " (PRIVATE MASTER VIEW)" : ""}</title>
-<style>
+const STYLE = `
 :root{
   --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
   --text:#e7eceb; --dim:#8ca1a3; --accent:#56a8a2;
@@ -879,6 +861,12 @@ details[open]>summary .chev::before{content:"▾"}
 .overdue{color:var(--crit)}
 ul.risk-list{margin:4px 0 0;padding-left:18px;font-size:13px}
 ul.risk-list li{margin-bottom:3px;color:var(--text)}
+a.row-link{display:flex;align-items:baseline;gap:12px;padding:9px 16px;font-size:13.5px;
+  color:var(--text);text-decoration:none;border-bottom:1px solid var(--line)}
+a.row-link:last-of-type{border-bottom:none}
+a.row-link:hover{background:color-mix(in srgb,var(--panel-2) 70%,transparent)}
+a.row-link:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+a.row-link .go{color:var(--accent);font-size:12px;white-space:nowrap}
 .row-links{margin-top:10px;font-size:12.5px}
 .row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
 ul.feed{list-style:none;margin:0;padding:6px 0}
@@ -896,7 +884,15 @@ footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-co
   .heartbeat.good .hb-label{animation:pulse 2.4s ease-in-out infinite}
   @keyframes pulse{50%{opacity:.55}}
 }
-</style>
+`;
+
+const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artificial Management — Ops Dashboard${PRIVATE_MODE ? " (PRIVATE MASTER VIEW)" : ""}</title>
+<style>${STYLE}</style>
 </head>
 <body>
 <main class="wrap">
@@ -922,7 +918,7 @@ ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span c
     page on every push. No database, no CMS. Every card cites its source file — click
     the file name to see the raw markdown behind the number.</p>
     <p><strong>Where to click:</strong> expand any <em>agent</em> to see what it reads, produces, and
-    depends on · expand a <em>decision</em> to see the reasoning it was made with · the
+    depends on · open a <em>project</em> to get its dedicated dashboard page — tasks by department, milestones, risks, deadlines · expand a <em>decision</em> to see the reasoning it was made with · the
     heartbeat banner above shows whether the system is actively maintained right now —
     it computes that itself, and it does not flatter the owner.</p>
   </div>
@@ -963,7 +959,7 @@ ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span c
 ${agentItems}
     </div>
     <div class="card">
-      <h2>Project portfolio — click to expand <small>${srcLink("projects/master-operating-system/project-tracker.md", "source: project-tracker.md")}</small></h2>
+      <h2>Project portfolio — click a project for its full dashboard <small>${srcLink("projects/master-operating-system/project-tracker.md", "source: project-tracker.md")}</small></h2>
 ${projectItems || '<p class="dim" style="padding:10px 16px">No projects registered.</p>'}
     </div>
     <div class="card">
@@ -1006,7 +1002,89 @@ const outPath = PRIVATE_MODE
   : path.join(ROOT, "dashboard", "index.html");
 if (PRIVATE_MODE) fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, html);
+
+// ---- per-project sub-pages: <outdir>/projects/<id>.html ----
+function projectPage(d) {
+  const p = d.p;
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(p.name)} — Project Dashboard</title>
+<style>${STYLE}</style>
+</head>
+<body>
+<main class="wrap">
+${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span class="hb-label">PRIVATE</span><div>Master view — includes private and client projects. Never publish or share this file.</div></div>` : ""}
+<header>
+  <div>
+    <div class="eyebrow"><a href="../index.html">← all projects</a> · project dashboard${p.source ? " · " + esc(p.source) : ""}</div>
+    <h1>${esc(p.name)} <span class="co">// ${esc(p.type) || "project"}</span></h1>
+  </div>
+  <div class="eyebrow num">built ${fmtDate(now)}</div>
+</header>
+
+<div class="heartbeat ${d.doneOverall ? "good" : d.blockedCount || d.overdueCount ? "warn" : "good"}">
+  <span class="hb-label">${d.doneOverall ? "DONE" : "NEXT"}</span>
+  <div>
+    <div>${esc(p.nextAction) || "—"}</div>
+    <div class="hb-detail">Status: ${esc(p.status)}${d.blockedCount ? ` · ${d.blockedCount} task${d.blockedCount === 1 ? "" : "s"} blocked` : ""}${d.overdueCount ? ` · ${d.overdueCount} item${d.overdueCount === 1 ? "" : "s"} overdue` : ""}</div>
+  </div>
+</div>
+
+<div class="metrics">
+  <div class="metric"><div class="v">${d.pct}%</div><div class="k">Progress</div><div class="s">${d.doneCount}/${d.tasks.length} tasks done</div></div>
+  ${d.milestones.length ? `<div class="metric"><div class="v">${d.msDone}/${d.milestones.length}</div><div class="k">Milestones</div><div class="s">${d.nextMilestone ? "next " + esc(d.nextMilestone.target) : "all reached"}</div></div>` : ""}
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">${esc(p.deadline)}</div><div class="k">Deadline</div><div class="s">${deadlineChip(p.deadline, d.doneOverall) || (d.doneOverall ? "complete" : "—")}</div></div>
+  <div class="metric"><div class="v">${d.blockedCount}</div><div class="k">Blocked</div><div class="s">tasks needing action</div></div>
+  <div class="metric"><div class="v">${d.overdueCount}</div><div class="k">Overdue</div><div class="s">tasks + milestones</div></div>
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">${esc(p.lastUpdated) || "—"}</div><div class="k">Last updated</div><div class="s">${d.staleChip || "current"}</div></div>
+</div>
+
+<div class="grid">
+  <div class="col">
+    <div class="card">
+      <h2>Overview</h2>
+      <div style="padding:12px 16px 14px"><div class="kv">${d.fieldRows || '<p class="dim">No Detail section yet.</p>'}</div>${d.readmeLink}</div>
+    </div>
+    <div class="card">
+      <h2>Tasks by department ${d.tasks.length ? `<small>${d.doneCount}/${d.tasks.length} done · ${d.pct}%</small>` : ""}</h2>
+      <div style="padding:8px 16px 14px">${d.taskHtml}</div>
+    </div>
+  </div>
+  <div class="col">
+    ${d.milestoneHtml ? `<div class="card"><h2>Milestones <small>${d.msDone}/${d.milestones.length} reached</small></h2><div style="padding:8px 16px 14px">${d.milestoneHtml}</div></div>` : ""}
+    ${d.riskHtml ? `<div class="card"><h2 style="color:var(--warn)">Risks &amp; blockers</h2><div style="padding:8px 16px 14px">${d.riskHtml}</div></div>` : ""}
+    <div class="card">
+      <h2>Recent changes <small>${srcLink("logs/changes.md", "source: logs/changes.md")}</small></h2>
+      ${d.changesHtml ? `<div style="padding:8px 16px 14px">${d.changesHtml}</div>` : `<p class="dim" style="padding:10px 16px">None logged under PROJECT: ${esc(p.id)} yet — log work with that tag to populate this panel.</p>`}
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Generated by <span class="mono">dashboard/build.js</span> from ${srcLink("projects/master-operating-system/project-tracker.md", "project-tracker.md")}</span>
+  <span><a href="../index.html">← back to ops dashboard</a></span>
+</footer>
+</main>
+</body>
+</html>
+`;
+}
+
+const pagesDir = path.join(path.dirname(outPath), "projects");
+fs.rmSync(pagesDir, { recursive: true, force: true });
+fs.mkdirSync(pagesDir, { recursive: true });
+let pageCount = 0;
+for (const d of projectData) {
+  if (!d.p.id) continue;
+  fs.writeFileSync(path.join(pagesDir, `${d.p.id}.html`), projectPage(d));
+  pageCount++;
+}
+
 console.log(`OK: wrote ${outPath}${PRIVATE_MODE ? " (PRIVATE — gitignored, do not publish)" : ""}`);
+console.log(`   ${pageCount} project sub-page${pageCount === 1 ? "" : "s"} in ${pagesDir}`);
 console.log(
   `   ${visibleProjects.length} projects shown (${projects.length} total) · ${agents.length} agents · ${skills.length} skills · ${tools.length} tools · ${decisions.length} decisions · ${changes.length} changes · ${weeks.length} activity weeks`
 );
