@@ -228,3 +228,5 @@ Format: [YYYY-MM-DD] CHANGED: ... | TYPE: new / updated / deleted / renamed | PR
 [2026-08-05] CHANGED: logs/reports/ | TYPE: new | PROJECT: master-operating-system | NOTES: Agent-generated output split from human session records — 11 files moved from logs/sessions/
 [2026-08-05] CHANGED: references/source-of-truth/source-of-truth-map.md | TYPE: updated | PROJECT: master-operating-system | NOTES: Resume rows repointed to private repo; Last Updated refreshed
 [2026-08-05] CHANGED: logs/sessions/2026-08-05-session.md | TYPE: new | PROJECT: master-operating-system | NOTES: Session record — restart, Secure & Sync (Session 1) + Close-out (Session 2)
+[2026-08-05] CHANGED: context/current-priorities.md | TYPE: updated | PROJECT: master-operating-system | NOTES: Gmail spelling confirmed — next action narrowed to verifying the Friday routine
+[2026-08-05] CHANGED: context/goals.md | TYPE: updated | PROJECT: master-operating-system | NOTES: Standing decision checked off — Gmail spelling confirmed as-registered

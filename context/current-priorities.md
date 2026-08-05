@@ -27,7 +27,7 @@
 ### Immediate Next Actions
 
 - **Verify dashboard live** — confirm GitHub Pages deploy at evanderpool.github.io/artificial-management; check heartbeat flipped to ACTIVE
-- **Confirm business Gmail spelling** — `artifical.management@gmail.com` everywhere; verify as-registered vs typo; check whether Friday briefing routine still runs
+- **Verify Friday briefing routine** — confirm routine trig_01Ed5upotVtnufPmQ9Fjbd17 still runs and delivers (address confirmed correct 2026-08-05)
 - **Write client-data-handling SOP** — gates all client outreach; doubles as sales asset
 - **Write disaster-recovery runbook** — inventory of non-repo assets (PAT, routines, connectors, local overrides)
 - **Start job applications** — resume lives in private repo (`artificial-management-private/references/resume/`); add dashboard + close-out story to it first

@@ -35,7 +35,7 @@ demo surface (dashboard + portfolio website).
 - [ ] Second AI project shipped (leading candidate: Supabase canonical-store migration for this system — doubles as the RAG/pgvector resume piece)
 
 ### Standing decisions needed (Erick)
-- [ ] Confirm business Gmail spelling (`artifical.management@gmail.com` — as-registered or typo?)
+- [x] Business Gmail spelling confirmed correct — `artifical.management@gmail.com` as registered (2026-08-05)
 - [ ] Google Workspace Business Starter upgrade (gates client outreach with custom domain)
 
 ---
