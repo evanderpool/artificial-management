@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artificial Management — Ops Dashboard</title>
+<style>
+:root{
+  --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
+  --text:#e7eceb; --dim:#8ca1a3; --accent:#56a8a2;
+  --good:#53b788; --warn:#d9a441; --crit:#d96459; --info:#6fa8c9;
+}
+@media (prefers-color-scheme: light){
+  :root{ --ink:#f4f5f2; --panel:#ffffff; --panel-2:#eceeea; --line:#d8dcd6;
+    --text:#1d2a26; --dim:#5f6f6d; --accent:#2e7d78;
+    --good:#2e8f63; --warn:#8a6410; --crit:#a53d33; --info:#3d7ba3; }
+}
+:root[data-theme="dark"]{ --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
+  --text:#e7eceb; --dim:#8ca1a3; --accent:#56a8a2;
+  --good:#53b788; --warn:#d9a441; --crit:#d96459; --info:#6fa8c9; }
+:root[data-theme="light"]{ --ink:#f4f5f2; --panel:#ffffff; --panel-2:#eceeea; --line:#d8dcd6;
+  --text:#1d2a26; --dim:#5f6f6d; --accent:#2e7d78;
+  --good:#2e8f63; --warn:#8a6410; --crit:#a53d33; --info:#3d7ba3; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);
+  font:15px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif;}
+.mono,.num,.pill,.eyebrow,th,h1 .co{font-family:"Cascadia Code","SF Mono",Consolas,ui-monospace,monospace}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 24px 64px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:20px;margin:0;letter-spacing:.02em}
+h1 .co{color:var(--accent)}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+a{color:var(--accent)}
+/* explainer */
+.explainer{border:1px solid var(--line);background:var(--panel);border-radius:6px;margin-bottom:16px}
+.explainer summary{cursor:pointer;padding:11px 16px;font-size:13px;color:var(--accent);list-style:none;display:flex;align-items:center;gap:10px}
+.explainer summary::-webkit-details-marker{display:none}
+.explainer[open] summary{border-bottom:1px solid var(--line)}
+.explainer .x-body{padding:14px 18px;font-size:14px;color:var(--text);max-width:76ch}
+.explainer .x-body p{margin:0 0 10px}
+.explainer .arch{padding:6px 18px 16px;overflow-x:auto}
+/* heartbeat */
+.heartbeat{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);
+  border-left:4px solid var(--accent);background:var(--panel);border-radius:6px;
+  padding:14px 18px;margin-bottom:16px}
+.heartbeat.crit{border-left-color:var(--crit)}
+.heartbeat.warn{border-left-color:var(--warn)}
+.heartbeat.good{border-left-color:var(--good)}
+.hb-label{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:13px;
+  letter-spacing:.12em;padding:3px 10px;border-radius:4px;white-space:nowrap}
+.crit .hb-label{background:color-mix(in srgb,var(--crit) 18%,transparent);color:var(--crit)}
+.warn .hb-label{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.good .hb-label{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.hb-detail{color:var(--dim);font-size:14px}
+/* activity */
+.activity{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:12px 18px 8px;margin-bottom:16px;overflow-x:auto}
+.activity .a-title{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;margin-bottom:8px}
+.bar{fill:var(--accent);opacity:.75}
+.bar:hover{opacity:1}
+.bar-end{fill:var(--accent);opacity:1}
+.bar-zero{fill:var(--line)}
+.a-src{text-transform:none;letter-spacing:.02em}
+.baseline{stroke:var(--line);stroke-width:1}
+.bar-label{fill:var(--dim);font:11px "Cascadia Code",Consolas,ui-monospace,monospace;text-anchor:middle;font-variant-numeric:tabular-nums}
+.axis-label{fill:var(--dim);font:11px "Cascadia Code",Consolas,ui-monospace,monospace}
+/* arch diagram */
+.node rect{fill:var(--panel-2);stroke:var(--line)}
+.node-title{fill:var(--accent);font:600 11px "Cascadia Code",Consolas,ui-monospace,monospace;letter-spacing:.08em}
+.node-body{fill:var(--text);font:12px "Segoe UI",system-ui,sans-serif}
+.node-dim{fill:var(--dim);font:11px "Segoe UI",system-ui,sans-serif}
+.node-accent{fill:var(--accent);font:11px "Segoe UI",system-ui,sans-serif}
+.arrow{stroke:var(--dim);stroke-width:1.5}
+.arrow-accent{stroke:var(--accent)}
+.arrow-head{fill:var(--dim)}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+.metric .v{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:24px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.metric .k{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-top:2px}
+.metric .s{font-size:12px;color:var(--dim);margin-top:4px}
+/* layout */
+.grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.card h2{font-size:12px;margin:0;padding:11px 16px;border-bottom:1px solid var(--line);
+  text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-weight:600;
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.card h2 small{letter-spacing:.02em;text-transform:none;font-weight:400}
+.card h2 small a{color:var(--dim)}
+.card h2 small a:hover{color:var(--accent)}
+.card .scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+  text-align:left;font-weight:600;padding:8px 16px;border-bottom:1px solid var(--line)}
+td{padding:8px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(odd){background:color-mix(in srgb,var(--panel-2) 55%,transparent)}
+.dim{color:var(--dim)}
+.pill{display:inline-block;font-size:11px;letter-spacing:.05em;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill-good{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.pill-warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.pill-crit{background:color-mix(in srgb,var(--crit) 16%,transparent);color:var(--crit)}
+.pill-info{background:color-mix(in srgb,var(--info) 16%,transparent);color:var(--info)}
+.pill-muted{background:color-mix(in srgb,var(--dim) 14%,transparent);color:var(--dim)}
+/* expandable rows */
+details.row{border-bottom:1px solid var(--line)}
+details.row:last-child{border-bottom:none}
+details.row summary{cursor:pointer;display:flex;align-items:baseline;gap:12px;
+  padding:9px 16px;list-style:none;font-size:13.5px}
+details.row summary::-webkit-details-marker{display:none}
+details.row summary:hover{background:color-mix(in srgb,var(--panel-2) 70%,transparent)}
+details.row summary:focus-visible,.explainer summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+@media (max-width:520px){
+  details.row summary{flex-wrap:wrap}
+  .row-name{white-space:normal}
+  table{min-width:560px}
+}
+.chev{flex:none;width:8px;color:var(--dim)}
+.chev::before{content:"▸";font-size:11px}
+details[open]>summary .chev::before{content:"▾"}
+.row-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-wrap{white-space:normal}
+.row-body{padding:4px 16px 14px 36px;font-size:13.5px;background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
+.row-body p{margin:6px 0 10px;max-width:72ch}
+.kv{display:flex;flex-direction:column;gap:6px}
+.kv .k{display:inline-block;min-width:96px;color:var(--dim);font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.1em;
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace}
+.kv>div{display:flex;gap:8px;align-items:baseline}
+.kv span:last-child{color:var(--text)}
+.row-links{margin-top:10px;font-size:12.5px}
+.row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
+ul.feed{list-style:none;margin:0;padding:6px 0}
+ul.feed li{display:flex;gap:12px;align-items:baseline;padding:7px 16px;font-size:13.5px;border-bottom:1px solid var(--line)}
+ul.feed li:last-child{border-bottom:none}
+ul.feed .num{color:var(--dim);font-size:12px;white-space:nowrap}
+details.row .num{color:var(--dim);font-size:12px;white-space:nowrap}
+ul.next{list-style:none;margin:0;padding:6px 0}
+ul.next li{padding:8px 16px 8px 34px;position:relative;font-size:14px;border-bottom:1px solid var(--line)}
+ul.next li:last-child{border-bottom:none}
+ul.next li::before{content:"→";position:absolute;left:16px;color:var(--accent)}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (prefers-reduced-motion: no-preference){
+  .heartbeat.good .hb-label{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.55}}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
+    <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
+  </div>
+  <div class="eyebrow num">built 2026-08-05 21:01 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+</header>
+
+<details class="explainer" open>
+  <summary><span class="chev"></span>What is this? — how this page works, and what to click</summary>
+  <div class="x-body">
+    <p>This is the live operations dashboard for an AI business operating system:
+    10 specialized AI agents and 9 reusable skills that run a solo
+    business the way a Fortune 500 runs departments — with a project tracker, an
+    append-only decision log, a change log, integrity audits, and cost tracking.</p>
+    <p>Everything on this page is generated from plain markdown files in a git repo —
+    the system's single source of truth. Agents read those files, do their work, and
+    write results back; a zero-dependency build script turns the same files into this
+    page on every push. No database, no CMS. Every card cites its source file — click
+    the file name to see the raw markdown behind the number.</p>
+    <p><strong>Where to click:</strong> expand any <em>agent</em> to see what it reads, produces, and
+    depends on · expand a <em>decision</em> to see the reasoning it was made with · the
+    heartbeat banner above shows whether the system is actively maintained right now —
+    it computes that itself, and it does not flatter the owner.</p>
+  </div>
+  <div class="arch"><svg viewBox="0 -8 720 218" width="100%" style="min-width:640px" role="img"
+  aria-label="Architecture: markdown source of truth is read by agents and skills, whose outputs are written back append-only; this dashboard is generated read-only from the same files.">
+  <defs>
+    <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" class="arrow-head"/>
+    </marker>
+  </defs>
+  <g class="node">
+    <rect x="8" y="30" width="200" height="110" rx="6"/>
+    <text x="108" y="52" text-anchor="middle" class="node-title">MARKDOWN SOURCE OF TRUTH</text>
+    <text x="108" y="74" text-anchor="middle" class="node-body">context/ · projects/</text>
+    <text x="108" y="92" text-anchor="middle" class="node-body">decisions/log.md · logs/</text>
+    <text x="108" y="110" text-anchor="middle" class="node-body">registry · trackers · SOPs</text>
+    <text x="108" y="130" text-anchor="middle" class="node-dim">git-versioned · append-only logs</text>
+  </g>
+  <g class="node">
+    <rect x="268" y="30" width="180" height="110" rx="6"/>
+    <text x="358" y="52" text-anchor="middle" class="node-title">AGENTS &amp; SKILLS</text>
+    <text x="358" y="74" text-anchor="middle" class="node-body">10 agents · 9 skills</text>
+    <text x="358" y="92" text-anchor="middle" class="node-body">run in Claude Code</text>
+    <text x="358" y="110" text-anchor="middle" class="node-body">+ 1 scheduled routine</text>
+    <text x="358" y="130" text-anchor="middle" class="node-dim">read → act → write back</text>
+  </g>
+  <g class="node">
+    <rect x="512" y="30" width="200" height="110" rx="6"/>
+    <text x="612" y="52" text-anchor="middle" class="node-title">OUTPUTS</text>
+    <text x="612" y="74" text-anchor="middle" class="node-body">daily briefs · sprint plans</text>
+    <text x="612" y="92" text-anchor="middle" class="node-body">integrity audits · cost reports</text>
+    <text x="612" y="110" text-anchor="middle" class="node-body">weekly email briefing</text>
+    <text x="612" y="130" text-anchor="middle" class="node-dim">every output cites its sources</text>
+  </g>
+  <line x1="208" y1="85" x2="262" y2="85" class="arrow" marker-end="url(#arr)"/>
+  <line x1="448" y1="85" x2="506" y2="85" class="arrow" marker-end="url(#arr)"/>
+  <path d="M 612 140 L 612 168 L 108 168 L 108 146" class="arrow" fill="none" marker-end="url(#arr)"/>
+  <text x="360" y="163" text-anchor="middle" class="node-dim">written back to the same files — append-only, change-logged</text>
+  <path d="M 108 30 L 108 12 L 680 12" class="arrow arrow-accent" fill="none" marker-end="url(#arr)"/>
+  <text x="394" y="8" text-anchor="middle" class="node-accent">dashboard/build.js reads the same files → generates this page (read-only)</text>
+</svg></div>
+</details>
+
+<div class="heartbeat crit">
+  <span class="hb-label">● STALE</span>
+  <div>
+    <div>System heartbeat — last commit <span class="num">2026-05-17</span> · <span class="mono dim">Resume v2.0 — LangGraph project added, score 82-86/100; Week 7 stretc…</span></div>
+    <div class="hb-detail">No commits in 80 days — past both the 7-day quiet and 14-day stale thresholds. Trackers below reflect the last active state, not the present. Recomputed at every build — rebuilt daily by CI.</div>
+  </div>
+</div>
+
+<div class="activity">
+  <div class="a-title">Activity — changes logged per week <span class="a-src">· sqrt scale · source: <a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">logs/changes.md</a></span></div>
+  <svg viewBox="0 0 276 80" width="276" height="80" role="img"
+    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 5 this week. Square-root scale.">
+    <line x1="16" y1="64" x2="260" y2="64" class="baseline"/>
+    <rect x="16" y="16" width="16" height="48" rx="2"
+        class="bar"><title>Week of 2026-05-11: 193 changes logged</title></rect><text x="24" y="12" class="bar-label">193</text>
+<rect x="35" y="58" width="16" height="6" rx="2"
+        class="bar"><title>Week of 2026-05-18: 3 changes logged</title></rect>
+<rect x="54" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-05-25: no changes logged</title></rect>
+<rect x="73" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-06-01: no changes logged</title></rect>
+<rect x="92" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-06-08: no changes logged</title></rect>
+<rect x="111" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-06-15: no changes logged</title></rect>
+<rect x="130" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-06-22: no changes logged</title></rect>
+<rect x="149" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-06-29: no changes logged</title></rect>
+<rect x="168" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-06: no changes logged</title></rect>
+<rect x="187" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-13: no changes logged</title></rect>
+<rect x="206" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-20: no changes logged</title></rect>
+<rect x="225" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-27: no changes logged</title></rect>
+<rect x="244" y="56" width="16" height="8" rx="2"
+        class="bar bar-end"><title>Week of 2026-08-03: 5 changes logged</title></rect><text x="252" y="52" class="bar-label">5</text>
+    <text x="16" y="77" class="axis-label">2026-05</text>
+    <text x="260" y="77" class="axis-label" text-anchor="end">2026-08</text>
+  </svg>
+</div>
+
+<div class="metrics">
+  <div class="metric"><div class="v">10</div><div class="k">Agents</div><div class="s">7 Active · 2 In Progress · 1 Spec Complete</div></div>
+  <div class="metric"><div class="v">9</div><div class="k">Skills</div><div class="s">9 Active</div></div>
+  <div class="metric"><div class="v">11</div><div class="k">Tools</div><div class="s">9 Connected · 2 Not Connected</div></div>
+  <div class="metric"><div class="v">49</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">201</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">~$50/mo</div><div class="k">Monthly spend</div><div class="s">base + variable API usage · as of 2026-05-16</div></div>
+</div>
+
+<div class="grid">
+  <div class="col">
+    <div class="card">
+      <h2>Agent roster — click to expand <small><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/master-operating-system/ai-system-registry.md" target="_blank" rel="noopener">source: ai-system-registry.md</a></small></h2>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Chief of Staff Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Synthesizes project status, priorities, and decisions into executive summaries and next-action directives</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>All project READMEs, change log, decision log, session logs, priorities</span></div>
+      <div><span class="k">Produces</span><span>Daily brief, weekly summary, next-action list, blocker report</span></div>
+      <div><span class="k">Depends on</span><span>Project Manager Agent, Documentation Agent</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/chief-of-staff-agent/spec.md" target="_blank" rel="noopener">spec: projects/chief-of-staff-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Project Manager Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Tracks all workstreams, tasks, deadlines, and blockers across 10 active projects and produces weekly sprint plans</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>goals.md, current-priorities.md, all project READMEs, change log</span></div>
+      <div><span class="k">Produces</span><span>Sprint plan, status report, deadline risk report, blocker escalation</span></div>
+      <div><span class="k">Depends on</span><span>Chief of Staff Agent, all project READMEs</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/project-manager-agent/spec.md" target="_blank" rel="noopener">spec: projects/project-manager-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Documentation Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Converts work sessions, decisions, and build events into clean structured documentation automatically</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>Session notes, change log, decision log, project READMEs, templates</span></div>
+      <div><span class="k">Produces</span><span>Session summaries, updated READMEs, change log entries, SOP drafts, case studies</span></div>
+      <div><span class="k">Depends on</span><span>work-session-to-docs skill, Data Integrity Agent</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/documentation-agent/spec.md" target="_blank" rel="noopener">spec: projects/documentation-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Data Integrity Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Validates consistency across all system documents, flags conflicts and outdated info, maintains system trustworthiness</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>All context files, all project READMEs, all agent specs, decision log, change log</span></div>
+      <div><span class="k">Produces</span><span>Inconsistency report, missing fields report, outdated info flags, confidence scores</span></div>
+      <div><span class="k">Depends on</span><span>All context files, Documentation Agent</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/data-integrity-agent/spec.md" target="_blank" rel="noopener">spec: projects/data-integrity-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Change Management Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Tracks everything that changes inside Artificial Management — what changed, when, and why</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>System changes, updated files, new workflows, modified prompts</span></div>
+      <div><span class="k">Produces</span><span>Change log entries, version diff summaries, rollback docs, outdated reference flags</span></div>
+      <div><span class="k">Depends on</span><span>logs/changes.md</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/change-management-agent/spec.md" target="_blank" rel="noopener">spec: projects/change-management-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Cost Tracking Agent</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Tracks all tools, APIs, subscriptions, and compute costs for Artificial Management</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>Tool subscriptions, API costs, software licenses, storage costs</span></div>
+      <div><span class="k">Produces</span><span>Monthly spend summary, cost change alerts, waste flags, pricing recommendations</span></div>
+      <div><span class="k">Depends on</span><span>External billing data</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/cost-tracking-agent/spec.md" target="_blank" rel="noopener">spec: projects/cost-tracking-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Portfolio Agent</span><span class="pill pill-info">In Progress</span></summary>
+  <div class="row-body">
+    <p>Converts every technical project and workflow into job-search and client-facing proof</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>Completed tasks, agent specs, automation workflows, business outcomes</span></div>
+      <div><span class="k">Produces</span><span>Resume bullets, case studies, LinkedIn posts, GitHub READMEs, interview stories</span></div>
+      <div><span class="k">Depends on</span><span>All project deliverables</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/portfolio-agent/spec.md" target="_blank" rel="noopener">spec: projects/portfolio-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Client Services Agent</span><span class="pill pill-warn" title="Registry and project tracker disagree — flagged by the build's integrity cross-check">conflict · tracker: Spec Complete</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Packages Artificial Management's capabilities into marketable service offers for SMB clients</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>Services list, market feedback, portfolio work, pain points, pricing logic</span></div>
+      <div><span class="k">Produces</span><span>Service packages (4 tiers), discovery call script, proposal template, outreach templates (6), client onboarding SOP</span></div>
+      <div><span class="k">Depends on</span><span>Portfolio Agent</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/client-services-agent/spec.md" target="_blank" rel="noopener">spec: projects/client-services-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">AI Engineering Build Agent</span><span class="pill pill-muted">Spec Complete</span></summary>
+  <div class="row-body">
+    <p>Designs and implements the technical architecture of the Artificial Management AI system</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>Business requirements, agent specs, data flows, tool constraints</span></div>
+      <div><span class="k">Produces</span><span>Architecture diagrams, tool selection rationale, database schemas, workflow specs</span></div>
+      <div><span class="k">Depends on</span><span>All agent specs</span></div>
+    </div>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/ai-engineering-build-agent/spec.md" target="_blank" rel="noopener">spec: projects/ai-engineering-build-agent/spec.md</a></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name">Master Operating System</span><span class="pill pill-info">In Progress</span></summary>
+  <div class="row-body">
+    <p>The central system that connects all agents, projects, documentation, dashboards, and workflows</p>
+    <div class="kv">
+      <div><span class="k">Reads</span><span>All system files</span></div>
+      <div><span class="k">Produces</span><span>Project tracker, AI system registry, weekly exec summary, architecture docs</span></div>
+      <div><span class="k">Depends on</span><span>All agents and tools</span></div>
+    </div>
+    
+  </div>
+</details>
+    </div>
+    <div class="card">
+      <h2>Project tracker <small><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/master-operating-system/project-tracker.md" target="_blank" rel="noopener">source: project-tracker.md</a></small></h2>
+      <div class="scroll"><table aria-label="Project tracker">
+        <thead><tr><th scope="col">Project</th><th scope="col">Status</th><th scope="col">Updated</th><th scope="col">Next action</th></tr></thead>
+        <tbody>
+<tr>
+  <td>Master Operating System</td>
+  <td><span class="pill pill-info">In Progress</span></td>
+  <td class="num">2026-05-16</td>
+  <td class="dim">Build architecture diagram, data flow diagram, master dashboard</td>
+</tr>
+<tr>
+  <td>Chief of Staff Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-16</td>
+  <td class="dim">Daily brief + weekly summary running; monitor Week 7 sprint</td>
+</tr>
+<tr>
+  <td>Project Manager Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-16</td>
+  <td class="dim">Sprint plan active — Week 7 targets set 2026-05-16</td>
+</tr>
+<tr>
+  <td>Documentation Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-15</td>
+  <td class="dim">Run /documentation live; validate session summary, README update, and SOP draft…</td>
+</tr>
+<tr>
+  <td>Data Integrity Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-15</td>
+  <td class="dim">Run /data-integrity full audit; validate confidence scoring output</td>
+</tr>
+<tr>
+  <td>Change Management Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-15</td>
+  <td class="dim">Run /change-management review to validate gap detection; integrate with session…</td>
+</tr>
+<tr>
+  <td>Cost Tracking Agent</td>
+  <td><span class="pill pill-good">Active</span></td>
+  <td class="num">2026-05-16</td>
+  <td class="dim">Monthly report + API tracking live; confirm 4 tool actuals by 2026-05-20</td>
+</tr>
+<tr>
+  <td>Portfolio Agent</td>
+  <td><span class="pill pill-info">In Progress</span></td>
+  <td class="num">2026-05-16</td>
+  <td class="dim">Push README to GitHub; confirm repo URL; Week 7 prep</td>
+</tr>
+<tr>
+  <td>Client Services Agent</td>
+  <td><span class="pill pill-muted">Spec Complete</span></td>
+  <td class="num">2026-05-14</td>
+  <td class="dim">Build service packages; write discovery call script</td>
+</tr>
+<tr>
+  <td>AI Engineering Build Agent</td>
+  <td><span class="pill pill-muted">Spec Complete</span></td>
+  <td class="num">2026-05-14</td>
+  <td class="dim">Build architecture diagram and data flow diagram</td>
+</tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Skill registry — click to expand <small><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/master-operating-system/ai-system-registry.md" target="_blank" rel="noopener">source: ai-system-registry.md</a></small></h2>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/chief-of-staff</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Reads all 10 project READMEs, logs, and priorities and produces a daily brief — saved to file and displayed in chat</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/chief-of-staff/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/chief-of-staff/SKILL.md</a><span class="dim">· used by Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/project-manager</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Produces sprint plans, status checks, and blocker reviews across all 10 projects — 3 modes (sprint/status/blockers)</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/project-manager/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/project-manager/SKILL.md</a><span class="dim">· used by Chief of Staff Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/weekly-exec-summary</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Automates producing a structured weekly executive briefing — reads all source files and fills out the weekly-exec-summary template</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/weekly-exec-summary/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/weekly-exec-summary/SKILL.md</a><span class="dim">· used by Chief of Staff Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/work-session-to-docs</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Captures decisions and changes from any work session and updates all relevant docs — session log, change log, decision log, project README</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/work-session-to-docs/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/work-session-to-docs/SKILL.md</a><span class="dim">· used by Documentation Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/documentation</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Converts sessions, decisions, and changes into structured documentation — 3 modes: session summary, README update, SOP draft</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/documentation/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/documentation/SKILL.md</a><span class="dim">· used by Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/data-integrity</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Validates system document consistency — 3 modes: full audit, quick check, conflict resolution; confidence scoring (0–100)</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/data-integrity/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/data-integrity/SKILL.md</a><span class="dim">· used by Data Integrity Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/change-management</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Logs, reviews, and flags all system changes — 3 modes: log changes (default), review (gap/orphan detection), flag [topic]</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/change-management/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/change-management/SKILL.md</a><span class="dim">· used by Change Management Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/cost-tracking</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Monthly spend report and add-tool workflow — 2 modes: monthly-report (default), add-tool</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/cost-tracking/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/cost-tracking/SKILL.md</a><span class="dim">· used by Cost Tracking Agent, Erick</span></div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="row-name mono">/ad-directors-vision</span><span class="pill pill-good">Active</span></summary>
+  <div class="row-body">
+    <p>Produces a full Director's Vision document for conversion-focused video ads — 7 sections covering brand focus, emotional arc, cinematography, scene structure, pacing, ad manager strategy, and affiliate/conversion — for TikTok, Reels, YouTube Shorts, UGC, and performance marketing content</p>
+    <div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/skills/ad-directors-vision/SKILL.md" target="_blank" rel="noopener">source: .claude/skills/ad-directors-vision/SKILL.md</a><span class="dim">· used by Erick</span></div>
+  </div>
+</details>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <h2>Next actions — as of 2026-05-17 <small><a href="https://github.com/evanderpool/artificial-management/blob/main/context/current-priorities.md" target="_blank" rel="noopener">source: current-priorities.md</a></small></h2>
+      <div class="dim" style="padding:8px 16px 0;font-size:12.5px">Frozen at the last active state — see heartbeat above.</div>
+      <ul class="next">
+<li>Build second AI project</li>
+<li>Finalize portfolio case study</li>
+<li>Start job applications</li>
+<li>Client outreach</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Recent decisions — click for reasoning <small><a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md" target="_blank" rel="noopener">49 total</a></small></h2>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">Ops dashboard v1 built as a read-only static page generated from the markdown repo — no databas…</span></summary>
+  <div class="row-body">
+    <p>Ops dashboard v1 built as a read-only static page generated from the markdown repo — no database, no separate write path</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>A dashboard with its own writable store would create a second source of truth and reintroduce the drift problem the system already fought; generating from the repo keeps markdown canonical and costs nothing to host</span></div>
+      <div><span class="k">Context</span><span>Dashboard v1 — dashboard/build.js + GitHub Pages via Actions; public-data whitelist enforced in the generator (no emails, no pricing, no resume content)</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">Client Services Agent activated in Week 7 with 4 service tiers (Data Essentials [price redacted…</span></summary>
+  <div class="row-body">
+    <p>Client Services Agent activated in Week 7 with 4 service tiers (Data Essentials [price redacted], Automation Starter [price redacted], AI Agent Build [price redacted], Full AI OS custom)</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>4 tiers cover the full spectrum from quick data fixes to full enterprise system builds; pricing anchors at value-based starting points with scope confirmed after discovery; all packages link to live GitHub proof</span></div>
+      <div><span class="k">Context</span><span>Week 7 — Client Services Agent build; 5 deliverables created: service-packages.md, discovery-call-script.md, proposal-template.md, outreach-templates.md (6 variants), client-onboarding.md</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">LangGraph multi-agent research workflow built as portfolio project — LangChain + LangGraph + Ta…</span></summary>
+  <div class="row-body">
+    <p>LangGraph multi-agent research workflow built as portfolio project — LangChain + LangGraph + Tavily + Claude Haiku + Streamlit</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>LangChain/LangGraph appeared in 70%+ of AI engineering postings and was the top identified resume gap; parallel Send API pattern, structured output, and streaming UI demonstrate production-grade LangGraph skills that close the gap; resume score updated to 82–86/100 (was 74–78)</span></div>
+      <div><span class="k">Context</span><span>Week 7 stretch goal — github.com/evanderpool/langchain-research-agent</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">GitHub README identified as the keystone Week 6 asset — all other Week 6 portfolio assets built…</span></summary>
+  <div class="row-body">
+    <p>GitHub README identified as the keystone Week 6 asset — all other Week 6 portfolio assets built from its narrative</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>README is the only public, permanently linkable proof; every other asset (LinkedIn post, demo script, proof statement) needs the same core narrative; writing README first forced clarity on the system description that sharpened all downstream assets</span></div>
+      <div><span class="k">Context</span><span>Week 6 planning — portfolio-agent asset sequencing</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">Architecture and data flow diagrams deferred — Mermaid diagram in README.md serves as the Week…</span></summary>
+  <div class="row-body">
+    <p>Architecture and data flow diagrams deferred — Mermaid diagram in README.md serves as the Week 6 architecture visual</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Mermaid renders natively on GitHub and covers the architecture overview needed for recruiters and clients; standalone PNG/SVG export is non-blocking for job search and client acquisition and can be added in Week 7 as polish</span></div>
+      <div><span class="k">Context</span><span>Week 6 close-out — portfolio-agent case study Week 6 targets</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">All weekly briefing email references changed to the business inbox (addresses redacted)</span></summary>
+  <div class="row-body">
+    
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Briefing is a business operations output — it belongs in the Artificial Management Gmail inbox, not the personal Outlook; Outlook address was set during initial system build before Gmail routing was clarified</span></div>
+      <div><span class="k">Context</span><span>Week 5/6 housekeeping — 5 files updated (weekly-exec-summary skill, weekly-briefing SOP, case-study-draft, weekly summary log, current-priorities)</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">Build /task-complete skill + extend work-session-to-docs to cover project-tracker.md and ai-sys…</span></summary>
+  <div class="row-body">
+    <p>Build /task-complete skill + extend work-session-to-docs to cover project-tracker.md and ai-system-registry.md</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Marking tasks complete required 6 manual edits across tracking files — causing persistent drift between current-priorities, project-tracker, registry, READMEs, change log, and source-of-truth map; a dedicated skill ensures all completions propagate consistently in one pass</span></div>
+      <div><span class="k">Context</span><span>master-operating-system — Week 5 operational gap identified</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">Week 5 also builds the Cost Tracking Agent skill and 3 formal SOPs before moving to Week 6 port…</span></summary>
+  <div class="row-body">
+    <p>Week 5 also builds the Cost Tracking Agent skill and 3 formal SOPs before moving to Week 6 portfolio work</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Cost tracking skill is Spec Complete and unblocked; SOPs in references/sops/ are needed for client-facing credibility (Week 7 dependency) — building them in Week 5 prevents a crunch in Weeks 6–7</span></div>
+      <div><span class="k">Context</span><span>Week 5 plan — plan file at C:\Users\Erick\.claude\plans\lets-move-into-week-replicated-newell.md</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-16</span><span class="row-name row-wrap">Week 5 primary deliverable is converting /weekly-exec-summary from manually-invoked skill to a…</span></summary>
+  <div class="row-body">
+    <p>Week 5 primary deliverable is converting /weekly-exec-summary from manually-invoked skill to a scheduled automation with Gmail delivery</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>The skill is fully operational but requires a human trigger; making it scheduled (every Friday) and auto-delivered by email completes the &quot;first working automation workflow&quot; goal — the system runs itself rather than waiting for Erick to invoke it</span></div>
+      <div><span class="k">Context</span><span>Week 5 kickoff — goals.md &quot;First Working Automation Workflow&quot; theme</span></div>
+    </div>
+  </div>
+</details>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-05-15</span><span class="row-name row-wrap">Change Management flag mode takes a [topic] argument for targeted cross-document reference scans</span></summary>
+  <div class="row-body">
+    
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Scanning all 25+ files for every flag would be too slow for quick post-change checks; a topic argument limits the scan to relevant documents and makes the mode fast enough to use routinely after any system change</span></div>
+      <div><span class="k">Context</span><span>Change Management Agent SKILL.md design — flag mode design</span></div>
+    </div>
+  </div>
+</details>
+    </div>
+    <div class="card">
+      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">201 total</a></small></h2>
+      <ul class="feed">
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">.github/workflows/dashboard.yml</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/README.md</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/index.html</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-05-16</span><span class="mono dim">context/current-priorities.md</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-05-16</span><span class="mono dim">projects/master-operating-system/project-tracker.md</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-05-16</span><span class="mono dim">logs/sessions/2026-05-16-sprint-plan.md</span><span class="pill pill-muted">new</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Generated by <span class="mono">dashboard/build.js</span> — no database, no runtime; the markdown repo is the single source of truth.</span>
+  <span><a href="https://github.com/evanderpool/artificial-management">github.com/evanderpool/artificial-management</a></span>
+</footer>
+</main>
+</body>
+</html>
