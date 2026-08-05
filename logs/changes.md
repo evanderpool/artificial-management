@@ -256,4 +256,3 @@ Format: [YYYY-MM-DD] CHANGED: ... | TYPE: new / updated / deleted / renamed | PR
 [2026-08-05] CHANGED: references/sops/mobile-bridge-sop.md | TYPE: new | PROJECT: master-operating-system | NOTES: Bridge SOP — security model, daily use, rotation/kill switch, failure modes, weekly audit review
 [2026-08-05] CHANGED: projects/master-operating-system/ai-system-registry.md | TYPE: updated | PROJECT: master-operating-system | NOTES: Mobile Bridge registered in Tool Registry (12 tools)
 [2026-08-05] CHANGED: dashboard/build.js | TYPE: updated | PROJECT: master-operating-system | NOTES: Private build emits projects.json manifest for the bridge project picker
-[2026-08-05] CHANGED: projects/master-operating-system/project-tracker.md | TYPE: updated | PROJECT: master-operating-system | NOTES: Task added via mobile bridge to AI OS v2 — Canonical Store: TEST bridge task / Visibility / hack [price redacted] [address redacted]
