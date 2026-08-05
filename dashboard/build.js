@@ -669,9 +669,7 @@ const projectData = sortedProjects
         ? `<div class="row-links">${srcLink(readmeRel, "README: " + readmeRel)}</div>`
         : "";
 
-    const summaryBits = `<span class="row-name">${esc(p.name)}</span><span class="dim" style="font-size:12px">${esc(p.type)}${p.source ? " · " + esc(p.source) : ""}</span>${tasks.length ? progressBar(true) + `<span class="num dim" style="font-size:11px">${pct}%</span>` : ""}${
-      blockedCount ? `<span class="pill pill-crit">${blockedCount} blocked</span>` : ""
-    }${overdueCount ? `<span class="pill pill-crit">${overdueCount} overdue</span>` : ""}${deadlineChip(p.deadline, doneOverall)}${staleChip}${
+    const summaryBits = `<span class="row-name">${esc(p.name)}</span>${
       PRIVATE_MODE && p.visibility === "private"
         ? `<span class="pill pill-warn">private</span>`
         : ""
