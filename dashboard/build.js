@@ -826,6 +826,20 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
 h1{font-size:20px;margin:0;letter-spacing:.02em}
 h1 .co{color:var(--accent)}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+.built-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#builtAgo.stale{color:var(--warn)}
+.refresh-btn{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  border-radius:99px;padding:4px 12px}
+.refresh-btn:hover{background:color-mix(in srgb,var(--accent) 20%,transparent)}
+.refresh-btn:active{transform:scale(.97)}
+.refresh-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){
+  .refresh-btn.spin{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
 a{color:var(--accent)}
 /* explainer */
 .explainer{border:1px solid var(--line);background:var(--panel);border-radius:6px;margin-bottom:16px}
@@ -1032,7 +1046,11 @@ ${brGate}
     <div class="eyebrow">Operations Dashboard${BRIDGE ? " · live control" : " · read-only view of the repo"}</div>
     <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
   </div>
-  <div class="eyebrow num">built ${fmtDate(now)} · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+  <div class="eyebrow num built-row">
+    <button id="refreshBtn" class="refresh-btn" type="button" title="${BRIDGE ? "Rebuild from the markdown files, then reload" : "Reload the latest published build"}">↻ Refresh</button>
+    <span id="builtAgo" data-built="${now.toISOString()}">built ${fmtDate(now)}</span>
+    · <a href="https://github.com/evanderpool/artificial-management">view the repo</a>
+  </div>
 </header>
 
 <details class="explainer" open>
@@ -1161,7 +1179,10 @@ ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span c
     <div class="eyebrow"><a href="../index.html">← all projects</a> · project dashboard${p.source ? " · " + esc(p.source) : ""}</div>
     <h1>${esc(p.name)} <span class="co">// ${esc(p.type) || "project"}</span></h1>
   </div>
-  <div class="eyebrow num">built ${fmtDate(now)}</div>
+  <div class="eyebrow num built-row">
+    <button id="refreshBtn" class="refresh-btn" type="button" title="${BRIDGE ? "Rebuild from the markdown files, then reload" : "Reload the latest published build"}">↻ Refresh</button>
+    <span id="builtAgo" data-built="${now.toISOString()}">built ${fmtDate(now)}</span>
+  </div>
 </header>
 
 <div class="heartbeat ${d.doneOverall ? "good" : d.blockedCount || d.overdueCount ? "warn" : "good"}">

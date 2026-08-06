@@ -153,8 +153,31 @@
     get("/api/queue").then(function (q) { if (q.items) renderQueue(q.items); });
   }
 
+  // On the bridge build, the header Refresh button regenerates the pages from
+  // the markdown source first, then reloads — a true refresh, not just a reload.
+  function wireHeaderRefresh() {
+    var btn = document.getElementById("refreshBtn");
+    if (!btn) return;
+    btn.dataset.handled = "bridge";
+    btn.textContent = "↻ Rebuild";
+    btn.addEventListener("click", function () {
+      if (!KEY) return toast("unlock with the access key first");
+      btn.classList.add("spin");
+      btn.disabled = true;
+      post("/api/rebuild", {}).then(function (r) {
+        toast(r.ok ? "Rebuilt from source — reloading…" : (r.error || "rebuild failed"));
+        setTimeout(function () {
+          var u = new URL(window.location.href);
+          u.searchParams.set("r", Date.now());
+          window.location.replace(u.toString());
+        }, r.ok ? 700 : 1500);
+      });
+    });
+  }
+
   gate();
   wire();
+  wireHeaderRefresh();
   refresh();
   setInterval(refresh, 6000);
 })();

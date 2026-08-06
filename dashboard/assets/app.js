@@ -4,6 +4,42 @@
  * nothing here creates, fetches, or modifies data. No data is embedded
  * in script context — everything animates what the static HTML already shows.
  */
+// ---- page chrome: freshness + refresh (runs regardless of motion prefs) ----
+(function () {
+  "use strict";
+  var stamp = document.getElementById("builtAgo");
+
+  function ago(iso) {
+    var secs = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+    if (secs < 90) return "just now";
+    if (secs < 5400) return Math.round(secs / 60) + " min ago";
+    if (secs < 172800) return Math.round(secs / 3600) + " h ago";
+    return Math.round(secs / 86400) + " days ago";
+  }
+  function tick() {
+    if (!stamp) return;
+    var iso = stamp.getAttribute("data-built");
+    if (!iso) return;
+    var secs = (Date.now() - new Date(iso).getTime()) / 1000;
+    stamp.textContent = "built " + ago(iso);
+    stamp.classList.toggle("stale", secs > 86400);
+  }
+  tick();
+  setInterval(tick, 30000);
+
+  var btn = document.getElementById("refreshBtn");
+  if (btn) {
+    btn.addEventListener("click", function () {
+      // bridge.js overrides this on the private build (rebuild, then reload)
+      if (btn.dataset.handled === "bridge") return;
+      btn.classList.add("spin");
+      var u = new URL(window.location.href);
+      u.searchParams.set("r", Date.now()); // bypass any CDN/browser cache
+      window.location.replace(u.toString());
+    });
+  }
+})();
+
 (function () {
   "use strict";
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

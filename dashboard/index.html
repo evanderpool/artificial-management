@@ -31,6 +31,20 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
 h1{font-size:20px;margin:0;letter-spacing:.02em}
 h1 .co{color:var(--accent)}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+.built-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#builtAgo.stale{color:var(--warn)}
+.refresh-btn{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  border-radius:99px;padding:4px 12px}
+.refresh-btn:hover{background:color-mix(in srgb,var(--accent) 20%,transparent)}
+.refresh-btn:active{transform:scale(.97)}
+.refresh-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){
+  .refresh-btn.spin{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
 a{color:var(--accent)}
 /* explainer */
 .explainer{border:1px solid var(--line);background:var(--panel);border-radius:6px;margin-bottom:16px}
@@ -229,7 +243,11 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
     <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
     <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
   </div>
-  <div class="eyebrow num">built 2026-08-06 18:08 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+  <div class="eyebrow num built-row">
+    <button id="refreshBtn" class="refresh-btn" type="button" title="Reload the latest published build">↻ Refresh</button>
+    <span id="builtAgo" data-built="2026-08-06T18:12:55.149Z">built 2026-08-06 18:12 UTC</span>
+    · <a href="https://github.com/evanderpool/artificial-management">view the repo</a>
+  </div>
 </header>
 
 <details class="explainer" open>
@@ -294,7 +312,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="heartbeat good">
   <span class="hb-label">● ACTIVE</span>
   <div>
-    <div>System heartbeat — last commit <span class="num">2026-08-06</span> · <span class="mono dim">The dashboard is the app — actions injected into the same pages</span></div>
+    <div>System heartbeat — last commit <span class="num">2026-08-06</span> · <span class="mono dim">audit.js — deterministic integrity checks; registers task-complete sk…</span></div>
     <div class="hb-detail">Last commit 0 days ago. Recomputed at every build — rebuilt daily by CI.</div>
   </div>
 </div>
@@ -302,7 +320,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="activity">
   <div class="a-title">Activity — changes logged per week <span class="a-src">· sqrt scale · source: <a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">logs/changes.md</a></span></div>
   <svg viewBox="0 0 276 80" width="276" height="80" role="img"
-    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 67 this week. Square-root scale.">
+    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 70 this week. Square-root scale.">
     <line x1="16" y1="64" x2="260" y2="64" class="baseline"/>
     <rect x="16" y="16" width="16" height="48" rx="2"
         class="bar"><title>Week of 2026-05-11: 193 changes logged</title></rect><text x="24" y="12" class="bar-label">193</text>
@@ -318,8 +336,8 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <rect x="187" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-13: no changes logged</title></rect>
 <rect x="206" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-20: no changes logged</title></rect>
 <rect x="225" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-27: no changes logged</title></rect>
-<rect x="244" y="36" width="16" height="28" rx="2"
-        class="bar bar-end"><title>Week of 2026-08-03: 67 changes logged</title></rect><text x="252" y="32" class="bar-label">67</text>
+<rect x="244" y="35" width="16" height="29" rx="2"
+        class="bar bar-end"><title>Week of 2026-08-03: 70 changes logged</title></rect><text x="252" y="31" class="bar-label">70</text>
     <text x="16" y="77" class="axis-label">2026-05</text>
     <text x="260" y="77" class="axis-label" text-anchor="end">2026-08</text>
   </svg>
@@ -331,7 +349,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
   <div class="metric"><div class="v">10</div><div class="k">Skills</div><div class="s">10 Active</div></div>
   <div class="metric"><div class="v">12</div><div class="k">Tools</div><div class="s">10 Connected · 2 Not Connected</div></div>
   <div class="metric"><div class="v">61</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
-  <div class="metric"><div class="v">263</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">266</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
   <div class="metric"><div class="v">~$50/mo</div><div class="k">Monthly spend</div><div class="s">base + variable API usage · as of 2026-08-05</div></div>
 </div>
 
@@ -658,16 +676,16 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 </details>
     </div>
     <div class="card">
-      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">263 total</a></small></h2>
+      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">266 total</a></small></h2>
       <ul class="feed">
+<li><span class="num">2026-08-06</span><span class="mono dim">dashboard/assets/bridge.js</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-06</span><span class="mono dim">dashboard/assets/app.js</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-06</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-06</span><span class="mono dim">.github/workflows/dashboard.yml</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-06</span><span class="mono dim">projects/master-operating-system/project-tracker.md</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-06</span><span class="mono dim">context/goals.md</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-06</span><span class="mono dim">projects/master-operating-system/ai-system-registry.md</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-06</span><span class="mono dim">scripts/audit.js</span><span class="pill pill-muted">new</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">archives/2026-08-bridge-standalone-app.html</span><span class="pill pill-muted">renamed</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">bridge/server.py</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/assets/bridge.js</span><span class="pill pill-muted">new</span></li>
       </ul>
     </div>
   </div>
