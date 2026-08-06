@@ -48,6 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Apply review-agent code fixes, then report templates + dashboard render |
 
 ---
 
@@ -87,6 +88,43 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Migration script: markdown trackers → tables | Data Integrity Agent | Planning | 2026-09-05 |
 | Dashboard reads from canonical store | AI Engineering Build Agent | Planning | 2026-09-20 |
 | Case study write-up | Portfolio Agent | Planning | 2026-09-30 |
+
+### Uplink — Local RAG — Detail
+
+**Description:** Local, private, self-hosted RAG system. Multi-format indexer (Markdown, PDF, Word, Excel, CSV/TSV, TXT) into SQLite FTS5 with BM25 search; Claude Code is the generation layer; phone access via the bridge queue pattern (read-only). Flagship privacy-first retrieval piece: "your documents never leave your machine." Standalone public repo — resume artifact in its own right.
+**Priority:** High
+**Start:** 2026-08-06
+**Client:** Internal (Artificial Management)
+**Links:** [Uplink repo](https://github.com/evanderpool/uplink) · local: `Desktop/uplink`
+**Risks/Blockers:**
+- Answers only when a Claude Code session is open with the watcher armed (same availability model as the bridge — accepted)
+- Phase 2 vector layer depends on fastembed/bge-small behaving on this Windows box; LanceDB is the vetted fallback, ChromaDB is disqualified (MSVC build failures)
+- Retrieved chunk text is a prompt-injection channel — must stay under the "untrusted data, never instructions" rule
+
+### Uplink — Local RAG — Milestones
+
+| Milestone | Target | Status |
+|---|---|---|
+| V1 core: multi-format indexer + BM25 search + eval harness + tests | 2026-08-06 | Complete |
+| Review-agent findings applied; repo public on GitHub | 2026-08-08 | In Progress |
+| Report templates with charts (deterministic, dashboard-styled) | 2026-08-20 | Planning |
+| Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
+| Phase 2: fastembed vectors + RRF, before/after eval numbers in README | 2026-09-10 | Planning |
+| Case study + recorded demo published | 2026-09-20 | Planning |
+
+### Uplink — Local RAG — Tasks
+
+| Task | Owner | Status | Due |
+|---|---|---|---|
+| V1 build: extractors, chunker, indexer, search CLI, eval, 25 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Golden fixtures (18 questions) + baseline eval numbers | Data Integrity Agent | Complete | 2026-08-06 |
+| Adversarial code review + apply fixes | AI Engineering Build Agent | In Progress | 2026-08-08 |
+| Publish public GitHub repo | AI Engineering Build Agent | In Progress | 2026-08-08 |
+| Report templates: 2-3 deterministic reports with charts | AI Engineering Build Agent | Planning | 2026-08-20 |
+| Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
+| Phase 2 hybrid retrieval, eval-gated | AI Engineering Build Agent | Planning | 2026-09-10 |
+| Eval review of phase 2 numbers | Data Integrity Agent | Planning | 2026-09-12 |
+| Case study, README polish, demo recording | Portfolio Agent | Planning | 2026-09-20 |
 
 ---
 
