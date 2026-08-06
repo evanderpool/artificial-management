@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Apply review-agent code fixes, then report templates + dashboard render |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Systems-integration review (deferred at Erick's direction), then bridge phone access |
 
 ---
 
@@ -106,8 +106,9 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Milestone | Target | Status |
 |---|---|---|
 | V1 core: multi-format indexer + BM25 search + eval harness + tests | 2026-08-06 | Complete |
-| Review-agent findings applied; repo public on GitHub | 2026-08-08 | In Progress |
-| Report templates with charts (deterministic, dashboard-styled) | 2026-08-20 | Planning |
+| Review-agent findings applied; repo public on GitHub | 2026-08-08 | Complete |
+| Report templates with charts (deterministic, SVG, narrative slot) | 2026-08-20 | Complete |
+| Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
 | Phase 2: fastembed vectors + RRF, before/after eval numbers in README | 2026-09-10 | Planning |
 | Case study + recorded demo published | 2026-09-20 | Planning |
@@ -118,9 +119,11 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 |---|---|---|---|
 | V1 build: extractors, chunker, indexer, search CLI, eval, 25 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Golden fixtures (18 questions) + baseline eval numbers | Data Integrity Agent | Complete | 2026-08-06 |
-| Adversarial code review + apply fixes | AI Engineering Build Agent | In Progress | 2026-08-08 |
-| Publish public GitHub repo | AI Engineering Build Agent | In Progress | 2026-08-08 |
-| Report templates: 2-3 deterministic reports with charts | AI Engineering Build Agent | Planning | 2026-08-20 |
+| Adversarial code review + apply fixes | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Publish public GitHub repo | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Report templates: 3 deterministic reports, SVG charts, eval history, AGENT.md | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Logic + code reviews of report phase, fixes applied (56 tests) | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
 | Phase 2 hybrid retrieval, eval-gated | AI Engineering Build Agent | Planning | 2026-09-10 |
 | Eval review of phase 2 numbers | Data Integrity Agent | Planning | 2026-09-12 |
