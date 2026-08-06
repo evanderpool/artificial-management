@@ -119,6 +119,26 @@ details.row summary:focus-visible,.explainer summary:focus-visible{outline:2px s
   .row-name{white-space:normal}
   table{min-width:560px}
 }
+/* phone layout — the same page, sized for a hand */
+html{overflow-x:hidden}
+@media (max-width:640px){
+  .wrap{padding:16px 12px 48px}
+  h1{font-size:17px}
+  header{margin-bottom:10px}
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px}
+  .metric{padding:10px 12px}
+  .metric .v{font-size:20px}
+  .grid{gap:12px}
+  .explainer .x-body{padding:12px 14px;font-size:13.5px}
+  .explainer .arch{max-width:100%;padding:6px 12px 14px}
+  .activity{max-width:100%;padding:10px 12px 6px}
+  a.row-link{flex-wrap:wrap}
+  a.row-link .go{margin-left:auto}
+  .card h2{padding:10px 14px;font-size:11px}
+  .row-body{padding:4px 14px 12px 28px}
+  ul.feed li,ul.next li{padding-left:14px;padding-right:14px}
+  ul.next li{padding-left:30px}
+}
 .chev{flex:none;width:8px;color:var(--dim)}
 .chev::before{content:"▸";font-size:11px}
 details[open]>summary .chev::before{content:"▾"}
@@ -197,17 +217,19 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 @media (prefers-reduced-motion: reduce){
   ::view-transition-old(root),::view-transition-new(root){animation:none}
 }
+
 </style>
 </head>
 <body>
 <main class="wrap">
+
 
 <header>
   <div>
     <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
     <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
   </div>
-  <div class="eyebrow num">built 2026-08-06 00:07 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+  <div class="eyebrow num">built 2026-08-06 00:22 UTC · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
 </header>
 
 <details class="explainer" open>
@@ -272,7 +294,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="heartbeat good">
   <span class="hb-label">● ACTIVE</span>
   <div>
-    <div>System heartbeat — last commit <span class="num">2026-08-05</span> · <span class="mono dim">Bridge test pass — encoding fix; injection/dup/pause/queue defenses v…</span></div>
+    <div>System heartbeat — last commit <span class="num">2026-08-06</span> · <span class="mono dim">Mobile app rebuilt on the dashboard design system</span></div>
     <div class="hb-detail">Last commit 0 days ago. Recomputed at every build — rebuilt daily by CI.</div>
   </div>
 </div>
@@ -280,7 +302,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="activity">
   <div class="a-title">Activity — changes logged per week <span class="a-src">· sqrt scale · source: <a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">logs/changes.md</a></span></div>
   <svg viewBox="0 0 276 80" width="276" height="80" role="img"
-    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 54 this week. Square-root scale.">
+    aria-label="Changes logged per week, 2026-05 to 2026-08: peak 193 in week of 2026-05-11, 10 quiet weeks, 62 this week. Square-root scale.">
     <line x1="16" y1="64" x2="260" y2="64" class="baseline"/>
     <rect x="16" y="16" width="16" height="48" rx="2"
         class="bar"><title>Week of 2026-05-11: 193 changes logged</title></rect><text x="24" y="12" class="bar-label">193</text>
@@ -296,8 +318,8 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <rect x="187" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-13: no changes logged</title></rect>
 <rect x="206" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-20: no changes logged</title></rect>
 <rect x="225" y="63" width="16" height="1" class="bar-zero"><title>Week of 2026-07-27: no changes logged</title></rect>
-<rect x="244" y="39" width="16" height="25" rx="2"
-        class="bar bar-end"><title>Week of 2026-08-03: 54 changes logged</title></rect><text x="252" y="35" class="bar-label">54</text>
+<rect x="244" y="37" width="16" height="27" rx="2"
+        class="bar bar-end"><title>Week of 2026-08-03: 62 changes logged</title></rect><text x="252" y="33" class="bar-label">62</text>
     <text x="16" y="77" class="axis-label">2026-05</text>
     <text x="260" y="77" class="axis-label" text-anchor="end">2026-08</text>
   </svg>
@@ -308,8 +330,8 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
   <div class="metric"><div class="v">10</div><div class="k">Agents</div><div class="s">10 Active</div></div>
   <div class="metric"><div class="v">9</div><div class="k">Skills</div><div class="s">9 Active</div></div>
   <div class="metric"><div class="v">12</div><div class="k">Tools</div><div class="s">10 Connected · 2 Not Connected</div></div>
-  <div class="metric"><div class="v">59</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
-  <div class="metric"><div class="v">250</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">60</div><div class="k">Decisions</div><div class="s">logged, append-only</div></div>
+  <div class="metric"><div class="v">258</div><div class="k">Changes</div><div class="s">logged, append-only</div></div>
   <div class="metric"><div class="v">~$50/mo</div><div class="k">Monthly spend</div><div class="s">base + variable API usage · as of 2026-08-05</div></div>
 </div>
 
@@ -510,6 +532,9 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
     </div>
   </div>
   <div class="col">
+
+
+
     <div class="card">
       <h2>Next actions — as of 2026-08-05 <small><a href="https://github.com/evanderpool/artificial-management/blob/main/context/current-priorities.md" target="_blank" rel="noopener">source: current-priorities.md</a></small></h2>
       
@@ -523,7 +548,17 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
       </ul>
     </div>
     <div class="card">
-      <h2>Recent decisions — click for reasoning <small><a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md" target="_blank" rel="noopener">59 total</a></small></h2>
+      <h2>Recent decisions — click for reasoning <small><a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md" target="_blank" rel="noopener">60 total</a></small></h2>
+<details class="row">
+  <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">The dashboard itself is the mobile app — the private build injects an action layer into the sam…</span></summary>
+  <div class="row-body">
+    <p>The dashboard itself is the mobile app — the private build injects an action layer into the same generated pages, and the bridge serves them at / (with /app redirecting there); the separate phone UI is archived</p>
+    <div class="kv">
+      <div><span class="k">Reasoning</span><span>Erick's video editor serves one page to desktop and phone alike; two UIs meant two designs to maintain and they had already diverged — one page with an injected action layer guarantees identical look and information everywhere, with the public build staying action-free and read-only</span></div>
+      <div><span class="k">Context</span><span>dashboard/assets/bridge.js + BRIDGE branch in build.js; archives/2026-08-bridge-standalone-app.html</span></div>
+    </div>
+  </div>
+</details>
 <details class="row">
   <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">Mobile bridge added — supersedes the 'no separate write path' clause of the dashboard-v1 decisi…</span></summary>
   <div class="row-body">
@@ -614,28 +649,18 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
     </div>
   </div>
 </details>
-<details class="row">
-  <summary><span class="chev"></span><span class="num">2026-08-05</span><span class="row-name row-wrap">June 30 deadline closed as PARTIAL — v1 system build succeeded ahead of schedule, outcome goals…</span></summary>
-  <div class="row-body">
-    <p>June 30 deadline closed as PARTIAL — v1 system build succeeded ahead of schedule, outcome goals (job offers, 3-4 clients) not achieved; root cause: system went dark 2026-05-20 with no liveness mechanism, and outcome work (applications, outreach) never started</p>
-    <div class="kv">
-      <div><span class="k">Reasoning</span><span>An honest retrospective is required before restart; the failure was operational (no heartbeat, pull-based safeguards only), not architectural — the build itself finished 6 weeks early</span></div>
-      <div><span class="k">Context</span><span>v1 close-out 2026-08-05; heartbeat now enforced by dashboard + daily CI recompute</span></div>
-    </div>
-  </div>
-</details>
     </div>
     <div class="card">
-      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">250 total</a></small></h2>
+      <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">258 total</a></small></h2>
       <ul class="feed">
+<li><span class="num">2026-08-05</span><span class="mono dim">archives/2026-08-bridge-standalone-app.html</span><span class="pill pill-muted">renamed</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">bridge/server.py</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/assets/bridge.js</span><span class="pill pill-muted">new</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">run_bridge.ps1</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-05</span><span class="mono dim">bridge/server.py</span><span class="pill pill-muted">updated</span></li>
 <li><span class="num">2026-08-05</span><span class="mono dim">dashboard/build.js</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">projects/master-operating-system/ai-system-registry.md</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">references/sops/mobile-bridge-sop.md</span><span class="pill pill-muted">new</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">CLAUDE.md</span><span class="pill pill-muted">updated</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">run_bridge.ps1</span><span class="pill pill-muted">new</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">bridge/</span><span class="pill pill-muted">new</span></li>
-<li><span class="num">2026-08-05</span><span class="mono dim">.github/workflows/dashboard.yml</span><span class="pill pill-muted">updated</span></li>
+<li><span class="num">2026-08-05</span><span class="mono dim">bridge/static/app.html</span><span class="pill pill-muted">updated</span></li>
       </ul>
     </div>
   </div>
@@ -649,5 +674,6 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <script defer src="assets/gsap.min.js"></script>
 <script defer src="assets/ScrollTrigger.min.js"></script>
 <script defer src="assets/app.js"></script>
+
 </body>
 </html>

@@ -718,6 +718,87 @@ const changeItems = changes
 
 const nextActionItems = nextActions.map((a) => `<li>${esc(a)}</li>`).join("\n");
 
+// ---- bridge layer (private build only) -------------------------------
+// The dashboard IS the app: these cards are injected into the same pages,
+// styled with the same classes. Public build never includes them.
+const BRIDGE = PRIVATE_MODE;
+
+const brGate = BRIDGE
+  ? `<div class="card" id="brGate" style="display:none">
+  <h2>Bridge access key</h2>
+  <div style="padding:12px 16px 14px;display:flex;gap:8px;flex-wrap:wrap">
+    <input class="br-in" id="brKeyInput" type="password" placeholder="paste the key shown on the PC" style="flex:1;min-width:200px">
+    <button class="br-btn" id="brUnlock">Unlock</button>
+  </div>
+</div>`
+  : "";
+
+const brStatusCard = BRIDGE
+  ? `<div class="card">
+  <h2>Bridge <small class="dim">actions run on this PC</small></h2>
+  <div id="brStatus" class="br-status">connecting…</div>
+  <div class="br-actions">
+    <button class="br-btn br-sec" data-br-action="rebuild">Rebuild dashboard</button>
+    <button class="br-btn br-danger" data-br-action="pause">Pause bridge</button>
+  </div>
+</div>`
+  : "";
+
+const brCaptureCard = BRIDGE
+  ? `<div class="card">
+  <h2>Capture</h2>
+  <div style="padding:10px 16px 0">
+    <textarea class="br-in" id="brCapture" placeholder="note, idea, or decision — tap the mic key to dictate"></textarea>
+  </div>
+  <div class="br-actions">
+    <button class="br-btn" data-br-action="add_note">Save note</button>
+    <button class="br-btn br-sec" data-br-action="capture_idea">Save idea</button>
+    <button class="br-btn br-sec" data-br-action="log_decision">Log as decision</button>
+    <button class="br-btn br-sec" data-br-action="run_brief">Run daily brief</button>
+  </div>
+</div>`
+  : "";
+
+const brQueueCard = BRIDGE
+  ? `<div class="card">
+  <h2>Bridge activity <small class="dim">queued work + answers</small></h2>
+  <div id="brQueue"><p class="dim" style="padding:10px 16px">Nothing queued.</p></div>
+</div>`
+  : "";
+
+const brStyle = BRIDGE
+  ? `
+.br-status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 16px 0}
+.br-actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px 14px}
+.br-btn{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);border-radius:8px;
+  padding:10px 14px;font:600 13px "Segoe UI",system-ui;cursor:pointer;flex:1 1 auto;min-width:140px}
+.br-btn:active{transform:scale(.98)}
+.br-sec{background:transparent;color:var(--dim);border-color:var(--line)}
+.br-danger{background:color-mix(in srgb,var(--crit) 13%,transparent);color:var(--crit);
+  border-color:color-mix(in srgb,var(--crit) 38%,transparent)}
+.br-in{width:100%;background:var(--panel-2);color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:14px "Segoe UI",system-ui;margin:4px 0}
+textarea.br-in{min-height:62px;resize:vertical}
+.br-fields{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px 0}
+.br-fields .br-in{flex:1 1 140px;width:auto}
+.br-item{border-bottom:1px solid var(--line);padding:10px 16px;font-size:13px}
+.br-item:last-child{border-bottom:none}
+.br-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.br-sum{color:var(--dim);margin-top:4px;line-height:1.45}
+.br-wait{color:var(--warn);margin-top:4px;font-size:12.5px}
+.br-q{margin-top:8px;padding:9px 10px;border-left:3px solid var(--info);
+  background:color-mix(in srgb,var(--info) 8%,transparent);border-radius:0 6px 6px 0}
+.br-btns{display:flex;gap:8px;margin-top:8px}
+.br-btns .br-btn{flex:0 0 auto;min-width:0;padding:6px 12px;font-size:12px}
+.br-toast{position:fixed;left:14px;right:14px;bottom:14px;max-width:640px;margin:0 auto;
+  background:var(--panel-2);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;
+  font-size:13.5px;z-index:99;display:none;box-shadow:0 10px 34px -10px rgba(0,0,0,.7)}
+.br-toast.show{display:block}
+@media (max-width:520px){ .br-btn{min-width:0;flex:1 1 45%} }
+`
+  : "";
+
 const STYLE = `
 :root{
   --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
@@ -833,6 +914,26 @@ details.row summary:focus-visible,.explainer summary:focus-visible{outline:2px s
   .row-name{white-space:normal}
   table{min-width:560px}
 }
+/* phone layout — the same page, sized for a hand */
+html{overflow-x:hidden}
+@media (max-width:640px){
+  .wrap{padding:16px 12px 48px}
+  h1{font-size:17px}
+  header{margin-bottom:10px}
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px}
+  .metric{padding:10px 12px}
+  .metric .v{font-size:20px}
+  .grid{gap:12px}
+  .explainer .x-body{padding:12px 14px;font-size:13.5px}
+  .explainer .arch{max-width:100%;padding:6px 12px 14px}
+  .activity{max-width:100%;padding:10px 12px 6px}
+  a.row-link{flex-wrap:wrap}
+  a.row-link .go{margin-left:auto}
+  .card h2{padding:10px 14px;font-size:11px}
+  .row-body{padding:4px 14px 12px 28px}
+  ul.feed li,ul.next li{padding-left:14px;padding-right:14px}
+  ul.next li{padding-left:30px}
+}
 .chev{flex:none;width:8px;color:var(--dim)}
 .chev::before{content:"▸";font-size:11px}
 details[open]>summary .chev::before{content:"▾"}
@@ -911,6 +1012,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 @media (prefers-reduced-motion: reduce){
   ::view-transition-old(root),::view-transition-new(root){animation:none}
 }
+${brStyle}
 `;
 
 const html = `<!doctype html>
@@ -924,9 +1026,10 @@ const html = `<!doctype html>
 <body>
 <main class="wrap">
 ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span class="hb-label">PRIVATE</span><div>Master view — includes private and client projects. Never publish or share this file.</div></div>` : ""}
+${brGate}
 <header>
   <div>
-    <div class="eyebrow">Operations Dashboard · read-only view of the repo</div>
+    <div class="eyebrow">Operations Dashboard${BRIDGE ? " · live control" : " · read-only view of the repo"}</div>
     <h1>Artificial Management <span class="co">// AI Operating System</span></h1>
   </div>
   <div class="eyebrow num">built ${fmtDate(now)} · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
@@ -997,6 +1100,9 @@ ${skillItems}
     </div>
   </div>
   <div class="col">
+${brStatusCard}
+${brQueueCard}
+${brCaptureCard}
     <div class="card">
       <h2>Next actions${prioUpdated ? ` — as of ${prioUpdated}` : ""} <small>${srcLink("context/current-priorities.md", "source: current-priorities.md")}</small></h2>
       ${heartbeat.level === "crit" ? `<div class="dim" style="padding:8px 16px 0;font-size:12.5px">Frozen at the last active state — see heartbeat above.</div>` : ""}
@@ -1025,6 +1131,7 @@ ${changeItems}
 <script defer src="assets/gsap.min.js"></script>
 <script defer src="assets/ScrollTrigger.min.js"></script>
 <script defer src="assets/app.js"></script>
+${BRIDGE ? '<script defer src="assets/bridge.js"></script>' : ""}
 </body>
 </html>
 `;
@@ -1076,6 +1183,36 @@ ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span c
 
 <div class="grid">
   <div class="col">
+    ${BRIDGE ? `<div class="card">
+      <h2>Actions <small class="dim">this project</small></h2>
+      <div id="brStatus" class="br-status">connecting…</div>
+      <div class="br-actions">
+        <button class="br-btn" data-br-action="proceed">▶ Proceed — next step</button>
+        <button class="br-btn br-sec" data-br-action="project_status">Where are we?</button>
+      </div>
+      <div class="br-fields">
+        <input class="br-in" id="brTask" placeholder="task text (add, or match to complete)">
+      </div>
+      <div class="br-fields">
+        <input class="br-in" id="brOwner" placeholder="owner — default Erick">
+        <input class="br-in" id="brDue" type="date">
+      </div>
+      <div class="br-actions">
+        <button class="br-btn" data-br-action="add_task">Add task</button>
+        <button class="br-btn br-sec" data-br-action="complete_task">Mark complete</button>
+      </div>
+      <div class="br-fields">
+        <textarea class="br-in" id="brCapture" placeholder="note or idea for this project"></textarea>
+      </div>
+      <div class="br-actions">
+        <button class="br-btn br-sec" data-br-action="add_note">Save note</button>
+        <button class="br-btn br-sec" data-br-action="capture_idea">Save idea</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Bridge activity</h2>
+      <div id="brQueue"><p class="dim" style="padding:10px 16px">Nothing queued.</p></div>
+    </div>` : ""}
     <div class="card">
       <h2>Overview</h2>
       <div style="padding:12px 16px 14px"><div class="kv">${d.fieldRows || '<p class="dim">No Detail section yet.</p>'}</div>${d.readmeLink}</div>
@@ -1103,6 +1240,8 @@ ${PRIVATE_MODE ? `<div class="heartbeat warn" style="margin-bottom:16px"><span c
 <script defer src="../assets/gsap.min.js"></script>
 <script defer src="../assets/ScrollTrigger.min.js"></script>
 <script defer src="../assets/app.js"></script>
+${BRIDGE ? `<script>window.__BRIDGE_PROJECT=${JSON.stringify(p.name).replace(/</g, "\\u003c")};</script>
+<script defer src="../assets/bridge.js"></script>` : ""}
 </body>
 </html>
 `;

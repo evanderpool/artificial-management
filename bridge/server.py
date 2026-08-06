@@ -421,9 +421,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"ok": True, "projects": []})
             return self._deny(404, "unknown endpoint")
         if path in ("/app", "/app/"):
-            return self._serve_file(APP_HTML.parent, APP_HTML.name)
-        if path in ("/shared.css", "/app/shared.css"):
-            return self._serve_file(APP_HTML.parent, "shared.css")
+            # The dashboard IS the app — one page everywhere (web + phone).
+            self.send_response(302)
+            self.send_header("Location", "/index.html")
+            self.end_headers()
+            return
         if path.startswith("/assets/"):
             return self._serve_file(ASSETS, path[len("/assets/"):])
         rel = path.lstrip("/")

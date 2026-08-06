@@ -114,6 +114,26 @@ details.row summary:focus-visible,.explainer summary:focus-visible{outline:2px s
   .row-name{white-space:normal}
   table{min-width:560px}
 }
+/* phone layout — the same page, sized for a hand */
+html{overflow-x:hidden}
+@media (max-width:640px){
+  .wrap{padding:16px 12px 48px}
+  h1{font-size:17px}
+  header{margin-bottom:10px}
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px}
+  .metric{padding:10px 12px}
+  .metric .v{font-size:20px}
+  .grid{gap:12px}
+  .explainer .x-body{padding:12px 14px;font-size:13.5px}
+  .explainer .arch{max-width:100%;padding:6px 12px 14px}
+  .activity{max-width:100%;padding:10px 12px 6px}
+  a.row-link{flex-wrap:wrap}
+  a.row-link .go{margin-left:auto}
+  .card h2{padding:10px 14px;font-size:11px}
+  .row-body{padding:4px 14px 12px 28px}
+  ul.feed li,ul.next li{padding-left:14px;padding-right:14px}
+  ul.next li{padding-left:30px}
+}
 .chev{flex:none;width:8px;color:var(--dim)}
 .chev::before{content:"▸";font-size:11px}
 details[open]>summary .chev::before{content:"▾"}
@@ -192,3 +212,33 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 @media (prefers-reduced-motion: reduce){
   ::view-transition-old(root),::view-transition-new(root){animation:none}
 }
+
+.br-status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 16px 0}
+.br-actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px 14px}
+.br-btn{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);border-radius:8px;
+  padding:10px 14px;font:600 13px "Segoe UI",system-ui;cursor:pointer;flex:1 1 auto;min-width:140px}
+.br-btn:active{transform:scale(.98)}
+.br-sec{background:transparent;color:var(--dim);border-color:var(--line)}
+.br-danger{background:color-mix(in srgb,var(--crit) 13%,transparent);color:var(--crit);
+  border-color:color-mix(in srgb,var(--crit) 38%,transparent)}
+.br-in{width:100%;background:var(--panel-2);color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:10px;font:14px "Segoe UI",system-ui;margin:4px 0}
+textarea.br-in{min-height:62px;resize:vertical}
+.br-fields{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px 0}
+.br-fields .br-in{flex:1 1 140px;width:auto}
+.br-item{border-bottom:1px solid var(--line);padding:10px 16px;font-size:13px}
+.br-item:last-child{border-bottom:none}
+.br-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.br-sum{color:var(--dim);margin-top:4px;line-height:1.45}
+.br-wait{color:var(--warn);margin-top:4px;font-size:12.5px}
+.br-q{margin-top:8px;padding:9px 10px;border-left:3px solid var(--info);
+  background:color-mix(in srgb,var(--info) 8%,transparent);border-radius:0 6px 6px 0}
+.br-btns{display:flex;gap:8px;margin-top:8px}
+.br-btns .br-btn{flex:0 0 auto;min-width:0;padding:6px 12px;font-size:12px}
+.br-toast{position:fixed;left:14px;right:14px;bottom:14px;max-width:640px;margin:0 auto;
+  background:var(--panel-2);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;
+  font-size:13.5px;z-index:99;display:none;box-shadow:0 10px 34px -10px rgba(0,0,0,.7)}
+.br-toast.show{display:block}
+@media (max-width:520px){ .br-btn{min-width:0;flex:1 1 45%} }
+
