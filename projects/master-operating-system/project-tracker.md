@@ -1,6 +1,6 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-08-05 (PM detail format — portfolio-website + langgraph removed at Erick's direction; archived)
+**Last Updated:** 2026-08-06 (audit.js shipped; PM detail format — portfolio-website + langgraph removed at Erick's direction; archived)
 **Owner:** Erick Vanderpool
 **Source of truth for:** the portfolio of real project work.
 
@@ -47,7 +47,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
-| AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | Planning | 2026-09-30 | 2026-08-05 | Schema design kickoff — blocked on Session 3 audit script (parsers feed the migration) |
+| AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
 
 ---
 
@@ -69,7 +69,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 
 | Milestone | Target | Status |
 |---|---|---|
-| Session 3 complete — scripts/audit.js + tests exist | 2026-08-15 | Planning |
+| Session 3 complete — scripts/audit.js + tests exist | 2026-08-15 | In Progress |
 | Supabase project created + MCP connected | 2026-08-20 | Planning |
 | Schema designed + logged to decision log | 2026-08-25 | Planning |
 | Migration script runs clean against live repo | 2026-09-05 | Planning |
@@ -80,7 +80,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 
 | Task | Owner | Status | Due |
 |---|---|---|---|
-| Build scripts/audit.js from dashboard parsers (Session 3) | AI Engineering Build Agent | Planning | 2026-08-15 |
+| Build scripts/audit.js from dashboard parsers (Session 3) | AI Engineering Build Agent | Complete | 2026-08-15 |
 | Create Supabase project + connect MCP | AI Engineering Build Agent | Planning | 2026-08-20 |
 | Schema design — projects, tasks, milestones, statuses, logs | AI Engineering Build Agent | Planning | 2026-08-25 |
 | Schema review + decision log entries | Data Integrity Agent | Planning | 2026-08-25 |

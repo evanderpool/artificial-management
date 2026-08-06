@@ -1,6 +1,6 @@
 # AI System Registry
 
-**Last Updated:** 2026-08-05
+**Last Updated:** 2026-08-06
 **Owner:** Erick Vanderpool
 **Source of truth for:** All agents and tools in the Artificial Management AI operating system
 
@@ -67,6 +67,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | data-integrity | Data Integrity Agent | Validates system document consistency — 3 modes: full audit, quick check, conflict resolution; confidence scoring (0–100) | Active | `.claude/skills/data-integrity/SKILL.md` | Data Integrity Agent, Erick | 2026-05-15 |
 | change-management | Change Management Agent | Logs, reviews, and flags all system changes — 3 modes: log changes (default), review (gap/orphan detection), flag [topic] | Active | `.claude/skills/change-management/SKILL.md` | Change Management Agent, Erick | 2026-05-15 |
 | cost-tracking | Cost Tracking Agent | Monthly spend report and add-tool workflow — 2 modes: monthly-report (default), add-tool | Active | `.claude/skills/cost-tracking/SKILL.md` | Cost Tracking Agent, Erick | 2026-05-16 |
+| task-complete | Task Complete | Cascades a completed task across all tracking files in one pass — current-priorities, project tracker, registry, project README, change log, source-of-truth map | Active | `.claude/skills/task-complete/SKILL.md` | Erick | 2026-08-06 |
 | ad-directors-vision | Ad Director's Vision | Produces a full Director's Vision document for conversion-focused video ads — 7 sections covering brand focus, emotional arc, cinematography, scene structure, pacing, ad manager strategy, and affiliate/conversion — for TikTok, Reels, YouTube Shorts, UGC, and performance marketing content | Active | `.claude/skills/ad-directors-vision/SKILL.md` | Erick | 2026-05-20 |
 
 ---
@@ -82,7 +83,7 @@ Every agent and tool must have an entry here before it is built or used. No undo
 | All agents have a registry entry | 10 / 10 |
 | All agents with specs have spec file links | 9 / 9 (master-operating-system does not need a spec) |
 | All tools documented | 12 tools/systems registered (8 connected, 2 planned, 1 reference system, 1 local server) |
-| All skills documented | 9 / 9 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking, ad-directors-vision) |
+| All skills documented | 10 / 10 (chief-of-staff, project-manager, weekly-exec-summary, work-session-to-docs, documentation, data-integrity, change-management, cost-tracking, task-complete, ad-directors-vision) — task-complete gap found by scripts/audit.js 2026-08-06 |
 | No undocumented agents | Pass |
 | No rogue workflows | Pass |
 | All Week 4 active skills status accurate | Pass — documentation, data-integrity, change-management all Active across README / registry / tracker |

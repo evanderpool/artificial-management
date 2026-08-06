@@ -26,6 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Integrity audit (report only — not yet blocking)
+        run: node scripts/audit.js
       - name: Generate dashboard
         run: node dashboard/build.js
       - name: Stage public files only (defense in depth — never ship private/)

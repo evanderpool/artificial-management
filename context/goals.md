@@ -2,6 +2,7 @@
 
 > Update this file at the start of each quarter. Q2 archived at `archives/2026-q2-goals.md`.
 
+**Last updated:** 2026-08-06
 **Quarter:** Q3 2026 (July – September 2026)
 **Working deadline:** September 30, 2026
 **Status note:** Q3 started late — the system was dark 2026-05-20 → 2026-08-05.
