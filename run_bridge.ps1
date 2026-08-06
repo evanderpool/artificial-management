@@ -18,9 +18,9 @@ if ($args -contains "stop") {
 $ts = & "C:\Program Files\Tailscale\tailscale.exe" ip -4 2>$null | Select-Object -First 1
 if (-not $ts) { Write-Host "FATAL: Tailscale is not connected. Start Tailscale first." -ForegroundColor Red; exit 2 }
 
-# 2. Port free?
-$busy = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
-if ($busy) { Write-Host "FATAL: port $port already in use (stale bridge? run: run_bridge.ps1 stop)" -ForegroundColor Red; exit 3 }
+# 2. Port free? (only a real LISTENER blocks us - TimeWait sockets are harmless)
+$busy = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
+if ($busy) { Write-Host "FATAL: port $port already has a listener (stale bridge? run: run_bridge.ps1 stop)" -ForegroundColor Red; exit 3 }
 
 # 3. Firewall rule scoped to the tailnet (created once; needs admin - skip quietly if not)
 try {

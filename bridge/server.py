@@ -422,6 +422,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._deny(404, "unknown endpoint")
         if path in ("/app", "/app/"):
             return self._serve_file(APP_HTML.parent, APP_HTML.name)
+        if path in ("/shared.css", "/app/shared.css"):
+            return self._serve_file(APP_HTML.parent, "shared.css")
         if path.startswith("/assets/"):
             return self._serve_file(ASSETS, path[len("/assets/"):])
         rel = path.lstrip("/")
