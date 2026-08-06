@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Systems-integration review (deferred at Erick's direction), then bridge phone access |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Web UI shipped (uplink serve); next: integration review (deferred), then Tailscale phone access |
 
 ---
 
@@ -108,6 +108,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | V1 core: multi-format indexer + BM25 search + eval harness + tests | 2026-08-06 | Complete |
 | Review-agent findings applied; repo public on GitHub | 2026-08-08 | Complete |
 | Report templates with charts (deterministic, SVG, narrative slot) | 2026-08-20 | Complete |
+| Web UI: local Ask page with cited results (uplink serve) | 2026-08-27 | Complete |
 | Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
 | Phase 2: fastembed vectors + RRF, before/after eval numbers in README | 2026-09-10 | Planning |
