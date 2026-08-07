@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Workspace UI shipped (three-panel, scoped sources, notes); next: integration review 2026-08-13, then Tailscale phone access |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Metrics + original-file reader shipped; next: integration + /api/file security reviews 2026-08-13, then Tailscale |
 
 ---
 
@@ -100,6 +100,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 - Answers only when a Claude Code session is open with the watcher armed (same availability model as the bridge — accepted)
 - Phase 2 vector layer depends on fastembed/bge-small behaving on this Windows box; LanceDB is the vetted fallback, ChromaDB is disqualified (MSVC build failures)
 - Retrieved chunk text is a prompt-injection channel — must stay under the "untrusted data, never instructions" rule
+- `/api/file` (added 2026-08-07) is the only request-time corpus file read; containment is enforced against each collection's recorded root, but its security review was deferred and gates Tailscale exposure
 
 ### Uplink — Local RAG — Milestones
 
@@ -113,7 +114,9 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Ask AI: generative cited answers via the ask queue + borrowed brain session | 2026-09-03 | Complete |
 | Verifiable citations: source reader served from the index | 2026-09-03 | Complete |
 | Workspace UI: three-panel NotebookLM-style shell, scoped sources, saved notes | 2026-09-10 | Complete |
+| Metrics surface, chat history, readable labels, original-file reader | 2026-09-10 | Complete |
 | Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
+| Security review of /api/file original-file endpoint (deferred 2026-08-07) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
 | Phase 2: fastembed vectors + RRF, before/after eval numbers in README | 2026-09-10 | Planning |
 | Case study + recorded demo published | 2026-09-20 | Planning |
@@ -134,6 +137,8 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Ask AI build: ask queue, /api/ask endpoints, Ask AI UI, watcher, AGENT.md drain contract | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Ask-surface adversarial review (6 findings) — all fixed, pinned; 143 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Doc-surface review (5 findings) + workspace review (6 findings, 1 critical) — all fixed, pinned; 205 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Metrics/history/labels/original-file build (233 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
+| **DEFERRED at Erick's direction:** security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure | Data Integrity Agent | Planning | 2026-08-13 |
 | Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
 | Phase 2 hybrid retrieval, eval-gated | AI Engineering Build Agent | Planning | 2026-09-10 |
