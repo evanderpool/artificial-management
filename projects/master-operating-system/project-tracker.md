@@ -143,6 +143,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Evaluation credibility pass: Wilson CIs, run-to-run deltas, live scoring, answer-quality metrics, metric tooltips (262 tests) | Data Integrity Agent | Complete | 2026-08-07 |
 | Self-improvement pass: answer thumbs, zero-hit + unknown-term gap detector, /api/promote (268 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
 | Spreadsheet/CSV industry corpora (BLS, CISA, CDC) + 6 fixtures; baseline 95%/0.947 over 19 questions | Data Integrity Agent | Complete | 2026-08-07 |
+| Grounding enforcement: scoped asks + mechanical citation verification (282 tests) | Data Integrity Agent | Complete | 2026-08-07 |
 | **DEFERRED at Erick's direction:** security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure | Data Integrity Agent | Planning | 2026-08-13 |
 | Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
