@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Ask AI shipped — generative cited answers via a borrowed Claude Code brain; next: integration review 2026-08-13, then Tailscale phone access |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-06 | Workspace UI shipped (three-panel, scoped sources, notes); next: integration review 2026-08-13, then Tailscale phone access |
 
 ---
 
@@ -111,6 +111,8 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Web UI: local Ask page with cited results (uplink serve) | 2026-08-27 | Complete |
 | v0.2: collections, localhost-gated upload/feedback, industry corpora, promote loop | 2026-08-27 | Complete |
 | Ask AI: generative cited answers via the ask queue + borrowed brain session | 2026-09-03 | Complete |
+| Verifiable citations: source reader served from the index | 2026-09-03 | Complete |
+| Workspace UI: three-panel NotebookLM-style shell, scoped sources, saved notes | 2026-09-10 | Complete |
 | Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
 | Phase 2: fastembed vectors + RRF, before/after eval numbers in README | 2026-09-10 | Planning |
@@ -131,6 +133,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | v0.2 sequential reviews (logic 10 findings, code 8 findings) — all fixed, pinned; 109 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Ask AI build: ask queue, /api/ask endpoints, Ask AI UI, watcher, AGENT.md drain contract | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Ask-surface adversarial review (6 findings) — all fixed, pinned; 143 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
+| Doc-surface review (5 findings) + workspace review (6 findings, 1 critical) — all fixed, pinned; 205 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
 | Phase 2 hybrid retrieval, eval-gated | AI Engineering Build Agent | Planning | 2026-09-10 |
