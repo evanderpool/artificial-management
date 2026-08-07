@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Metrics + original-file reader shipped; next: integration + /api/file security reviews 2026-08-13, then Tailscale |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Evaluation + self-improvement panel shipped (CIs, drift, answer quality, gap detector); next: integration + /api/file security reviews 2026-08-13, then Tailscale |
 
 ---
 
@@ -115,6 +115,8 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Verifiable citations: source reader served from the index | 2026-09-03 | Complete |
 | Workspace UI: three-panel NotebookLM-style shell, scoped sources, saved notes | 2026-09-10 | Complete |
 | Metrics surface, chat history, readable labels, original-file reader | 2026-09-10 | Complete |
+| Evaluation panel: confidence intervals, regression deltas, live drift + failing questions | 2026-09-15 | Complete |
+| Self-improvement loop: answer feedback, gap detection, in-app promote | 2026-09-15 | Complete |
 | Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
 | Security review of /api/file original-file endpoint (deferred 2026-08-07) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
@@ -138,6 +140,8 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Ask-surface adversarial review (6 findings) — all fixed, pinned; 143 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Doc-surface review (5 findings) + workspace review (6 findings, 1 critical) — all fixed, pinned; 205 tests | AI Engineering Build Agent | Complete | 2026-08-06 |
 | Metrics/history/labels/original-file build (233 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
+| Evaluation credibility pass: Wilson CIs, run-to-run deltas, live scoring, answer-quality metrics, metric tooltips (262 tests) | Data Integrity Agent | Complete | 2026-08-07 |
+| Self-improvement pass: answer thumbs, zero-hit + unknown-term gap detector, /api/promote (268 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
 | **DEFERRED at Erick's direction:** security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure | Data Integrity Agent | Planning | 2026-08-13 |
 | Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
