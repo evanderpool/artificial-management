@@ -48,7 +48,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Project | ID | Type | Visibility | Status | Deadline | Last Updated | Next Step |
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
-| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Evaluation + self-improvement panel shipped (CIs, drift, answer quality, gap detector); next: integration + /api/file security reviews 2026-08-13, then Tailscale |
+| Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Legacy .xls, Apple 10-K corpus, source search/filtering, plain-English Studio, dictation shipped; first dictated-question→grounded-answer loop ran end-to-end; next: integration + /api/file security reviews 2026-08-13, then Tailscale |
 
 ---
 
@@ -101,6 +101,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 - Phase 2 vector layer depends on fastembed/bge-small behaving on this Windows box; LanceDB is the vetted fallback, ChromaDB is disqualified (MSVC build failures)
 - Retrieved chunk text is a prompt-injection channel — must stay under the "untrusted data, never instructions" rule
 - `/api/file` (added 2026-08-07) is the only request-time corpus file read; containment is enforced against each collection's recorded root, but its security review was deferred and gates Tailscale exposure
+- Two brain sessions armed the same ask queue 2026-08-07 and raced on an answer — standing rule: exactly one armed watcher per queue (logged in decisions 2026-08-07)
 
 ### Uplink — Local RAG — Milestones
 
@@ -117,6 +118,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Metrics surface, chat history, readable labels, original-file reader | 2026-09-10 | Complete |
 | Evaluation panel: confidence intervals, regression deltas, live drift + failing questions | 2026-09-15 | Complete |
 | Self-improvement loop: answer feedback, gap detection, in-app promote | 2026-09-15 | Complete |
+| Source management: add-sources dialog, legacy .xls, search/type filtering, dictation | 2026-09-10 | Complete |
 | Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) | 2026-08-13 | Planning |
 | Security review of /api/file original-file endpoint (deferred 2026-08-07) | 2026-08-13 | Planning |
 | Phone access via bridge queue (read-only questions) | 2026-08-27 | Planning |
@@ -144,6 +146,10 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Self-improvement pass: answer thumbs, zero-hit + unknown-term gap detector, /api/promote (268 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
 | Spreadsheet/CSV industry corpora (BLS, CISA, CDC) + 6 fixtures; baseline 95%/0.947 over 19 questions | Data Integrity Agent | Complete | 2026-08-07 |
 | Grounding enforcement: scoped asks + mechanical citation verification (282 tests) | Data Integrity Agent | Complete | 2026-08-07 |
+| Add-sources dialog: batch upload, pasted-text notes, collection picker, `uplink forget` (325 tests; parallel session) | AI Engineering Build Agent | Complete | 2026-08-07 |
+| Native .xls extractor (xlrd, hand-built BIFF2 fixture) + original-file content-type parity | AI Engineering Build Agent | Complete | 2026-08-07 |
+| Apple 10-K corpus: 10 EDGAR .xls filings FY2016–25 identified, renamed, indexed (apple: 257 docs); post-ingest eval 90%/0.900 unchanged, run logged | Data Integrity Agent | Complete | 2026-08-07 |
+| Workspace UX: source title search + type filter, select-all docKey scoping fix, plain-English Studio labels, mic dictation (332 tests) | AI Engineering Build Agent | Complete | 2026-08-07 |
 | **DEFERRED at Erick's direction:** security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure | Data Integrity Agent | Planning | 2026-08-13 |
 | Systems-integration review (deferred at Erick's direction 2026-08-06) | Data Integrity Agent | Planning | 2026-08-13 |
 | Bridge integration: question action type, read-only | AI Engineering Build Agent | Planning | 2026-08-27 |
