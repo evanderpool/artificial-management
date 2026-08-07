@@ -49,6 +49,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
 | Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Legacy .xls, Apple 10-K corpus, source search/filtering, plain-English Studio, dictation shipped; first dictated-question→grounded-answer loop ran end-to-end; next: integration + /api/file security reviews 2026-08-13, then Tailscale |
+| Uplink Public Demo | uplink-demo | Portfolio build | Public | Built — launch gated | 2026-08-20 | 2026-08-07 | Demo repo built (API brain, 5-per-visitor limit, Render blueprint, 343 tests); next: Erick pushes repo + creates Render service; LIVE date gated by 2026-08-13 security reviews |
 
 ---
 
