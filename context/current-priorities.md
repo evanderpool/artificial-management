@@ -26,7 +26,7 @@
 
 ### Immediate Next Actions
 
-- **Verify dashboard live** — confirm GitHub Pages deploy at evanderpool.github.io/artificial-management; check heartbeat flipped to ACTIVE
+- ~~**Verify dashboard live**~~ — DONE 2026-08-07: Pages deploy confirmed, heartbeat ACTIVE, Uplink rendering (root cause of missing Uplink was a 15-commit unpushed backlog, now synced)
 - **Verify Friday briefing routine** — confirm routine trig_01Ed5upotVtnufPmQ9Fjbd17 still runs and delivers (address confirmed correct 2026-08-05)
 - **Write client-data-handling SOP** — gates all client outreach; doubles as sales asset
 - **Write disaster-recovery runbook** — inventory of non-repo assets (PAT, routines, connectors, local overrides)
