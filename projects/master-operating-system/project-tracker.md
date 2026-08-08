@@ -49,7 +49,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 |---|---|---|---|---|---|---|---|
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
 | Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-07 | Legacy .xls, Apple 10-K corpus, source search/filtering, plain-English Studio, dictation shipped; first dictated-question→grounded-answer loop ran end-to-end; next: integration + /api/file security reviews 2026-08-13, then Tailscale |
-| Uplink Public Demo | uplink-demo | Portfolio build | Public | Deployed — unshared | 2026-08-20 | 2026-08-07 | LIVE at uplink-demo.onrender.com (12 docs, Haiku brain verified end to end over the internet); address stays unshared until the 2026-08-13 security reviews pass, then link from portfolio |
+| Uplink Public Demo | uplink-demo | Portfolio build | Public | Deployed — unshared | 2026-08-20 | 2026-08-07 | LIVE at uplink-demo.onrender.com — corpus reshaped per Erick: ten Apple 10-K .xls filings only, shipped in-repo; Haiku brain verified on the new corpus; address stays unshared until the 2026-08-13 security reviews pass, then link from portfolio |
 
 ---
 
