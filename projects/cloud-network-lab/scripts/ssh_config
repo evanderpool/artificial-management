@@ -63,3 +63,17 @@ Host am-db01 db lab-db
 # Cloud equivalent: SSM port forwarding or Azure Bastion. The convenient
 # alternative -- a second NIC straight to the host -- quietly destroys the
 # segmentation the whole lab exists to demonstrate.
+
+# --- Perimeter firewall -----------------------------------------------------
+# am-fw01 (10.0.0.1) is on the am-edge segment, reachable only through the
+# bastion. sshd is bound to the LAN address ONLY -- never the WAN -- and is
+# key-only (PasswordAuthentication no). root is the sole account on an
+# appliance, so PermitRootLogin stays on; the key is the control.
+Host am-fw01 fw
+    HostName            10.0.0.1
+    User                root
+    IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
+    UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
+    StrictHostKeyChecking accept-new
+    IdentitiesOnly      yes
+    ProxyJump           am-rtr01

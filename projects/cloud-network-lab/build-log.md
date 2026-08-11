@@ -1147,3 +1147,90 @@ security group permits only the application tier. The lab version is the same
 architecture with the mechanism visible instead of abstracted — and the
 "restore the route and watch it still fail" test is precisely what a NACL buys
 that a security group alone does not.
+
+---
+
+## 2026-08-11 — CLI access to the appliance, and what an appliance teaches
+
+The DMZ and intrusion detection both need firewall configuration, and clicking
+a GUI is not something an agent can do. So the firewall needed scriptable
+access. Getting it was more instructive than the destination.
+
+### SSH was off by default — correctly
+
+The installed OPNsense had port 22 closed. That is right: an appliance should
+not ship with a remote shell open. Enabling it involved three deliberate
+choices, each of which had to be made rather than accepted:
+
+| Setting | Shipped as | Set to | Why |
+|---|---|---|---|
+| `PasswordAuthentication` | `yes` | `no` | Same standard as every Linux host here, and the exact issue the audit raised as its one High finding |
+| `ListenAddress` | `*:22` (all, incl. WAN) | `10.0.0.1` (LAN only) | A management service listening on an internet-facing address is fixed, not reasoned around |
+| Reachability | — | bastion only | No direct path from the workstation |
+
+`PermitRootLogin` stays enabled because root is the only account an appliance
+has. The key is the control, not the username.
+
+### FAILURE — editing generated files on an appliance is temporary
+
+Everything worked. Then the firewall was rebooted to add the DMZ NIC, and SSH
+broke: `Permission denied (publickey)`.
+
+`/root/.ssh/` was **empty**. OPNsense had regenerated it.
+
+That is the whole lesson: **an appliance regenerates its configuration files
+from its own config store on every boot.** `/usr/local/etc/ssh/sshd_config`
+and `/root/.ssh/authorized_keys` are *outputs*, not inputs. Editing them is
+editing a build artifact — it survives exactly until the next build.
+`PasswordAuthentication no` had reverted for the same reason.
+
+Confirmed by what *did* survive: the `<interfaces>lan</interfaces>` setting
+written into `config.xml` persisted correctly, and sshd came back bound to
+`10.0.0.1`. Config store persisted. Generated file did not.
+
+### FAILURE — sed on XML
+
+The fix was to write the key into the config store as the appliance expects.
+Done with:
+
+```
+sed -i '' 's|<name>root</name>|<name>root</name><authorizedkeys>...</authorizedkeys>|'
+```
+
+`<name>root</name>` appears **more than once** in `config.xml` — the root
+*user* and the root *group* among them. The edit landed in two places, one of
+them meaningless, and key auth still failed.
+
+Restored from backup and switched to `xml.etree` in Python for the DMZ
+interface edit. Structured data deserves a structured parser; `sed` matches
+text and has no idea what an element is.
+
+### Current state, stated honestly
+
+The key now lives in `/root/.ssh/authorized_keys` written directly, which works
+and **will be wiped again on the next reboot**. The durable fix is to attach it
+to the root user through the OPNsense GUI's user page, which writes it to the
+config store in the schema OPNsense actually reads. Recorded as a known
+limitation rather than presented as solved.
+
+### DMZ interface added
+
+```
+opt1: em2 -> 10.0.3.1/24, description "DMZ"
+interfaces now: wan lan lo0 opt1
+configctl interface reconfigure opt1 -> OK
+```
+
+A third zone now exists on the firewall. `am-dmz` is its own VirtualBox
+internal network — the DMZ host that goes there will be able to reach the
+internet and will be *blocked from the internal networks by default*, which is
+the entire definition of a DMZ.
+
+### Three shells, one lab
+
+The first remote command to the firewall failed with `Ambiguous output
+redirect` — OPNsense's root shell is **tcsh**, where `2>/dev/null` is a syntax
+error. This lab now spans **bash** (Debian), **tcsh** (FreeBSD), and
+**PowerShell** (Windows), and automation has to respect all three. That is what
+heterogeneous infrastructure actually feels like, and it is worth having met it
+here rather than during a client engagement.
