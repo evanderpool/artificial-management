@@ -1,0 +1,46 @@
+# Cloud Network Lab — SSH client config
+#
+# Usage:  ssh -F <path-to-this-file> lab-app
+#
+# Why this file exists: `ssh -o ProxyJump=host` does NOT reliably pass -i to
+# the inner (jump) connection on Windows OpenSSH, so a one-liner ProxyJump
+# fails with "Connection timed out during banner exchange" even when the jump
+# host can reach the target perfectly. Declaring each host — including the
+# bastion — gives the inner connection its own IdentityFile and fixes it.
+#
+# This is also just the correct way to run a bastion. The private key stays on
+# the operator's workstation and is never copied to the jump host, which is the
+# whole security argument for having a bastion in the first place.
+#
+# Cloud equivalent: the same pattern points at an EC2 bastion or is replaced
+# entirely by AWS SSM Session Manager / Azure Bastion, which remove the need to
+# expose port 22 at all. Phase 2 should compare the two.
+
+Host lab-gw
+    HostName            192.168.56.10
+    User                erick
+    IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
+    UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
+    StrictHostKeyChecking accept-new
+    IdentitiesOnly      yes
+
+# Private-subnet hosts. Unreachable from the workstation except through lab-gw
+# — that is the design, not an inconvenience.
+
+Host lab-app
+    HostName            10.0.2.20
+    User                erick
+    IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
+    UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
+    StrictHostKeyChecking accept-new
+    IdentitiesOnly      yes
+    ProxyJump           lab-gw
+
+Host lab-db
+    HostName            10.0.2.30
+    User                erick
+    IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
+    UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
+    StrictHostKeyChecking accept-new
+    IdentitiesOnly      yes
+    ProxyJump           lab-gw
