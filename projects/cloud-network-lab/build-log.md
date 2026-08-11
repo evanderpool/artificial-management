@@ -865,3 +865,106 @@ Root password generated (20 chars) and stored in
 on `am-public` and management on host-only. Moving `am-rtr01` behind it is the
 next step and follows `scripts/replumb-behind-firewall.md`: add the new uplink
 first, verify, then remove the old one.
+
+---
+
+## 2026-08-11 — Replumb: the router now sits behind the perimeter
+
+### Topology change
+
+```
+BEFORE:  internet ── am-public ── am-rtr01 ── am-private ── app/dc
+AFTER:   internet ── am-public ── am-fw01 ── am-edge ── am-rtr01 ── am-private ── app/dc
+```
+
+Two firewalls in series: an appliance doing north-south filtering at the
+perimeter, and a host firewall doing east-west segmentation inside. Not
+redundancy — the audit already proved the host firewall catches traffic the
+perimeter never sees, because `am-app01` talking to `am-rtr01` never crosses
+the perimeter at all.
+
+### Order of operations (the part that mattered)
+
+1. Firewall's inside NIC moved from host-only to `am-edge`, addressed `10.0.0.1/24`
+2. **Second uplink ADDED to the router** on `am-edge` (`10.0.0.10/24`) while the
+   original `am-public` uplink stayed live
+3. Path proved with a single host route before committing anything:
+   `ip route add 1.1.1.1/32 via 10.0.0.1` -> `ping 1.1.1.1` returned in 13 ms
+4. Default route switched, firewall rules re-applied with `WAN=enp0s10`
+5. Only then was the original uplink removed
+
+Never remove a working path to test its replacement. Step 3 is what made steps
+4 and 5 boring.
+
+### FAILURE — `set -o pipefail` + `head` killed the cutover mid-flight
+
+The cutover script exited **141** (SIGPIPE) at:
+
+```
+ip route | head -4
+```
+
+`head` closes the pipe after four lines; `ip` gets SIGPIPE; `pipefail` promotes
+that to a script failure; `set -e` aborts. The script died **after switching
+the default route but before applying the matching firewall rules** — the exact
+half-applied state a change like this must never be left in. The private subnet
+had a route out and no NAT rule to use it.
+
+Recovered in under a minute because the rollback timer was already armed and
+the management path was never in the blast radius. The damage window was
+bounded by design, not by luck.
+
+**Lesson:** a diagnostic `| head` inside a change script is not free. Under
+`pipefail` it is an abort condition, and putting cosmetic output in the middle
+of a state transition means cosmetics can halt the transition. Print state
+before or after the change, never between two halves of it.
+
+### CONFIG DRIFT — the script no longer matched the machine
+
+Before re-applying `gw-configure.sh`, a read of it showed the dnsmasq stanza
+still said `domain=lab.local` with reservations named `app`/`db` and **no entry
+for the domain controller**. Those had been changed live with `sed` during the
+rename pass and never written back to the script.
+
+Re-running it would have silently reverted the domain to `lab.local` — the
+exact mDNS collision the rename existed to avoid — and dropped `am-dc01`'s
+reservation.
+
+Caught by reading before running. Fixed by syncing the script to the live
+state, and the interface names were parameterised at the same time
+(`WAN`/`LAN`/`MGMT` now substitute into the ruleset instead of being hardcoded
+in three places — the kind of thing that gets updated in two).
+
+**Lesson:** the moment a live system is changed by hand, the script that built
+it is wrong. Idempotent scripts are only safe if they are also *current*; an
+out-of-date idempotent script is a reliable way to undo yesterday's work.
+
+### Verified after cutover
+
+```
+am-rtr01 interfaces:  enp0s8 10.0.2.1   (private)
+                      enp0s9 192.168.56.10 (management)
+                      enp0s10 10.0.0.10 (uplink -> firewall)
+                      enp0s3: GONE
+default via 10.0.0.1 dev enp0s10
+
+router egress:  http=200
+app egress:     http=200
+app DNS:        resolves via the router
+app -> Windows host:      blocked
+app -> management IP:     blocked
+am-dc01 RDP:              UP
+```
+
+Firewall counters, which are the actual evidence:
+
+```
+15 packets  iifname "enp0s8"  oifname "enp0s10" accept     <- private egress
+ 5 packets  iifname "enp0s10" oifname "enp0s8"  drop       <- inbound refused
+ 8 packets  oifname "enp0s10" masquerade                   <- NAT
+```
+
+The inbound drop counter is non-zero. Something on the edge segment attempted
+to reach the private subnet and was refused — which is precisely why that rule
+was written with an explicit `counter` rather than left to the chain policy.
+A silent policy drop would have shown nothing at all.
