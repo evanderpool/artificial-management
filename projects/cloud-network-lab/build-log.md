@@ -968,3 +968,94 @@ The inbound drop counter is non-zero. Something on the edge segment attempted
 to reach the private subnet and was refused — which is precisely why that rule
 was written with an explicit `counter` rather than left to the chain policy.
 A silent policy drop would have shown nothing at all.
+
+---
+
+## 2026-08-11 — `corp.internal` is live: Active Directory promoted
+
+`am-dc01` is now a domain controller.
+
+```
+domain:      corp.internal
+netbios:     CORP
+dc:          am-dc01.corp.internal
+forest mode: Windows2025Forest
+forwarder:   10.0.2.1
+```
+
+### Two things done BEFORE promotion, both deliberate
+
+**Converted from DHCP reservation to a static address.** The reservation was
+stable, but a domain controller must not depend on a lease for the address the
+entire network uses to locate it. If DHCP is unavailable at the wrong moment,
+the machine that authenticates everything cannot be found. Same address
+(`10.0.2.40`), now fixed. Verified still reachable from the router afterwards.
+
+**Pointed its DNS at itself (`127.0.0.1`).** A DC registers the `_ldap._tcp`
+and `_kerberos._tcp` SRV records that members use to *find* it. If it resolves
+through some other server, it cannot see its own service records. Classic AD
+misconfiguration, avoided by ordering rather than by luck.
+
+### The DNS delegation warnings were expected
+
+`Install-ADDSForest` emitted two warnings about being unable to create a
+delegation in the authoritative parent zone. That is correct behaviour for
+`.internal`: there is no parent zone to delegate from, which is the entire
+reason ICANN reserved the TLD for private use. The warning ends with
+"Otherwise, no action is required."
+
+Worth noting because a warning that is *correct to ignore* still has to be read
+and understood — the alternative is either ignoring warnings by habit or
+chasing a non-problem.
+
+### Verification — service records, not screenshots
+
+Queried from `am-rtr01` rather than read off the console:
+
+```
+corp.internal.                       600  IN A    10.0.2.40      (aa flag set)
+corp.internal.                      3600  IN SOA  am-dc01.corp.internal.
+_ldap._tcp.dc._msdcs.corp.internal.      SRV  0 100 389 am-dc01.corp.internal.
+_kerberos._tcp.corp.internal.            SRV  0 100 88  am-dc01.corp.internal.
+```
+
+All eight AD ports answering from the private subnet: 53, 88, 135, 389, 445,
+464, 636, 3389.
+
+### FALSE ALARM (again) — polling across a reboot
+
+A four-minute poll reported `corp.internal A` and `_ldap SRV` as empty and it
+looked like registration had failed. It had not: the queries were landing while
+the machine was rebooting as part of the promotion. Once up, every record was
+present and authoritative.
+
+**Fourth monitoring false-negative in this build.** All four share one cause:
+*querying a service across a restart and interpreting "no answer" as "wrong
+answer."* A check needs to distinguish **not ready** from **broken**, and none
+of mine did. In cloud terms this is exactly why health checks have a grace
+period and why deployment tooling waits for a readiness signal instead of a
+liveness one.
+
+### The DNS authority split, proved by one flag
+
+The design gave `corp.internal` to the DC and everything else to the router.
+The evidence that it worked is a single bit in the DNS header:
+
+| Query | Flags | Meaning |
+|---|---|---|
+| `am-dc01.corp.internal` | `qr **aa** rd ra` | `aa` = authoritative answer — the DC owns this name |
+| `deb.debian.org` | `qr rd ra` | no `aa` — forwarded to `10.0.2.1`, not owned |
+
+That bit is the difference between one authority per namespace and two servers
+both claiming one — the misconfiguration that produces intermittent, miserable
+resolution failures. Non-domain Linux hosts continue to resolve through the
+router directly and were unaffected.
+
+### Security note for the next audit
+
+The DC now exposes eight ports to the private subnet. That is inherent to
+running Active Directory, not a misconfiguration, but it materially widens the
+blast radius of a compromise on `am-app01`: SMB (445) and LDAP (389) are now
+reachable from the application tier. The re-audit should specifically assess
+whether the app tier needs any of them, and whether host-based filtering on the
+DC should restrict them further than the subnet boundary does.
