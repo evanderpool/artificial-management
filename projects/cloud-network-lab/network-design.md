@@ -8,6 +8,83 @@ rather than asserted.
 
 ---
 
+## Naming convention
+
+Adopted 2026-08-11 at Erick's direction, replacing the shorthand names (`gw`,
+`app`, `dc`) used during the first build. Short names are fast to type and
+useless to read — six months from now, or to anyone else looking at the
+portfolio, `gw` says nothing about what the machine is for.
+
+Two layers, because they serve different readers.
+
+### VirtualBox display name — for a human looking at the GUI
+
+`NN-ZONE-Role (Platform)`
+
+The numeric prefix forces VirtualBox to list the machines in **network order** —
+edge first, then core, then the tiers behind it — so the VM list itself reads
+as a diagram.
+
+| # | VirtualBox display name | Was |
+|---|---|---|
+| 01 | `01-EDGE-Firewall (OPNsense)` | *(new)* |
+| 02 | `02-CORE-Router-Bastion (Debian)` | `gw` |
+| 03 | `03-APP-Server (Debian-Docker)` | `app` |
+| 04 | `04-DATA-Database (Postgres-pgvector)` | *(new)* |
+| 05 | `05-IDENTITY-DomainController (WinServer2025)` | `dc` |
+| 06 | `06-DMZ-ReverseProxy (Alpine-Docker)` | *(new)* |
+| 07 | `07-SEC-Monitoring (Debian)` | *(new)* |
+
+### Guest hostname — for machines and logs
+
+`am-<role><NN>` — lowercase, DNS-safe, and **15 characters or fewer** so that
+Windows NetBIOS never truncates it.
+
+| Hostname | Address | Role |
+|---|---|---|
+| `am-fw01` | 10.0.1.x / 10.0.0.1 | Perimeter firewall |
+| `am-rtr01` | 10.0.2.1 | Router, NAT, DHCP, bastion |
+| `am-app01` | 10.0.2.20 | Application server |
+| `am-db01` | 10.0.2.30 | Database, no egress |
+| `am-dc01` | 10.0.2.40 | Domain controller |
+| `am-dmz01` | 10.0.0.20 | Reverse proxy |
+| `am-sec01` | 10.0.2.50 | Logging and monitoring |
+
+Descriptive label for humans, terse code for machines, is what real
+infrastructure inventories do: the CMDB entry reads
+"Perimeter Firewall — OPNsense", the host answers to `am-fw01`.
+
+### DNS domain: `corp.internal`, not `lab.local`
+
+The first build used `lab.local`. That is a long-standing mistake worth
+correcting rather than inheriting.
+
+`.local` is reserved for **mDNS** (Bonjour/Avahi). Using it as an Active
+Directory domain causes intermittent, hard-to-diagnose resolution failures on
+any host running an mDNS responder — which is most modern machines. Microsoft
+has advised against it for years.
+
+**ICANN reserved `.internal` for private use in 2024**, explicitly as the
+replacement for improvised choices like `.local`, `.corp`, and `.lan`. It can
+never be delegated as a public TLD, so it cannot collide with a real domain the
+way `.corp` could.
+
+AD domain: **`corp.internal`**. dnsmasq's `domain=` moves to match, so one
+namespace covers the network.
+
+### Sequencing note
+
+`am-dc01` must be renamed **before** it is promoted to a domain controller.
+Renaming a DC after promotion means touching the AD database, SPNs, and DNS
+records — doable, but a genuinely bad afternoon. Renaming a plain member server
+is a reboot. The rename therefore happens as soon as the install finishes and
+before `Install-ADDSForest` is ever run.
+
+Renaming a VirtualBox VM also requires it to be **powered off**, so the whole
+rename lands as one coordinated pass rather than piecemeal.
+
+---
+
 ## Design principle: zones, not machines
 
 A business network is not a list of servers. It is a set of **trust zones**
@@ -62,7 +139,70 @@ occupy a zone, and the interesting engineering is in what may cross a boundary
 | `app` | **Debian 13** + Docker | 2 Server | Business application containers | Matches what runs on a cloud instance. Docker here demonstrates containers as a *deployment* boundary, not a security one. |
 | `db` | **Debian 13** | 3 Data | PostgreSQL + pgvector. **No egress whatsoever.** | The crown jewels. Bare-metal Postgres rather than a container, on its own VM, to make the isolation argument concrete. |
 | `sec` | **Debian 13** + Docker | 5 Mgmt | Log collection, IDS event console, metrics | The audit plane must not live on what it audits. |
-| `ws` | **Windows 11** or **Xubuntu** | 4 User | Employee workstation | The realistic entry point for a real attack. Also the machine that legitimately has a desktop. |
+| `dc` | **Windows Server 2025** (Desktop Experience) | 6 Identity | Active Directory, AD-integrated DNS, Group Policy, file services, CA | Identity is the centre of enterprise security and the direct conceptual ancestor of cloud IAM. Full GUI. 180-day evaluation. |
+| `ws` | **Xubuntu** *(optional, later)* | 4 User | Employee workstation, domain-joined | The realistic entry point for a real attack. Deferred — see note below. |
+
+### Why the Windows box is a domain controller, not a desktop
+
+Erick supplied `26100.32230...SERVER_EVAL_x64FRE_en-us.iso` describing it as
+"Windows 11 eval". Build 26100 is the kernel shared by Windows 11 24H2 and
+Windows Server 2025, which is why the naming reads client-ish — but the SKU is
+`ServerStandardEval`. It is a **server**, not a client OS.
+
+That is a better outcome than what was planned, and the role changed to match:
+
+- A server OS makes a poor "employee workstation" — the pretence would teach
+  nothing and look wrong to anyone who knows the difference.
+- What it *does* provide is the thing the lab was missing entirely: **identity**.
+  Active Directory, Kerberos, LDAP, Group Policy, and an internal CA are the
+  direct conceptual ancestors of cloud IAM, and "I built and secured a domain"
+  is a stronger line for both target roles than "I ran a desktop VM".
+- Practical bonus: Windows **Server** has no TPM 2.0 / Secure Boot requirement,
+  unlike the Windows 11 client, so it installs in VirtualBox without the
+  workarounds a client image would have needed. The evaluation window is also
+  180 days rather than 90.
+
+A separate lightweight Linux desktop can still be added later for the user zone
+if the case study wants a compromise-path demonstration. It is no longer on the
+critical path.
+
+### The DNS authority problem this creates
+
+`gw` currently runs dnsmasq as DHCP **and** DNS for `am-private`. A Windows
+domain wants AD-integrated DNS, because domain members locate domain
+controllers through `_ldap._tcp` and `_kerberos._tcp` SRV records that live in
+the DNS zone. Two authorities for one namespace is a classic real-world
+misconfiguration and produces intermittent, miserable failures.
+
+Boundary drawn deliberately:
+
+| Function | Owner | Reason |
+|---|---|---|
+| DHCP for `am-private` | `gw` (dnsmasq) | Already working, reserved leases by MAC, one less service on the DC |
+| DNS for `lab.local` (the AD zone) | `dc` | SRV records must be authoritative on the DC or domain join fails |
+| DNS for everything else | `dc` forwards to `gw`, which forwards upstream | Single recursive path, still logged in one place |
+
+Domain members are handed `dc` as their resolver via a DHCP option change on
+`gw`; non-domain Linux hosts keep using `gw` directly. Recording the split here
+because the failure mode it prevents is invisible until something breaks.
+
+### Access path — no management NIC on `dc`
+
+`dc` gets exactly one NIC, on `am-private`. It deliberately does **not** get a
+host-only adapter, because that is precisely the private-to-management leak the
+security review flagged as F-02.
+
+RDP is reached by tunnelling through the bastion instead:
+
+```
+ssh -F scripts/ssh_config -L 13389:10.0.2.40:3389 lab-gw
+# then RDP to localhost:13389
+```
+
+Same pattern used to reach a private-subnet Windows instance in a real VPC,
+where the equivalents are SSM port forwarding or Azure Bastion. The convenient
+option — a second NIC straight to the host — is the one that quietly destroys
+the segmentation the whole lab exists to demonstrate.
 
 ---
 

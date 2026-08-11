@@ -1,6 +1,11 @@
 # Cloud Network Lab — SSH client config
 #
-# Usage:  ssh -F <path-to-this-file> lab-app
+# Usage:  ssh -F <path-to-this-file> am-rtr01
+#         ssh -F <path-to-this-file> rtr          (short alias)
+#
+# Names follow the convention in network-design.md: descriptive labels live on
+# the VirtualBox VMs for humans, terse `am-<role><NN>` hostnames live on the
+# machines for logs and DNS.
 #
 # Why this file exists: `ssh -o ProxyJump=host` does NOT reliably pass -i to
 # the inner (jump) connection on Windows OpenSSH, so a one-liner ProxyJump
@@ -16,7 +21,8 @@
 # entirely by AWS SSM Session Manager / Azure Bastion, which remove the need to
 # expose port 22 at all. Phase 2 should compare the two.
 
-Host lab-gw
+# --- Router / NAT / DHCP / bastion — the only host reachable directly --------
+Host am-rtr01 rtr lab-gw
     HostName            192.168.56.10
     User                erick
     IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
@@ -24,23 +30,36 @@ Host lab-gw
     StrictHostKeyChecking accept-new
     IdentitiesOnly      yes
 
-# Private-subnet hosts. Unreachable from the workstation except through lab-gw
-# — that is the design, not an inconvenience.
+# --- Private-subnet hosts ----------------------------------------------------
+# Unreachable from the workstation except through the bastion. That is the
+# design, not an inconvenience.
 
-Host lab-app
+Host am-app01 app lab-app
     HostName            10.0.2.20
     User                erick
     IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
     UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
     StrictHostKeyChecking accept-new
     IdentitiesOnly      yes
-    ProxyJump           lab-gw
+    ProxyJump           am-rtr01
 
-Host lab-db
+Host am-db01 db lab-db
     HostName            10.0.2.30
     User                erick
     IdentityFile        C:/Users/Erick/CloudLab/build/lab_key
     UserKnownHostsFile  C:/Users/Erick/CloudLab/build/known_hosts
     StrictHostKeyChecking accept-new
     IdentitiesOnly      yes
-    ProxyJump           lab-gw
+    ProxyJump           am-rtr01
+
+# --- Domain controller — RDP, not SSH ---------------------------------------
+# am-dc01 (10.0.2.40) has NO management NIC on purpose: a second adapter to the
+# Windows host is exactly the private-to-management leak the security review
+# flagged as F-02. Reach its desktop by tunnelling RDP through the bastion:
+#
+#   ssh -F scripts/ssh_config -L 13389:10.0.2.40:3389 am-rtr01
+#   ...then point Remote Desktop at localhost:13389
+#
+# Cloud equivalent: SSM port forwarding or Azure Bastion. The convenient
+# alternative -- a second NIC straight to the host -- quietly destroys the
+# segmentation the whole lab exists to demonstrate.

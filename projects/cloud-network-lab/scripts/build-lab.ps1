@@ -28,16 +28,26 @@ $VBM = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
 # InstallMem is deliberately higher than RunMem: Debian's installer enters an
 # interactive low-memory mode below ~1GB, which stalls an unattended build.
 # Size for the peak of the lifecycle, not the average of the workload.
+# Name     = VirtualBox display name. Numeric prefix forces the GUI to list the
+#            machines in network order, so the VM list reads as a diagram.
+# Hostname = what the guest calls itself. Lowercase, DNS-safe, <=15 chars so
+#            Windows NetBIOS never truncates it.
 $VMs = @(
-    @{ Name='gw';  RunMem=768;  InstallMem=2048; Disk=8192;  Mac=$null;
+    @{ Name='02-CORE-Router-Bastion (Debian)'; Hostname='am-rtr01';
+       RunMem=768;  InstallMem=2048; Disk=8192;  Mac=$null;
        Nics=@(
          @{ Slot=1; Type='natnetwork'; Net='am-public'  }
          @{ Slot=2; Type='intnet';     Net='am-private' }
          @{ Slot=3; Type='hostonly';   Net='VirtualBox Host-Only Ethernet Adapter' }
        ) }
-    @{ Name='app'; RunMem=1024; InstallMem=2048; Disk=8192;  Mac='080027AA0020';
+    @{ Name='03-APP-Server (Debian-Docker)'; Hostname='am-app01';
+       RunMem=2048; InstallMem=2048; Disk=8192;  Mac='080027AA0020';
        Nics=@( @{ Slot=1; Type='intnet'; Net='am-private' } ) }
-    @{ Name='db';  RunMem=1536; InstallMem=2048; Disk=12288; Mac='080027AA0030';
+    @{ Name='04-DATA-Database (Postgres-pgvector)'; Hostname='am-db01';
+       RunMem=1536; InstallMem=2048; Disk=12288; Mac='080027AA0030';
+       Nics=@( @{ Slot=1; Type='intnet'; Net='am-private' } ) }
+    @{ Name='05-IDENTITY-DomainController (WinServer2025)'; Hostname='am-dc01';
+       RunMem=4096; InstallMem=4096; Disk=61440; Mac='080027AA0040';
        Nics=@( @{ Slot=1; Type='intnet'; Net='am-private' } ) }
 )
 
@@ -130,6 +140,18 @@ foreach ($vm in $VMs) {
 
         VBoxManage controlvm <n> acpipowerbutton
         VBoxManage modifyvm  <n> --memory <RunMem>        # drop install-time RAM
+        VBoxManage modifyvm  <n> --boot1 disk --boot2 dvd
+
+        # DETACH INSTALL MEDIA -- not optional. `unattended install` leaves a
+        # .viso attached whose contents reference files by ABSOLUTE path. It is
+        # harmless until the VM folder moves (e.g. a rename), at which point the
+        # VM will not boot at all: VERR_PATH_NOT_FOUND on the optical drive.
+        # Cost us a dead DC after the rename pass -- see the build log.
+        VBoxManage storageattach <n> --storagectl SATA --port 1 --device 0 `
+            --type dvddrive --medium none
+        VBoxManage storageattach <n> --storagectl SATA --port 2 --device 0 `
+            --type dvddrive --medium none
+
         VBoxManage modifyvm  <n> --nic2 intnet   --intnet2 am-private
         VBoxManage modifyvm  <n> --nic3 hostonly --host-only-adapter3 "<adapter>"
         VBoxManage startvm   <n> --type headless
@@ -138,3 +160,33 @@ foreach ($vm in $VMs) {
     to be powered off, and detecting "install finished" reliably on a headless
     guest with no guest additions is its own problem — see the build log.
 #>
+
+function Complete-VM {
+    <#  Finish a VM after its unattended install: drop to runtime RAM, detach
+        install media, attach the remaining NICs, boot. Run with the VM off. #>
+    param([Parameter(Mandatory)][string]$Name)
+
+    $vm = $VMs | Where-Object { $_.Name -eq $Name }
+    if (-not $vm) { throw "Unknown VM '$Name'" }
+
+    Invoke-VBox modifyvm $Name --memory $vm.RunMem --boot1 disk --boot2 dvd | Out-Null
+
+    # Install media MUST go. See the comment block above.
+    foreach ($port in 1,2) {
+        Invoke-VBox storageattach $Name --storagectl SATA --port $port --device 0 `
+                    --type dvddrive --medium none | Out-Null
+    }
+
+    foreach ($nic in ($vm.Nics | Select-Object -Skip 1)) {
+        $a = @('modifyvm', $Name, "--nic$($nic.Slot)", $nic.Type)
+        switch ($nic.Type) {
+            'natnetwork' { $a += @("--nat-network$($nic.Slot)", $nic.Net) }
+            'intnet'     { $a += @("--intnet$($nic.Slot)",      $nic.Net) }
+            'hostonly'   { $a += @("--host-only-adapter$($nic.Slot)", $nic.Net) }
+        }
+        Invoke-VBox @a | Out-Null
+    }
+
+    Invoke-VBox startvm $Name --type headless | Out-Null
+    Write-Host "$Name completed and started (RAM $($vm.RunMem)MB, install media detached)"
+}

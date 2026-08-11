@@ -501,3 +501,367 @@ Worth recording, because an audit that only lists problems is not an audit:
   all filtered.
 - Repo hygiene clean: `credentials.txt` outside the repo and untracked, no
   private key material anywhere in the tree, only the public key committed.
+
+---
+
+## 2026-08-11 — Windows Server 2025, and four self-inflicted diagnostic errors
+
+Erick supplied `...SERVER_EVAL_x64FRE_en-us.iso` as "Windows 11 eval".
+`VBoxManage unattended detect` read it as `ServerStandardEval`, build
+10.0.26100.32230 — **Windows Server 2025**, not a client OS. Build 26100 is the
+kernel shared with Windows 11 24H2, which is why the filename reads client-ish.
+
+Role changed to match: the box became a **domain controller** rather than an
+employee desktop. Reasoning in `network-design.md` — a server OS makes a poor
+pretend workstation, and identity (AD, Kerberos, LDAP, GPO, internal CA) is the
+direct ancestor of cloud IAM and worth far more to both target roles. Bonus:
+Server has no TPM 2.0 / Secure Boot requirement, so it installed in VirtualBox
+without the workarounds a Windows 11 client would have needed, and the eval is
+180 days rather than 90.
+
+Installed unattended: image #2 (Standard, Desktop Experience), 4 GB, 2 vCPU,
+60 GB, EFI, one NIC on `am-private` with MAC `08:00:27:AA:00:40`.
+
+### ERROR 1 — a monitor that could never have succeeded
+
+The install watcher reported `dc_dhcp_lease=0` for thirty straight minutes. It
+was checked with:
+
+```
+grep -c ',dc,' /var/lib/misc/dnsmasq.leases
+```
+
+`dnsmasq.leases` is **space-delimited**. The commas in that pattern meant it
+could not match regardless of what the network did. The lease had been issued
+correctly the whole time — `ipconfig` inside the guest showed `10.0.2.40`,
+gateway `10.0.2.1`, DNS `10.0.2.1`: exactly the reservation.
+
+This produced a **false negative**, which is the more dangerous direction. A
+false positive gets investigated and dismissed; a false negative sends you
+hunting a fault that does not exist. Time was nearly spent chasing a missing
+Intel NIC driver on a NIC that was working perfectly.
+
+**Rule taken from it:** when a monitor fires, the first question is *"is the
+monitor right?"* — validate the check against a known-good case before trusting
+it to describe a bad one.
+
+### ERROR 2 — Windows Run dialog silently truncates at ~260 characters
+
+A ~380-character PowerShell command typed into Win+R stopped mid-word at
+`New-NetFirewall`. No error, no warning, no ellipsis — just a command that
+ended early and would have failed with a confusing syntax error had it run.
+
+Fix: type into a real PowerShell console, which has no such limit. Worth
+knowing because the failure is silent and looks like a typing fault.
+
+### ERROR 3 — Guest Additions never installed
+
+`--install-additions` was passed, but only
+`/VirtualBox/GuestAdd/HostVerLastChecked` exists as a guest property — no
+version, and `guestcontrol` fails with *"The guest execution service is not
+ready"*. So the entire scripted-control channel into the Windows guest was
+unavailable, and configuration had to be driven with synthetic keystrokes
+(`VBoxManage controlvm ... keyboardputscancode/keyboardputstring`) plus
+screenshots to verify each step.
+
+Slow, but it worked, and it is worth recording that a headless guest with no
+agent is still drivable — the console is an API of last resort.
+
+### ERROR 4 — UAC defaults to "No"
+
+`Start-Process powershell -Verb RunAs` raised a UAC consent dialog with focus
+on **No**. Blindly sending Enter would have declined elevation and silently
+done nothing. Required Left-arrow then Enter, verified by screenshot.
+
+A reminder that "automate the GUI" means reading the screen, not assuming it.
+
+### Configuration applied
+
+RDP enabled and — importantly — **scoped**:
+
+```
+Set-NetFirewallRule -DisplayGroup 'Remote Desktop' -RemoteAddress 10.0.2.0/24
+New-NetFirewallRule -DisplayName 'Lab ICMP' -Protocol ICMPv4 -IcmpType 8 `
+    -RemoteAddress 10.0.2.0/24 -Action Allow -Direction Inbound
+```
+
+Not `-RemoteAddress Any`. A domain controller reachable from anywhere is how
+labs quietly teach bad habits. Verified from the router, not from the screen:
+`PING_OK`, `RDP_OPEN`.
+
+### Rename pass
+
+Erick asked for names that say what each machine is. Convention adopted in
+`network-design.md`: descriptive VirtualBox display names for humans, terse
+`am-<role><NN>` hostnames for machines and logs.
+
+| Was | VirtualBox name | Hostname |
+|---|---|---|
+| `gw` | `02-CORE-Router-Bastion (Debian)` | `am-rtr01` |
+| `app` | `03-APP-Server (Debian-Docker)` | `am-app01` |
+| `dc` | `05-IDENTITY-DomainController (WinServer2025)` | `am-dc01` |
+
+Sequencing mattered in two places:
+
+- **`am-dc01` was renamed BEFORE promotion.** Renaming a live domain controller
+  means touching the AD database, service principal names, and DNS records.
+  Renaming a plain member server is a reboot. Ordering turned a bad afternoon
+  into a five-minute step.
+- **VirtualBox will not rename a running VM**, so all display-name changes
+  landed in one coordinated powered-off pass rather than piecemeal.
+
+Confirmed afterwards from the router's lease table — the guests re-registered
+under their new names on their reserved addresses:
+
+```
+10.0.2.20 am-app01
+10.0.2.40 am-dc01
+```
+
+### DNS domain moved: `lab.local` -> `corp.internal`
+
+`.local` is reserved for **mDNS** (Bonjour/Avahi). Using it as an Active
+Directory domain causes intermittent resolution failures on any host running an
+mDNS responder, which is most modern machines.
+
+**ICANN reserved `.internal` in 2024** explicitly as the private-use
+replacement for improvised choices like `.local`, `.corp`, and `.lan`. It can
+never be delegated publicly, so it cannot collide with a real domain.
+
+Changed in dnsmasq (`domain=`, `local=/corp.internal/`), in `/etc/hosts`, and in
+the reservation names — before AD promotion, because the domain name is baked
+into the forest at creation and changing it afterwards is a migration.
+
+### FAILURE — renaming a VM broke it, via a stale absolute path
+
+The Linux hosts restarted fine after the VirtualBox rename. `am-dc01` refused
+to boot at all:
+
+```
+VD: Backend 'VBoxIsoMaker' does not support async I/O (VERR_NOT_SUPPORTED).
+VISO: RTVfsChainQueryInfo failed to open
+  'C:\Users\Erick\CloudLab\vms\dc\Unattended-...-autounattend.xml': VERR_PATH_NOT_FOUND
+AHCI: Failed to attach drive to Port1 (VERR_PATH_NOT_FOUND)
+```
+
+**Cause:** `VBoxManage unattended install` builds a *virtual* ISO — a `.viso`
+descriptor listing real files by **absolute path** — and leaves it attached to
+SATA port 1 after the installation finishes. Renaming the VM moved its folder
+from `vms\dc\` to `vms\05-IDENTITY-DomainController (WinServer2025)\`. The
+`.viso` file moved with it; the paths *inside* it did not. It still pointed at
+`vms\dc\`, which no longer existed, so the VM could not attach its optical
+drive and refused to start.
+
+**Fix:** detach the leftover install media, which should have been removed the
+moment the installation completed:
+
+```
+VBoxManage storageattach '<vm>' --storagectl SATA --port 1 --device 0 \
+    --type dvddrive --medium none
+```
+
+Both Debian guests had already ejected theirs, which is why only the Windows
+guest broke — a difference in install-media handling between the two paths that
+was invisible until something moved.
+
+**Lesson, and it is not really about VirtualBox:** installation artifacts that
+outlive the installation become latent failures. The `.viso` did no harm for
+hours; it broke on the first unrelated change. This is the same class of
+problem as a cloud instance that boots fine until it is moved to another AZ and
+something references an AZ-scoped resource by hardcoded ID, or a container
+image that works until its build-time bind mount disappears.
+
+**Rule taken from it:** teardown of install media belongs in the build script,
+not in memory. `build-lab.ps1` should detach install media as the final step of
+provisioning rather than leaving it attached "in case."
+
+---
+
+## 2026-08-11 — OPNsense perimeter: a wrong assumption, caught by reading the screen
+
+### WRONG ASSUMPTION — the `vga` image is an installer, not a pre-installed disk
+
+The plan was to skip the installer entirely by converting OPNsense's `vga`
+image straight to a VDI and booting it:
+
+```
+bzip2 -dk OPNsense-26.7-vga-amd64.img.bz2
+VBoxManage convertfromraw OPNsense-26.7-vga-amd64.img opnsense.vdi --format VDI
+```
+
+That worked, and the machine booted — to this:
+
+```
+Welcome!  OPNsense is running in live mode from install media.  Please
+login as 'root' to continue in live mode, or as 'installer' to start the
+installation.
+```
+
+**Live mode.** The `vga` and `serial` images are *installers* differentiated by
+console type, not pre-installed systems. Nothing would have survived a reboot.
+Every rule, certificate, and interface assignment would have evaporated, and
+the failure would have surfaced days later as "the firewall forgot everything"
+— the kind of bug that is miserable to diagnose precisely because the system
+appears to work perfectly right up until it restarts.
+
+Caught only because the boot console was actually read rather than skimmed for
+absence-of-errors. A screenshot is a cheap habit that keeps paying.
+
+Corrected: fresh 20 GB target disk, the DVD ISO attached as the installer,
+boot order set to DVD first — the ordinary install path.
+
+### Interfaces auto-assigned backwards
+
+The live boot also revealed:
+
+```
+LAN (em0) -> v4: 192.168.1.1/24
+WAN (em1) -> v4/DHCP4: 192.168.56.101/24
+```
+
+`em0` is NIC1 (`am-public`, intended WAN); `em1` is NIC2 (host-only, intended
+management). OPNsense's first-boot autodetection picks WAN by **which interface
+obtains a DHCP lease first**, and the host-only network answered sooner than
+the NAT network did.
+
+Worth knowing generally: interface *order* in the hypervisor does not determine
+interface *role* in the guest. Anything that auto-assigns roles by observed
+behaviour will occasionally observe something different from what was intended.
+Roles get pinned explicitly after installation rather than trusted from
+autodetection.
+
+### The RAM lesson, a second time — on a different OS
+
+The OPNsense installer refused to proceed:
+
+```
+The installer detected only 1023MB of RAM. Since this is a live image,
+copying the full file system to another disk requires at least 3000MB
+of RAM and is generally advised for good operation.
+              [Proceed anyway]    [Cancel]
+```
+
+1 GB is the firewall's *runtime* budget and is entirely adequate for it. The
+*install* wanted three times that. Raised to 4096 MB for the install, dropped
+back to 1024 MB immediately after — exactly the treatment Debian needed.
+
+Twice on unrelated operating systems makes it a pattern rather than an
+anecdote:
+
+> **Provisioning is a workload.** It is usually the heaviest one a machine ever
+> runs, and it happens exactly once — so it never shows up in capacity planning
+> derived from steady-state observation.
+
+This transfers directly to Phase 2/3. An instance type sized from CloudWatch
+averages will fail during image builds, migrations, and major-version upgrades
+— the moments when a surprise is least welcome. The fix is not a permanently
+larger instance; it is recognising that install-time and run-time are separate
+sizing problems.
+
+`Proceed anyway` was available and was declined. "It warned me and I ignored
+it" is a bad line in a build log.
+
+### PROCESS FAILURE — blind keystroke batching
+
+The second installer boot was driven with a batch of timed keystrokes and no
+verification between them. It did not land on the installer: the boot had gone
+to *manual interface assignment* instead, so the keystrokes were consumed by a
+different wizard, and the down-arrow was read as an interface name:
+
+```
+Enter the WAN interface name or 'a' for auto-detection: ^[[B
+Invalid interface name ''
+```
+
+Harmless by luck. The earlier steps had worked precisely because each screen
+was screenshotted and verified before acting, and this one broke the moment
+that stopped.
+
+Verification was reinstated, and it earned its keep twice within the next two
+minutes:
+
+- The disk selector defaulted to **`cd0` — the DVD**, not the target disk.
+  A blind Enter would have aimed the installer at its own installation media.
+- Immediately after: `Last Chance! Are you sure you want to destroy the current
+  contents of the following disks: ada0`, with **YES** pre-selected.
+
+Two consecutive destructive prompts where the default was either wrong or
+irreversible. The argument for verifying is not that a blind script *might*
+fail — it is that the failure is unrecoverable when it does.
+
+### Interface roles pinned by MAC, not by autodetection
+
+Autodetection had assigned WAN and LAN backwards, choosing WAN by whichever
+interface obtained a DHCP lease first. Roles were pinned explicitly instead,
+mapped by hardware address rather than by trust:
+
+| VirtualBox | MAC | OPNsense | Role |
+|---|---|---|---|
+| NIC1 -> `am-public` | `08:00:27:5c:62:b7` | `em0` | **WAN** |
+| NIC2 -> host-only | `08:00:27:cb:9e:70` | `em1` | **LAN / management** |
+
+Confirmed after reassignment: `WAN (em0) -> DHCP 10.0.1.5/24` — the NAT
+network, as designed.
+
+### Install media ejected BEFORE first boot
+
+The installer's own closing screen says it plainly:
+
+```
+Installation Complete
+The system may boot back into the installation media when not ejected properly.
+```
+
+**Halt** was chosen over **Reboot** specifically so the DVD could be detached
+while powered off, boot order set to disk-only, and RAM returned to 1024 MB —
+before the installed system ever started.
+
+This is the same class of problem that killed `am-dc01` earlier in the day,
+where leftover unattended-install media held absolute paths and broke the VM
+the moment its folder was renamed. Second occurrence, so it is now a rule
+rather than an observation: **install media is detached as the final step of
+provisioning, always.** Encoded in `build-lab.ps1` as `Complete-VM`.
+
+### `am-fw01` live — web console reachable
+
+Console after applying:
+
+```
+You can now access the web GUI by opening the following URL in your web browser:
+    https://192.168.56.20
+
+LAN (em1) -> v4: 192.168.56.20/24
+WAN (em0) -> v4/DHCP4: 10.0.1.5/24
+```
+
+Verified from Windows, not from the console: `ping` OK and TCP/443 open.
+Reading "you can now access" on a screen is not evidence that anything can.
+
+Choices made during the interface wizard, each for a reason:
+
+| Prompt | Answer | Why |
+|---|---|---|
+| Configure LAN via DHCP | **No** | A firewall's management address must not depend on a lease |
+| LAN IPv4 | `192.168.56.20/24` | Joins the existing host-only management segment; default was `192.168.1.1`, unreachable from this host |
+| LAN upstream gateway | **none** | A LAN interface with a gateway creates a second default route and asymmetric routing |
+| IPv6 via WAN tracking / DHCP6 | **No** | The audit already flagged that the `inet` ruleset's IPv6 handling is untested. Enabling an address family nothing is filtering yet would open a path around every rule written so far |
+| Enable DHCP server on LAN | **No** | VirtualBox's host-only network already serves DHCP here — it handed this box `192.168.56.101` earlier. Two DHCP servers on one segment is a classic cause of intermittent, hard-to-diagnose address conflicts |
+| Web GUI protocol HTTPS -> HTTP | **No** | Management plane stays encrypted even on a lab segment |
+| Restore web GUI access defaults | **Yes** | Restores the anti-lockout rule after the address change. Locking yourself out of a firewall's own management interface is the classic own-goal, and the recovery is console-only |
+
+Root password generated (20 chars) and stored in
+`C:\Users\Erick\CloudLab\build\credentials.txt` — outside the repo, untracked.
+
+**Current state of the lab:**
+
+| VirtualBox | Hostname | Role | Status |
+|---|---|---|---|
+| `01-EDGE-Firewall (OPNsense)` | `OPNsense.internal` | Perimeter firewall, IDS-capable, web console | **Live, GUI reachable** |
+| `02-CORE-Router-Bastion (Debian)` | `am-rtr01` | Router, NAT, DHCP/DNS, bastion | Live, hardened, audited |
+| `03-APP-Server (Debian-Docker)` | `am-app01` | Application tier | Live, isolated |
+| `05-IDENTITY-DomainController (WinServer2025)` | `am-dc01` | Windows Server 2025, future AD | Live, RDP scoped |
+
+`am-fw01` is not yet in the traffic path — it sits alongside the lab with a WAN
+on `am-public` and management on host-only. Moving `am-rtr01` behind it is the
+next step and follows `scripts/replumb-behind-firewall.md`: add the new uplink
+first, verify, then remove the old one.
