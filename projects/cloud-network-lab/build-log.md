@@ -1059,3 +1059,91 @@ blast radius of a compromise on `am-app01`: SMB (445) and LDAP (389) are now
 reachable from the application tier. The re-audit should specifically assess
 whether the app tier needs any of them, and whether host-based filtering on the
 DC should restrict them further than the subnet boundary does.
+
+---
+
+## 2026-08-11 — `am-db01`: the data tier, and proving isolation properly
+
+Debian 13, PostgreSQL **17**, **pgvector 0.8.0**, at `10.0.2.30` on the private
+subnet. Bound to its private address only, `pg_hba.conf` restricted to
+`10.0.2.20/32` (the app server, and nothing else) with `scram-sha-256`.
+
+```
+listen_addresses = '10.0.2.30'
+host  all  app  10.0.2.20/32  scram-sha-256
+LISTEN 0  200  10.0.2.30:5432
+vector 0.8.0
+```
+
+### Provisioning order was the design
+
+Everything the database will ever need was installed **while it still had
+internet**. Then the door closed permanently. The reverse order produces a
+database you cannot install anything on — the third appearance this session of
+*provisioning is a workload, and it is not the workload you size for*.
+
+### Two independent controls, not one
+
+**On the host:** `/etc/network/interfaces` has a static address and
+deliberately **no `gateway` line**. No default route means no path off the
+subnet.
+
+**On the router:** a rule placed *first* in the forward chain, ahead of the
+established/related accept so that even an open flow is cut rather than
+grandfathered:
+
+```
+counter ip saddr 10.0.2.30 oifname != "enp0s8" drop
+```
+
+The second one exists because the first is not a security control. A missing
+route is a *configuration*, and the database's own root account can restore it
+in a single command. The router's rule sits outside that machine's reach
+entirely.
+
+**The control belongs outside the thing being controlled.** This is the whole
+argument for network-level egress policy over host-level, and the same reason a
+cloud NACL is worth having even when every instance already runs a local
+firewall.
+
+### Verification — including the test that actually matters
+
+| # | Test | Result |
+|---|---|---|
+| 1 | Internet from the database | **blocked** |
+| 2 | Reach router `10.0.2.1` | reachable (expected) |
+| 2 | Reach app `10.0.2.20` | reachable (expected) |
+| 3 | **Restore its own default route, then retry** | **STILL BLOCKED** |
+| 4 | App server -> `db:5432` | open (expected) |
+
+Test 3 is the one worth keeping. It simulates exactly what a compromised root
+account would do — put the route back — and the machine still could not reach
+the internet, because the decision was never its to make.
+
+The router's counter is the evidence:
+
+```
+counter packets 41 bytes 11993  ip saddr 10.0.2.30 oifname != "enp0s8" drop
+```
+
+**41 packets, 11,993 bytes refused.** Not "configured correctly" — *observed
+being stopped*.
+
+### Residual channel, stated rather than hidden
+
+DNS to the router is still permitted, because the database must resolve its
+neighbours. A determined attacker can tunnel data out through DNS queries.
+Closing that properly means an internal-only resolver that never forwards, or a
+static hosts file with no resolver at all.
+
+It is written into the ruleset as a comment and recorded here as future work.
+A security claim with an unstated exception is worse than an honest gap,
+because the gap gets defended around and the unstated exception does not.
+
+### Cloud equivalent
+
+This is an isolated subnet with no NAT Gateway route and an RDS instance whose
+security group permits only the application tier. The lab version is the same
+architecture with the mechanism visible instead of abstracted — and the
+"restore the route and watch it still fail" test is precisely what a NACL buys
+that a security group alone does not.

@@ -130,6 +130,29 @@ table inet filter {
     chain forward {
         type filter hook forward priority filter; policy drop;
 
+        # --- DATA TIER: NO EGRESS ---------------------------------------
+        # am-db01 (10.0.2.30) may speak to the private subnet and nothing
+        # else. Placed FIRST, ahead of the established/related accept, so
+        # that even an already-open flow is cut rather than grandfathered.
+        #
+        # Enforced HERE, on the router, rather than only by omitting a
+        # default route on the database itself. A missing route is a
+        # configuration that the database's own root account can restore in
+        # one command; this rule sits outside its reach entirely.
+        #
+        # The control belongs OUTSIDE the thing being controlled. That is
+        # the whole argument for network-level egress policy over
+        # host-level, and it is the same reason a cloud NACL is worth having
+        # even when every instance already runs a local firewall.
+        #
+        # RESIDUAL CHANNEL, stated honestly: DNS to the router is still
+        # permitted (the input chain allows it) because the database must
+        # resolve its neighbours. A determined attacker can tunnel data out
+        # through DNS queries. Closing that properly means an internal-only
+        # resolver that never forwards, or a static hosts file -- noted as
+        # future work rather than pretended away.
+        counter ip saddr 10.0.2.30 oifname != "${LAN}" drop
+
         counter ct state established,related accept
         counter ct state invalid drop
 
