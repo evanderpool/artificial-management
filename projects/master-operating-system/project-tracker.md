@@ -1,6 +1,6 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-08-11 (cloud-network-lab registered — first infrastructure project; fills one of the open new-slate slots)
+**Last Updated:** 2026-08-11 (cloud-network-lab scrapped at Erick's direction — VMs, networks, files, and docs all removed; slate slot reopened)
 **Owner:** Erick Vanderpool
 **Source of truth for:** the portfolio of real project work.
 
@@ -50,7 +50,6 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
 | Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-08 | Phase-2 hybrid retrieval built + measured (BM25 53%→hybrid 93% on 10-K set, gated behind a flag, reviewed); legacy .xls, source filtering, dictation shipped; next: integration + /api/file security reviews 2026-08-13, decide public hybrid activation |
 | Uplink Public Demo | uplink-demo | Portfolio build | Public | Deployed — unshared | 2026-08-20 | 2026-08-07 | LIVE at uplink-demo.onrender.com — corpus reshaped per Erick: ten Apple 10-K .xls filings only, shipped in-repo; Haiku brain verified on the new corpus; address stays unshared until the 2026-08-13 security reviews pass, then link from portfolio |
-| Cloud Network Lab | cloud-network-lab | Portfolio build | Public | In Progress | 2026-09-30 | 2026-08-11 | FOUR machines live: OPNsense perimeter firewall (web console at https://192.168.56.20), Debian router/bastion, Debian app server, Windows Server 2025 domain controller. Independent security agent audited the lab (1 High/5 Med/6 Low); all three top findings FIXED and re-verified with packet counters. All VMs renamed to descriptive names; domain moved lab.local -> corp.internal (.local breaks AD via mDNS). Next: replumb router behind the firewall per scripts/replumb-behind-firewall.md, promote am-dc01, then am-db01 with ZERO egress |
 
 ---
 
@@ -159,63 +158,11 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Eval review of phase 2 numbers | Data Integrity Agent | Planning | 2026-09-12 |
 | Case study, README polish, demo recording | Portfolio Agent | Planning | 2026-09-20 |
 
-### Cloud Network Lab — Detail
-
-**Description:** One network architecture built three times — local VirtualBox VMs, then the identical topology by hand in the AWS console, then the same thing again in Terraform. Segmented public/private subnets, a NAT gateway, bastion-only SSH access, and a default-deny nftables firewall, each with its named cloud equivalent documented in a lab→cloud mapping table. The `db` tier runs Postgres + pgvector, making the lab the rehearsal environment for the canonical-store migration. The progression is the deliverable: the same diagram rendered three ways with the reasoning that moved between them.
-**Priority:** Medium-High
-**Start:** 2026-08-11
-**Client:** Internal (Artificial Management)
-**Links:** [Project README](../cloud-network-lab/README.md) · [Build log](../cloud-network-lab/build-log.md) · lab files: `C:\Users\Erick\CloudLab` (never committed)
-**Risks/Blockers:**
-- VirtualBox install and host-only adapter creation need administrator elevation — a human at the keyboard must approve; the agent cannot complete these unattended
-- Windows 11 Home already runs the Virtual Machine Platform hypervisor, so VirtualBox executes via the Windows Hypervisor Platform API rather than native VT-x — accepted (headless servers), VMware Workstation Pro held in reserve
-- **AWS managed NAT Gateway is NOT free tier (~$32/month, billed idle)** — Phases 2–3 must use a NAT instance or design around egress; billing alarm is the first resource created, before any network resource
-- Serves two job tracks at once (cloud + AI); risk of it diluting rather than doubling — mitigated by making the db tier feed the canonical-store project directly
-- Break/fix drills are Erick's, not the agent's — if they slip, the interview-facing value of the project slips with them
-
-### Cloud Network Lab — Milestones
-
-| Milestone | Target | Status |
-|---|---|---|
-| Project registered; Debian ISO downloaded + checksum verified | 2026-08-11 | Complete |
-| VirtualBox installed; NAT Network + host-only adapter created | 2026-08-13 | In Progress |
-| Phase 1: gw + app live, app reaches internet only via gw | 2026-08-15 | Planning |
-| db tier online — Postgres + pgvector, private subnet only | 2026-08-18 | Planning |
-| Default-deny nftables firewall + SSH ProxyJump verified | 2026-08-20 | Planning |
-| Break/fix drills completed by Erick and written up | 2026-08-24 | Planning |
-| VBoxManage script rebuilds the whole lab from nothing | 2026-08-27 | Planning |
-| Phase 2: identical topology in AWS console + billing alarm | 2026-09-10 | Planning |
-| Phase 3: Terraform apply/destroy reproduces the environment | 2026-09-22 | Planning |
-| Case study published — one diagram, three renderings | 2026-09-30 | Planning |
-
-### Cloud Network Lab — Tasks
-
-| Task | Owner | Status | Due |
-|---|---|---|---|
-| Host survey; VirtualBox-over-Hyper-V decision logged | AI Engineering Build Agent | Complete | 2026-08-11 |
-| Project README, build log, tracker registration | Documentation Agent | Complete | 2026-08-11 |
-| Debian 13.6.0 netinst download + SHA256 verification | AI Engineering Build Agent | Complete | 2026-08-11 |
-| **BLOCKED ON ERICK:** approve UAC prompt for VirtualBox install | AI Engineering Build Agent | Blocked | 2026-08-13 |
-| Create NAT Network `am-public` + host-only adapter | AI Engineering Build Agent | Planning | 2026-08-13 |
-| Author Debian preseed for unattended installs | AI Engineering Build Agent | Planning | 2026-08-13 |
-| Build gw VM: 2 NICs, IP forwarding, nftables masquerade | AI Engineering Build Agent | Planning | 2026-08-15 |
-| Build app VM on private subnet; verify egress only via gw | AI Engineering Build Agent | Planning | 2026-08-15 |
-| Build db VM: Postgres + pgvector, no route to host | AI Engineering Build Agent | Planning | 2026-08-18 |
-| Default-deny firewall + documented allow list | Data Integrity Agent | Planning | 2026-08-20 |
-| SSH ProxyJump verification; prove db unreachable directly | Data Integrity Agent | Planning | 2026-08-20 |
-| **ERICK'S OWN WORK:** break/fix drills (bad route, wrong rule, missing forward) | Erick Vanderpool | Planning | 2026-08-24 |
-| VBoxManage rebuild-from-nothing script | AI Engineering Build Agent | Planning | 2026-08-27 |
-| AWS billing alarm created before any network resource | Cost Tracking Agent | Planning | 2026-09-01 |
-| Phase 2: VPC, subnets, route tables, security groups by console | AI Engineering Build Agent | Planning | 2026-09-10 |
-| Phase 3: Terraform equivalent; apply/destroy verified | AI Engineering Build Agent | Planning | 2026-09-22 |
-| Case study: diagram three ways, mapping table, cost discipline | Portfolio Agent | Planning | 2026-09-30 |
-
----
-
 ## Removed / Archived Projects
 
 | Project | Removed | Where |
 |---|---|---|
+| Cloud Network Lab | 2026-08-11 | Scrapped entirely at Erick's direction — VMs, networks, local files, and repo docs all deleted (no archive); see decisions/log.md 2026-08-11 |
 | Portfolio Website | 2026-08-05 | Plan archived at `archives/2026-08-portfolio-website-plan.md`; codebase (outside this repo) untouched |
 | LangGraph Research Agent | 2026-08-05 | Removed from portfolio at Erick's direction; repo remains live at github.com/evanderpool/langchain-research-agent |
 | v1 agent builds | 2026-08-05 | `archives/2026-q2-agent-build-checklists.md` |

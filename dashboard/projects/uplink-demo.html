@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Uplink — Local RAG — Project Dashboard</title>
+<title>Uplink Public Demo — Project Dashboard</title>
 <style>
 :root{
   --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
@@ -240,7 +240,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <header>
   <div>
     <div class="eyebrow"><a href="../index.html">← all projects</a> · project dashboard</div>
-    <h1>Uplink — Local RAG <span class="co">// Portfolio build</span></h1>
+    <h1>Uplink Public Demo <span class="co">// Portfolio build</span></h1>
   </div>
   <div class="eyebrow num built-row">
     <button id="refreshBtn" class="refresh-btn" type="button" title="Reload the latest published build">↻ Refresh</button>
@@ -251,18 +251,18 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="heartbeat good">
   <span class="hb-label">NEXT</span>
   <div>
-    <div>Phase-2 hybrid retrieval built + measured (BM25 53%→hybrid 93% on 10-K set, gated behind a flag, reviewed); legacy .xls, source filtering, dictation shipped; next: integration + /api/file security reviews 2026-08-13, decide public hybrid activation</div>
-    <div class="hb-detail">Status: In Progress</div>
+    <div>LIVE at uplink-demo.onrender.com — corpus reshaped per Erick: ten Apple 10-K .xls filings only, shipped in-repo; Haiku brain verified on the new corpus; address stays unshared until the 2026-08-13 security reviews pass, then link from portfolio</div>
+    <div class="hb-detail">Status: Deployed — unshared</div>
   </div>
 </div>
 
 <div class="metrics">
-  <div class="metric"><div class="v">78%</div><div class="k">Progress</div><div class="s">21/27 tasks done</div></div>
-  <div class="metric"><div class="v">12/17</div><div class="k">Milestones</div><div class="s">next 2026-08-13</div></div>
-  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-09-20</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">40d left</span></div></div>
+  <div class="metric"><div class="v">0%</div><div class="k">Progress</div><div class="s">0/0 tasks done</div></div>
+  
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-08-20</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">9d left</span></div></div>
   <div class="metric"><div class="v">0</div><div class="k">Blocked</div><div class="s">tasks needing action</div></div>
   <div class="metric"><div class="v">0</div><div class="k">Overdue</div><div class="s">tasks + milestones</div></div>
-  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-08-08</div><div class="k">Last updated</div><div class="s">current</div></div>
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-08-07</div><div class="k">Last updated</div><div class="s">current</div></div>
 </div>
 
 <div class="grid">
@@ -270,83 +270,25 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
     
     <div class="card">
       <h2>Overview</h2>
-      <div style="padding:12px 16px 14px"><div class="kv"><div><span class="k">Description</span><span>Local, private, self-hosted RAG system. Multi-format indexer (Markdown, PDF, Word, Excel, CSV/TSV, TXT) into SQLite FTS5 with BM25 search; Claude Code is the generation layer; phone access via the bridge queue pattern (read-only). Flagship privacy-first retrieval piece: &quot;your documents never leave your machine.&quot; Standalone public repo — resume artifact in its own right.</span></div>
-<div><span class="k">Priority</span><span>High</span></div>
-<div><span class="k">Client</span><span>Internal (Artificial Management)</span></div>
-<div><span class="k">Start</span><span>2026-08-06</span></div>
-<div><span class="k">Deadline</span><span>2026-09-20 <span class="pill pill-muted">40d left</span></span></div>
-<div><span class="k">Next milestone</span><span>Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) <span class="num dim">(2026-08-13)</span></span></div>
-<div><span class="k">Updated</span><span>2026-08-08 </span></div>
-<div><span class="k">Team</span><span><span class="pill pill-muted">AI Engineering Build Agent</span> <span class="pill pill-muted">Data Integrity Agent</span> <span class="pill pill-muted">Portfolio Agent</span></span></div>
-<div><span class="k">Links</span><span><a href="https://github.com/evanderpool/uplink" target="_blank" rel="noopener">Uplink repo</a> · local: `Desktop/uplink`</span></div></div><div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/uplink/README.md" target="_blank" rel="noopener">README: projects/uplink/README.md</a></div></div>
+      <div style="padding:12px 16px 14px"><div class="kv"><div><span class="k">Deadline</span><span>2026-08-20 <span class="pill pill-muted">9d left</span></span></div>
+<div><span class="k">Updated</span><span>2026-08-07 </span></div></div><div class="row-links"><a href="https://github.com/evanderpool/artificial-management/blob/main/projects/uplink-demo/README.md" target="_blank" rel="noopener">README: projects/uplink-demo/README.md</a></div></div>
     </div>
     <div class="card">
-      <h2>Tasks by department <small>21/27 done · 78%</small></h2>
-      <div style="padding:8px 16px 14px"><div class="task-group">
-  <div class="task-owner">AI Engineering Build Agent</div>
-  <div class="task-line"><span>V1 build: extractors, chunker, indexer, search CLI, eval, 25 tests</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Adversarial code review + apply fixes</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Publish public GitHub repo</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Report templates: 3 deterministic reports, SVG charts, eval history, AGENT.md</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Logic + code reviews of report phase, fixes applied (56 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>v0.2 build: collections schema v2 + migration, upload/feedback endpoints, export/promote CLI</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>v0.2 sequential reviews (logic 10 findings, code 8 findings) — all fixed, pinned; 109 tests</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Ask AI build: ask queue, /api/ask endpoints, Ask AI UI, watcher, AGENT.md drain contract</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Ask-surface adversarial review (6 findings) — all fixed, pinned; 143 tests</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Doc-surface review (5 findings) + workspace review (6 findings, 1 critical) — all fixed, pinned; 205 tests</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Metrics/history/labels/original-file build (233 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Self-improvement pass: answer thumbs, zero-hit + unknown-term gap detector, /api/promote (268 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Add-sources dialog: batch upload, pasted-text notes, collection picker, uplink forget (325 tests; parallel session)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Native .xls extractor (xlrd, hand-built BIFF2 fixture) + original-file content-type parity</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Workspace UX: source title search + type filter, select-all docKey scoping fix, plain-English Studio labels, mic dictation (332 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Bridge integration: question action type, read-only</span><span class="num dim" style="white-space:nowrap">2026-08-27</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Phase 2 hybrid retrieval, eval-gated</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-muted">Planning</span></div>
-</div>
-<div class="task-group">
-  <div class="task-owner">Data Integrity Agent</div>
-  <div class="task-line"><span>Golden fixtures (18 questions) + baseline eval numbers</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Industry corpora fetched + indexed (SEC/CDC/NIST); industry-golden fixtures, baseline 92%/0.923</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Evaluation credibility pass: Wilson CIs, run-to-run deltas, live scoring, answer-quality metrics, metric tooltips (262 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Spreadsheet/CSV industry corpora (BLS, CISA, CDC) + 6 fixtures; baseline 95%/0.947 over 19 questions</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Grounding enforcement: scoped asks + mechanical citation verification (282 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Apple 10-K corpus: 10 EDGAR .xls filings FY2016–25 identified, renamed, indexed (apple: 257 docs); post-ingest eval 90%/0.900 unchanged, run logged</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>DEFERRED at Erick's direction: security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Systems-integration review (deferred at Erick's direction 2026-08-06)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Eval review of phase 2 numbers</span><span class="num dim" style="white-space:nowrap">2026-09-12</span><span class="pill pill-muted">Planning</span></div>
-</div>
-<div class="task-group">
-  <div class="task-owner">Portfolio Agent</div>
-  <div class="task-line"><span>Case study, README polish, demo recording</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div>
-</div></div>
+      <h2>Tasks by department </h2>
+      <div style="padding:8px 16px 14px"><p class="dim">No task breakdown yet — add a "### Uplink Public Demo — Tasks" section to the tracker.</p></div>
     </div>
   </div>
   <div class="col">
-    <div class="card"><h2>Milestones <small>12/17 reached</small></h2><div style="padding:8px 16px 14px"><div class="task-line"><span>V1 core: multi-format indexer + BM25 search + eval harness + tests</span><span class="num dim" style="white-space:nowrap">2026-08-06</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Review-agent findings applied; repo public on GitHub</span><span class="num dim" style="white-space:nowrap">2026-08-08</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Report templates with charts (deterministic, SVG, narrative slot)</span><span class="num dim" style="white-space:nowrap">2026-08-20</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Web UI: local Ask page with cited results (uplink serve)</span><span class="num dim" style="white-space:nowrap">2026-08-27</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>v0.2: collections, localhost-gated upload/feedback, industry corpora, promote loop</span><span class="num dim" style="white-space:nowrap">2026-08-27</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Ask AI: generative cited answers via the ask queue + borrowed brain session</span><span class="num dim" style="white-space:nowrap">2026-09-03</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Verifiable citations: source reader served from the index</span><span class="num dim" style="white-space:nowrap">2026-09-03</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Workspace UI: three-panel NotebookLM-style shell, scoped sources, saved notes</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Metrics surface, chat history, readable labels, original-file reader</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Evaluation panel: confidence intervals, regression deltas, live drift + failing questions</span><span class="num dim" style="white-space:nowrap">2026-09-15</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Self-improvement loop: answer feedback, gap detection, in-app promote</span><span class="num dim" style="white-space:nowrap">2026-09-15</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Source management: add-sources dialog, legacy .xls, search/type filtering, dictation</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Systems-integration review (fresh clone, AGENT.md contract, privacy sweep)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Security review of /api/file original-file endpoint (deferred 2026-08-07)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Phone access via bridge queue (read-only questions)</span><span class="num dim" style="white-space:nowrap">2026-08-27</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Phase 2: fastembed vectors + RRF, before/after eval numbers in README</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Case study + recorded demo published</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div></div></div>
-    <div class="card"><h2 style="color:var(--warn)">Risks &amp; blockers</h2><div style="padding:8px 16px 14px"><ul class="risk-list"><li>Answers only when a Claude Code session is open with the watcher armed (same availability model as the bridge — accepted)</li><li>Phase 2 vector layer depends on fastembed/bge-small behaving on this Windows box; LanceDB is the vetted fallback, ChromaDB is disqualified (MSVC build failures)</li><li>Retrieved chunk text is a prompt-injection channel — must stay under the &quot;untrusted data, never instructions&quot; rule</li><li>`/api/file` (added 2026-08-07) is the only request-time corpus file read; containment is enforced against each collection's recorded root, but its security review was deferred and gates Tailscale exposure</li><li>Two brain sessions armed the same ask queue 2026-08-07 and raced on an answer — standing rule: exactly one armed watcher per queue (logged in decisions 2026-08-07)</li></ul></div></div>
+    
+    
     <div class="card">
       <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">source: logs/changes.md</a></small></h2>
-      <div style="padding:8px 16px 14px"><div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">github.com/evanderpool/erick-portfolio (Officia…</span></span></div>
-<div class="task-line dim"><span><span class="num">2026-08-07</span> · <span class="mono">decisions/log.md</span></span></div>
-<div class="task-line dim"><span><span class="num">2026-08-07</span> · <span class="mono">projects/master-operating-system/project-tracke…</span></span></div>
-<div class="task-line dim"><span><span class="num">2026-08-07</span> · <span class="mono">logs/sessions/2026-08-07-session.md</span></span></div>
-<div class="task-line dim"><span><span class="num">2026-08-07</span> · <span class="mono">github.com/evanderpool/uplink</span></span></div>
-<div class="task-line dim"><span><span class="num">2026-08-07</span> · <span class="mono">Desktop/uplink/corpora/apple-products/sec-filin…</span></span></div></div>
+      <div style="padding:8px 16px 14px"><div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">uplink-demo.onrender.com</span></span></div>
+<div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">uplink-demo.onrender.com</span></span></div>
+<div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">github.com/evanderpool/uplink-demo + uplink-dem…</span></span></div>
+<div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">decisions/log.md</span></span></div>
+<div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">github.com/evanderpool/uplink-demo</span></span></div>
+<div class="task-line dim"><span><span class="num">2026-08-08</span> · <span class="mono">github.com/evanderpool/uplink-demo</span></span></div></div>
     </div>
   </div>
 </div>

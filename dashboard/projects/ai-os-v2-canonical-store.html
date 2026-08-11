@@ -244,7 +244,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
   </div>
   <div class="eyebrow num built-row">
     <button id="refreshBtn" class="refresh-btn" type="button" title="Reload the latest published build">↻ Refresh</button>
-    <span id="builtAgo" data-built="2026-08-07T22:43:08.889Z">built 2026-08-07 22:43 UTC</span>
+    <span id="builtAgo" data-built="2026-08-11T21:45:57.979Z">built 2026-08-11 21:45 UTC</span>
   </div>
 </header>
 
@@ -259,7 +259,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="metrics">
   <div class="metric"><div class="v">14%</div><div class="k">Progress</div><div class="s">1/7 tasks done</div></div>
   <div class="metric"><div class="v">0/6</div><div class="k">Milestones</div><div class="s">next 2026-08-15</div></div>
-  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-09-30</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">54d left</span></div></div>
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-09-30</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">50d left</span></div></div>
   <div class="metric"><div class="v">0</div><div class="k">Blocked</div><div class="s">tasks needing action</div></div>
   <div class="metric"><div class="v">0</div><div class="k">Overdue</div><div class="s">tasks + milestones</div></div>
   <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-08-06</div><div class="k">Last updated</div><div class="s">current</div></div>
@@ -270,10 +270,15 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
     
     <div class="card">
       <h2>Overview</h2>
-      <div style="padding:12px 16px 14px"><div class="kv"><div><span class="k">Deadline</span><span>2026-09-30 <span class="pill pill-muted">54d left</span></span></div>
+      <div style="padding:12px 16px 14px"><div class="kv"><div><span class="k">Description</span><span>Migrate the operating system's status data from markdown trackers to a Supabase/Postgres canonical store. Markdown becomes generated views for humans and git history; the dashboard and skills read live data. Doubles as the pgvector/RAG-ready foundation and the second flagship portfolio project.</span></div>
+<div><span class="k">Priority</span><span>High</span></div>
+<div><span class="k">Client</span><span>Internal (Artificial Management)</span></div>
+<div><span class="k">Start</span><span>2026-08-05</span></div>
+<div><span class="k">Deadline</span><span>2026-09-30 <span class="pill pill-muted">50d left</span></span></div>
 <div><span class="k">Next milestone</span><span>Session 3 complete — scripts/audit.js + tests exist <span class="num dim">(2026-08-15)</span></span></div>
 <div><span class="k">Updated</span><span>2026-08-06 </span></div>
-<div><span class="k">Team</span><span><span class="pill pill-muted">AI Engineering Build Agent</span> <span class="pill pill-muted">Data Integrity Agent</span> <span class="pill pill-muted">Portfolio Agent</span></span></div></div></div>
+<div><span class="k">Team</span><span><span class="pill pill-muted">AI Engineering Build Agent</span> <span class="pill pill-muted">Data Integrity Agent</span> <span class="pill pill-muted">Portfolio Agent</span></span></div>
+<div><span class="k">Links</span><span><a href="https://evanderpool.github.io/artificial-management/" target="_blank" rel="noopener">Ops Dashboard</a> · <a href="https://github.com/evanderpool/artificial-management" target="_blank" rel="noopener">Public repo</a></span></div></div></div>
     </div>
     <div class="card">
       <h2>Tasks by department <small>1/7 done · 14%</small></h2>
@@ -302,7 +307,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="task-line"><span>Migration script runs clean against live repo</span><span class="num dim" style="white-space:nowrap">2026-09-05</span><span class="pill pill-muted">Planning</span></div>
 <div class="task-line"><span>Dashboard reads canonical store</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div>
 <div class="task-line"><span>Case study published</span><span class="num dim" style="white-space:nowrap">2026-09-30</span><span class="pill pill-muted">Planning</span></div></div></div>
-    
+    <div class="card"><h2 style="color:var(--warn)">Risks &amp; blockers</h2><div style="padding:8px 16px 14px"><ul class="risk-list"><li>Supabase project + MCP connection not yet set up — gates all schema work</li><li>Session 3 audit script is a prerequisite (its parsers become the migration source of truth)</li><li>Single-operator risk: no second reviewer for schema decisions (mitigate: decision-log every schema choice)</li></ul></div></div>
     <div class="card">
       <h2>Recent changes <small><a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md" target="_blank" rel="noopener">source: logs/changes.md</a></small></h2>
       <div style="padding:8px 16px 14px"><div class="task-line dim"><span><span class="num">2026-08-06</span> · <span class="mono">.github/workflows/dashboard.yml</span></span></div>
