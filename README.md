@@ -2,7 +2,9 @@
 
 **A Fortune 500-style AI business operating system built from scratch in 7 weeks.**
 
-10 specialized AI agents. 8 automated workflows. A shared source of truth. Enterprise-grade documentation, change management, data integrity, and cost tracking — running on a solo founder's desk.
+10 specialized AI agents. 10 operational skills. A shared source of truth. Enterprise-grade documentation, change management, data integrity, and cost tracking — running on a solo founder's desk.
+
+**[Read the case study →](CASE-STUDY.md)** · **[Live dashboard →](https://evanderpool.github.io/artificial-management/)**
 
 ---
 

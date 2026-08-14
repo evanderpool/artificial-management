@@ -1049,6 +1049,7 @@ ${brGate}
   <div class="eyebrow num built-row">
     <button id="refreshBtn" class="refresh-btn" type="button" title="${BRIDGE ? "Rebuild from the markdown files, then reload" : "Reload the latest published build"}">↻ Refresh</button>
     <span id="builtAgo" data-built="${now.toISOString()}">built ${fmtDate(now)}</span>
+    · <a href="https://github.com/evanderpool/artificial-management/blob/main/CASE-STUDY.md">case study</a>
     · <a href="https://github.com/evanderpool/artificial-management">view the repo</a>
   </div>
 </header>
