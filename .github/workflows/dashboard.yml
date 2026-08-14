@@ -48,3 +48,18 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  vercel-refresh:
+    # Keeps the Vercel mirror's heartbeat honest: pushes auto-deploy via the
+    # git integration, but the daily cron only reaches Vercel through this
+    # deploy hook. No-op until the VERCEL_DEPLOY_HOOK secret is added.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel rebuild (heartbeat parity with the daily cron)
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK" > /dev/null && echo "Vercel rebuild triggered"
+          else
+            echo "No VERCEL_DEPLOY_HOOK secret set — skipped"
+          fi

@@ -244,24 +244,24 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
   </div>
   <div class="eyebrow num built-row">
     <button id="refreshBtn" class="refresh-btn" type="button" title="Reload the latest published build">↻ Refresh</button>
-    <span id="builtAgo" data-built="2026-08-11T21:45:57.979Z">built 2026-08-11 21:45 UTC</span>
+    <span id="builtAgo" data-built="2026-08-14T02:59:33.321Z">built 2026-08-14 02:59 UTC</span>
   </div>
 </header>
 
-<div class="heartbeat good">
+<div class="heartbeat warn">
   <span class="hb-label">NEXT</span>
   <div>
     <div>Phase-2 hybrid retrieval built + measured (BM25 53%→hybrid 93% on 10-K set, gated behind a flag, reviewed); legacy .xls, source filtering, dictation shipped; next: integration + /api/file security reviews 2026-08-13, decide public hybrid activation</div>
-    <div class="hb-detail">Status: In Progress</div>
+    <div class="hb-detail">Status: In Progress · 4 items overdue</div>
   </div>
 </div>
 
 <div class="metrics">
   <div class="metric"><div class="v">78%</div><div class="k">Progress</div><div class="s">21/27 tasks done</div></div>
   <div class="metric"><div class="v">12/17</div><div class="k">Milestones</div><div class="s">next 2026-08-13</div></div>
-  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-09-20</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">40d left</span></div></div>
+  <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-09-20</div><div class="k">Deadline</div><div class="s"><span class="pill pill-muted">37d left</span></div></div>
   <div class="metric"><div class="v">0</div><div class="k">Blocked</div><div class="s">tasks needing action</div></div>
-  <div class="metric"><div class="v">0</div><div class="k">Overdue</div><div class="s">tasks + milestones</div></div>
+  <div class="metric"><div class="v">4</div><div class="k">Overdue</div><div class="s">tasks + milestones</div></div>
   <div class="metric"><div class="v" style="font-size:18px;padding-top:4px">2026-08-08</div><div class="k">Last updated</div><div class="s">current</div></div>
 </div>
 
@@ -274,7 +274,7 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div><span class="k">Priority</span><span>High</span></div>
 <div><span class="k">Client</span><span>Internal (Artificial Management)</span></div>
 <div><span class="k">Start</span><span>2026-08-06</span></div>
-<div><span class="k">Deadline</span><span>2026-09-20 <span class="pill pill-muted">40d left</span></span></div>
+<div><span class="k">Deadline</span><span>2026-09-20 <span class="pill pill-muted">37d left</span></span></div>
 <div><span class="k">Next milestone</span><span>Systems-integration review (fresh clone, AGENT.md contract, privacy sweep) <span class="num dim">(2026-08-13)</span></span></div>
 <div><span class="k">Updated</span><span>2026-08-08 </span></div>
 <div><span class="k">Team</span><span><span class="pill pill-muted">AI Engineering Build Agent</span> <span class="pill pill-muted">Data Integrity Agent</span> <span class="pill pill-muted">Portfolio Agent</span></span></div>
@@ -310,8 +310,8 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="task-line"><span>Spreadsheet/CSV industry corpora (BLS, CISA, CDC) + 6 fixtures; baseline 95%/0.947 over 19 questions</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
 <div class="task-line"><span>Grounding enforcement: scoped asks + mechanical citation verification (282 tests)</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
 <div class="task-line"><span>Apple 10-K corpus: 10 EDGAR .xls filings FY2016–25 identified, renamed, indexed (apple: 257 docs); post-ingest eval 90%/0.900 unchanged, run logged</span><span class="num dim" style="white-space:nowrap">2026-08-07</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>DEFERRED at Erick's direction: security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Systems-integration review (deferred at Erick's direction 2026-08-06)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span class="overdue">DEFERRED at Erick's direction: security review of /api/file (path containment, iframe posture, metrics disclosure, DoS) — must run before Tailscale exposure</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-crit">late</span></div>
+<div class="task-line"><span class="overdue">Systems-integration review (deferred at Erick's direction 2026-08-06)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-crit">late</span></div>
 <div class="task-line"><span>Eval review of phase 2 numbers</span><span class="num dim" style="white-space:nowrap">2026-09-12</span><span class="pill pill-muted">Planning</span></div>
 </div>
 <div class="task-group">
@@ -333,8 +333,8 @@ h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
 <div class="task-line"><span>Evaluation panel: confidence intervals, regression deltas, live drift + failing questions</span><span class="num dim" style="white-space:nowrap">2026-09-15</span><span class="pill pill-good">Complete</span></div>
 <div class="task-line"><span>Self-improvement loop: answer feedback, gap detection, in-app promote</span><span class="num dim" style="white-space:nowrap">2026-09-15</span><span class="pill pill-good">Complete</span></div>
 <div class="task-line"><span>Source management: add-sources dialog, legacy .xls, search/type filtering, dictation</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-good">Complete</span></div>
-<div class="task-line"><span>Systems-integration review (fresh clone, AGENT.md contract, privacy sweep)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
-<div class="task-line"><span>Security review of /api/file original-file endpoint (deferred 2026-08-07)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-muted">Planning</span></div>
+<div class="task-line"><span class="overdue">Systems-integration review (fresh clone, AGENT.md contract, privacy sweep)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-crit">late</span></div>
+<div class="task-line"><span class="overdue">Security review of /api/file original-file endpoint (deferred 2026-08-07)</span><span class="num dim" style="white-space:nowrap">2026-08-13</span><span class="pill pill-crit">late</span></div>
 <div class="task-line"><span>Phone access via bridge queue (read-only questions)</span><span class="num dim" style="white-space:nowrap">2026-08-27</span><span class="pill pill-muted">Planning</span></div>
 <div class="task-line"><span>Phase 2: fastembed vectors + RRF, before/after eval numbers in README</span><span class="num dim" style="white-space:nowrap">2026-09-10</span><span class="pill pill-muted">Planning</span></div>
 <div class="task-line"><span>Case study + recorded demo published</span><span class="num dim" style="white-space:nowrap">2026-09-20</span><span class="pill pill-muted">Planning</span></div></div></div>

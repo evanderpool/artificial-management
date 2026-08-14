@@ -4,3 +4,7 @@ CLAUDE.local.md
 node_modules/
 dashboard/private/
 dashboard/private-sources.json
+.vercel/
+_site/
+
+.vercel

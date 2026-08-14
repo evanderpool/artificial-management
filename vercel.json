@@ -1,0 +1,6 @@
+{
+  "buildCommand": "node scripts/stage-dashboard.js",
+  "installCommand": "",
+  "outputDirectory": "_site",
+  "framework": null
+}
