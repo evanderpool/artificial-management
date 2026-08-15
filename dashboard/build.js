@@ -1049,7 +1049,7 @@ ${brGate}
   <div class="eyebrow num built-row">
     <button id="refreshBtn" class="refresh-btn" type="button" title="${BRIDGE ? "Rebuild from the markdown files, then reload" : "Reload the latest published build"}">↻ Refresh</button>
     <span id="builtAgo" data-built="${now.toISOString()}">built ${fmtDate(now)}</span>
-    · <a href="https://github.com/evanderpool/artificial-management/blob/main/CASE-STUDY.md">case study</a>
+    · <a href="case-study.html">case study</a>
     · <a href="https://github.com/evanderpool/artificial-management">view the repo</a>
   </div>
 </header>
@@ -1288,6 +1288,120 @@ for (const d of projectData) {
   if (!d.p.id) continue;
   fs.writeFileSync(path.join(pagesDir, `${d.p.id}.html`), projectPage(d));
   pageCount++;
+}
+
+// ---- case study page: <outdir>/case-study.html, rendered from CASE-STUDY.md ----
+// The markdown stays the single source of truth; this page can never drift from it.
+function mdInline(s) {
+  s = esc(s);
+  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+  s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, t, u) => `<a href="${u}">${t}</a>`);
+  s = s.replace(/\*\*([^*]+(?:\*(?!\*)[^*]*)*)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+  return s;
+}
+function renderCaseStudy(md) {
+  const lines = md.split(/\r?\n/);
+  const out = [];
+  let para = [], list = [], table = [], statsDone = false;
+  const flushPara = () => {
+    if (para.length) out.push(`<p>${mdInline(para.join(" "))}</p>`);
+    para = [];
+  };
+  const flushList = () => {
+    if (list.length)
+      out.push(`<ul>${list.map((li) => `<li>${mdInline(li)}</li>`).join("")}</ul>`);
+    list = [];
+  };
+  const flushTable = () => {
+    if (!table.length) return;
+    const rows = table
+      .filter((r) => !/^[\s|:-]+$/.test(r))
+      .map((r) => r.split("|").map((c) => c.trim()).filter((c, i, a) => !(c === "" && (i === 0 || i === a.length - 1))));
+    if (!statsDone && rows.length === 2) {
+      // first table = the stat row: values on top, labels underneath
+      statsDone = true;
+      out.push(
+        `<div class="stats">` +
+          rows[0].map((v, i) => `<div class="stat"><div class="v num">${mdInline(v)}</div><div class="l">${mdInline(rows[1][i] || "")}</div></div>`).join("") +
+          `</div>`
+      );
+    } else {
+      out.push(
+        `<table><thead><tr>${rows[0].map((c) => `<th>${mdInline(c)}</th>`).join("")}</tr></thead><tbody>` +
+          rows.slice(1).map((r) => `<tr>${r.map((c) => `<td>${mdInline(c)}</td>`).join("")}</tr>`).join("") +
+          `</tbody></table>`
+      );
+    }
+    table = [];
+  };
+  const flushAll = () => { flushPara(); flushList(); flushTable(); };
+  for (const raw of lines) {
+    const line = raw.replace(/\s+$/, "");
+    const h = line.match(/^\**(#{1,3})\s*(.+?)\**$/);
+    if (h && /^#/.test(line.replace(/^\*+/, ""))) {
+      flushAll();
+      const lvl = h[1].length;
+      out.push(`<h${lvl}>${mdInline(h[2])}</h${lvl}>`);
+      continue;
+    }
+    if (/^---+$/.test(line)) { flushAll(); out.push("<hr>"); continue; }
+    if (/^\|/.test(line)) { flushPara(); flushList(); table.push(line); continue; }
+    if (/^-\s+/.test(line)) { flushPara(); flushTable(); list.push(line.replace(/^-\s+/, "")); continue; }
+    if (/^\s+\S/.test(line) && list.length) { list[list.length - 1] += " " + line.trim(); continue; }
+    if (line === "") { flushAll(); continue; }
+    flushTable(); flushList();
+    para.push(line);
+  }
+  flushAll();
+  return out.join("\n");
+}
+try {
+  const csMd = fs.readFileSync(path.join(ROOT, "CASE-STUDY.md"), "utf8");
+  const csHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study — Artificial Management</title>
+<style>${STYLE}
+.article{max-width:800px;margin:0 auto}
+.article h1{font-size:27px;line-height:1.28;letter-spacing:0;margin:10px 0 4px}
+.article h2{font-size:18px;margin:42px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.article p{margin:13px 0}
+.article a{color:var(--accent)}
+.article code{background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:"Cascadia Code","SF Mono",Consolas,ui-monospace,monospace;font-size:13px}
+.article ul{margin:12px 0;padding-left:22px}
+.article li{margin:8px 0}
+.article hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+.article table{border-collapse:collapse;width:100%;margin:16px 0}
+.article td,.article th{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:24px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat .v{font-size:24px;color:var(--accent)}
+.stat .l{font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body>
+<main class="wrap article">
+<header>
+  <div>
+    <div class="eyebrow"><a href="index.html">← dashboard</a> · case study · rendered from <a href="https://github.com/evanderpool/artificial-management/blob/main/CASE-STUDY.md">CASE-STUDY.md</a></div>
+  </div>
+  <div class="eyebrow built-row"><span class="num">built ${fmtDate(now)}</span> · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+</header>
+${renderCaseStudy(csMd)}
+<footer style="margin-top:40px;border-top:1px solid var(--line);padding-top:14px" class="eyebrow">
+  Generated by <span class="mono">dashboard/build.js</span> from CASE-STUDY.md — the markdown is the source of truth; this page cannot drift from it.
+</footer>
+</main>
+</body>
+</html>
+`;
+  fs.writeFileSync(path.join(path.dirname(outPath), "case-study.html"), csHtml);
+  console.log(`   case-study.html rendered from CASE-STUDY.md`);
+} catch (e) {
+  console.warn(`WARN: case study page not generated — ${e.message}`);
 }
 
 // Private mode: project manifest for the mobile bridge (/api/projects)

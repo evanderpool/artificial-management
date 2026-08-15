@@ -14,6 +14,8 @@ execSync("node dashboard/build.js", { cwd: ROOT, stdio: "inherit" });
 fs.rmSync(SITE, { recursive: true, force: true });
 fs.mkdirSync(SITE, { recursive: true });
 fs.copyFileSync(path.join(ROOT, "dashboard", "index.html"), path.join(SITE, "index.html"));
+const cs = path.join(ROOT, "dashboard", "case-study.html");
+if (fs.existsSync(cs)) fs.copyFileSync(cs, path.join(SITE, "case-study.html"));
 for (const dir of ["projects", "assets"]) {
   const src = path.join(ROOT, "dashboard", dir);
   if (fs.existsSync(src)) fs.cpSync(src, path.join(SITE, dir), { recursive: true });

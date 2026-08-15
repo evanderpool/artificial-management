@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study — Artificial Management</title>
+<style>
+:root{
+  --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
+  --text:#e7eceb; --dim:#8ca1a3; --accent:#56a8a2;
+  --good:#53b788; --warn:#d9a441; --crit:#d96459; --info:#6fa8c9;
+}
+@media (prefers-color-scheme: light){
+  :root{ --ink:#f4f5f2; --panel:#ffffff; --panel-2:#eceeea; --line:#d8dcd6;
+    --text:#1d2a26; --dim:#5f6f6d; --accent:#2e7d78;
+    --good:#2e8f63; --warn:#8a6410; --crit:#a53d33; --info:#3d7ba3; }
+}
+:root[data-theme="dark"]{ --ink:#0e1418; --panel:#151d23; --panel-2:#1a242b; --line:#243139;
+  --text:#e7eceb; --dim:#8ca1a3; --accent:#56a8a2;
+  --good:#53b788; --warn:#d9a441; --crit:#d96459; --info:#6fa8c9; }
+:root[data-theme="light"]{ --ink:#f4f5f2; --panel:#ffffff; --panel-2:#eceeea; --line:#d8dcd6;
+  --text:#1d2a26; --dim:#5f6f6d; --accent:#2e7d78;
+  --good:#2e8f63; --warn:#8a6410; --crit:#a53d33; --info:#3d7ba3; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);
+  font:15px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif;}
+.mono,.num,.pill,.eyebrow,th,h1 .co{font-family:"Cascadia Code","SF Mono",Consolas,ui-monospace,monospace}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 24px 64px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:20px;margin:0;letter-spacing:.02em}
+h1 .co{color:var(--accent)}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim)}
+.built-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#builtAgo.stale{color:var(--warn)}
+.refresh-btn{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  border-radius:99px;padding:4px 12px}
+.refresh-btn:hover{background:color-mix(in srgb,var(--accent) 20%,transparent)}
+.refresh-btn:active{transform:scale(.97)}
+.refresh-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){
+  .refresh-btn.spin{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
+a{color:var(--accent)}
+/* explainer */
+.explainer{border:1px solid var(--line);background:var(--panel);border-radius:6px;margin-bottom:16px}
+.explainer summary{cursor:pointer;padding:11px 16px;font-size:13px;color:var(--accent);list-style:none;display:flex;align-items:center;gap:10px}
+.explainer summary::-webkit-details-marker{display:none}
+.explainer[open] summary{border-bottom:1px solid var(--line)}
+.explainer .x-body{padding:14px 18px;font-size:14px;color:var(--text);max-width:76ch}
+.explainer .x-body p{margin:0 0 10px}
+.explainer .arch{padding:6px 18px 16px;overflow-x:auto}
+/* heartbeat */
+.heartbeat{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);
+  border-left:4px solid var(--accent);background:var(--panel);border-radius:6px;
+  padding:14px 18px;margin-bottom:16px}
+.heartbeat.crit{border-left-color:var(--crit)}
+.heartbeat.warn{border-left-color:var(--warn)}
+.heartbeat.good{border-left-color:var(--good)}
+.hb-label{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:13px;
+  letter-spacing:.12em;padding:3px 10px;border-radius:4px;white-space:nowrap}
+.crit .hb-label{background:color-mix(in srgb,var(--crit) 18%,transparent);color:var(--crit)}
+.warn .hb-label{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.good .hb-label{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.hb-detail{color:var(--dim);font-size:14px}
+/* activity */
+.activity{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:12px 18px 8px;margin-bottom:16px;overflow-x:auto}
+.activity .a-title{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;margin-bottom:8px}
+.bar{fill:var(--accent);opacity:.75}
+.bar:hover{opacity:1}
+.bar-end{fill:var(--accent);opacity:1}
+.bar-zero{fill:var(--line)}
+.a-src{text-transform:none;letter-spacing:.02em}
+.baseline{stroke:var(--line);stroke-width:1}
+.bar-label{fill:var(--dim);font:11px "Cascadia Code",Consolas,ui-monospace,monospace;text-anchor:middle;font-variant-numeric:tabular-nums}
+.axis-label{fill:var(--dim);font:11px "Cascadia Code",Consolas,ui-monospace,monospace}
+/* arch diagram */
+.node rect{fill:var(--panel-2);stroke:var(--line)}
+.node-title{fill:var(--accent);font:600 11px "Cascadia Code",Consolas,ui-monospace,monospace;letter-spacing:.08em}
+.node-body{fill:var(--text);font:12px "Segoe UI",system-ui,sans-serif}
+.node-dim{fill:var(--dim);font:11px "Segoe UI",system-ui,sans-serif}
+.node-accent{fill:var(--accent);font:11px "Segoe UI",system-ui,sans-serif}
+.arrow{stroke:var(--dim);stroke-width:1.5}
+.arrow-accent{stroke:var(--accent)}
+.arrow-head{fill:var(--dim)}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+.metric .v{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:24px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.metric .k{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-top:2px}
+.metric .s{font-size:12px;color:var(--dim);margin-top:4px}
+/* layout */
+.grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.card h2{font-size:12px;margin:0;padding:11px 16px;border-bottom:1px solid var(--line);
+  text-transform:uppercase;letter-spacing:.13em;color:var(--dim);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-weight:600;
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.card h2 small{letter-spacing:.02em;text-transform:none;font-weight:400}
+.card h2 small a{color:var(--dim)}
+.card h2 small a:hover{color:var(--accent)}
+.card .scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+  text-align:left;font-weight:600;padding:8px 16px;border-bottom:1px solid var(--line)}
+td{padding:8px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(odd){background:color-mix(in srgb,var(--panel-2) 55%,transparent)}
+.dim{color:var(--dim)}
+.pill{display:inline-block;font-size:11px;letter-spacing:.05em;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill-good{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.pill-warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.pill-crit{background:color-mix(in srgb,var(--crit) 16%,transparent);color:var(--crit)}
+.pill-info{background:color-mix(in srgb,var(--info) 16%,transparent);color:var(--info)}
+.pill-muted{background:color-mix(in srgb,var(--dim) 14%,transparent);color:var(--dim)}
+/* expandable rows */
+details.row{border-bottom:1px solid var(--line)}
+details.row:last-child{border-bottom:none}
+details.row summary{cursor:pointer;display:flex;align-items:baseline;gap:12px;
+  padding:9px 16px;list-style:none;font-size:13.5px}
+details.row summary::-webkit-details-marker{display:none}
+details.row summary:hover{background:color-mix(in srgb,var(--panel-2) 70%,transparent)}
+details.row summary:focus-visible,.explainer summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+@media (max-width:520px){
+  details.row summary{flex-wrap:wrap}
+  .row-name{white-space:normal}
+  table{min-width:560px}
+}
+/* phone layout — the same page, sized for a hand */
+html{overflow-x:hidden}
+@media (max-width:640px){
+  .wrap{padding:16px 12px 48px}
+  h1{font-size:17px}
+  header{margin-bottom:10px}
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px}
+  .metric{padding:10px 12px}
+  .metric .v{font-size:20px}
+  .grid{gap:12px}
+  .explainer .x-body{padding:12px 14px;font-size:13.5px}
+  .explainer .arch{max-width:100%;padding:6px 12px 14px}
+  .activity{max-width:100%;padding:10px 12px 6px}
+  a.row-link{flex-wrap:wrap}
+  a.row-link .go{margin-left:auto}
+  .card h2{padding:10px 14px;font-size:11px}
+  .row-body{padding:4px 14px 12px 28px}
+  ul.feed li,ul.next li{padding-left:14px;padding-right:14px}
+  ul.next li{padding-left:30px}
+}
+.chev{flex:none;width:8px;color:var(--dim)}
+.chev::before{content:"▸";font-size:11px}
+details[open]>summary .chev::before{content:"▾"}
+.row-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-wrap{white-space:normal}
+.row-body{padding:4px 16px 14px 36px;font-size:13.5px;background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
+.row-body p{margin:6px 0 10px;max-width:72ch}
+.kv{display:flex;flex-direction:column;gap:6px}
+.kv .k{display:inline-block;min-width:96px;color:var(--dim);font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.1em;
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace}
+.kv>div{display:flex;gap:8px;align-items:baseline}
+.kv span:last-child{color:var(--text)}
+.task-group{margin-bottom:8px}
+.task-owner{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);
+  font-family:"Cascadia Code",Consolas,ui-monospace,monospace;margin:6px 0 4px}
+.task-line{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  padding:3px 0;font-size:13px;border-bottom:1px dashed color-mix(in srgb,var(--line) 60%,transparent)}
+.task-line:last-child{border-bottom:none}
+.progress{display:inline-block;width:120px;height:6px;border-radius:3px;vertical-align:middle;
+  background:color-mix(in srgb,var(--dim) 18%,transparent);overflow:hidden}
+.progress.mini{width:56px;height:5px;flex:none}
+.progress-fill{display:block;height:100%;background:var(--accent);border-radius:3px}
+.overdue{color:var(--crit)}
+ul.risk-list{margin:4px 0 0;padding-left:18px;font-size:13px}
+ul.risk-list li{margin-bottom:3px;color:var(--text)}
+a.row-link{display:flex;align-items:baseline;gap:12px;padding:9px 16px;font-size:13.5px;
+  color:var(--text);text-decoration:none;border-bottom:1px solid var(--line)}
+a.row-link:last-of-type{border-bottom:none}
+a.row-link:hover{background:color-mix(in srgb,var(--panel-2) 70%,transparent)}
+a.row-link:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+a.row-link .go{color:var(--accent);font-size:12px;white-space:nowrap}
+.row-links{margin-top:10px;font-size:12.5px}
+.row-links a{font-family:"Cascadia Code",Consolas,ui-monospace,monospace;font-size:12px}
+ul.feed{list-style:none;margin:0;padding:6px 0}
+ul.feed li{display:flex;gap:12px;align-items:baseline;padding:7px 16px;font-size:13.5px;border-bottom:1px solid var(--line)}
+ul.feed li:last-child{border-bottom:none}
+ul.feed .num{color:var(--dim);font-size:12px;white-space:nowrap}
+details.row .num{color:var(--dim);font-size:12px;white-space:nowrap}
+ul.next{list-style:none;margin:0;padding:6px 0}
+ul.next li{padding:8px 16px 8px 34px;position:relative;font-size:14px;border-bottom:1px solid var(--line)}
+ul.next li:last-child{border-bottom:none}
+ul.next li::before{content:"→";position:absolute;left:16px;color:var(--accent)}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+footer{margin-top:26px;color:var(--dim);font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* showcase layer */
+body{background-image:
+  radial-gradient(1100px 520px at 72% -8%, color-mix(in srgb,var(--accent) 8%,transparent), transparent 62%),
+  radial-gradient(800px 420px at -10% 108%, color-mix(in srgb,var(--info) 5%,transparent), transparent 60%),
+  linear-gradient(color-mix(in srgb,var(--line) 24%,transparent) 1px, transparent 1px),
+  linear-gradient(90deg, color-mix(in srgb,var(--line) 24%,transparent) 1px, transparent 1px);
+  background-size:auto,auto,44px 44px,44px 44px;
+  background-attachment:fixed}
+.card,.metric,.heartbeat,.activity,.explainer{
+  background:color-mix(in srgb,var(--panel) 86%,transparent);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+h1 .co{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
+.hb-label{box-shadow:0 0 14px color-mix(in srgb,currentColor 25%,transparent)}
+.progress-fill{background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--info)));
+  box-shadow:0 0 8px color-mix(in srgb,var(--accent) 40%,transparent)}
+@view-transition{navigation:auto}
+::view-transition-old(root){animation-duration:.22s}
+::view-transition-new(root){animation-duration:.32s}
+@media (prefers-reduced-motion: no-preference){
+  .heartbeat.good .hb-label{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.55}}
+  .card,.metric{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+  .card:hover,.metric:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    box-shadow:0 10px 34px -14px color-mix(in srgb,var(--accent) 45%,transparent)}
+  a.row-link,details.row summary{transition:background .2s ease}
+  a.row-link .go{transition:transform .2s ease}
+  a.row-link:hover .go{transform:translateX(4px)}
+  .pill{transition:box-shadow .25s ease}
+  .pill-good:hover,.pill-crit:hover,.pill-warn:hover{box-shadow:0 0 10px color-mix(in srgb,currentColor 35%,transparent)}
+}
+@media (prefers-reduced-motion: reduce){
+  ::view-transition-old(root),::view-transition-new(root){animation:none}
+}
+
+
+.article{max-width:800px;margin:0 auto}
+.article h1{font-size:27px;line-height:1.28;letter-spacing:0;margin:10px 0 4px}
+.article h2{font-size:18px;margin:42px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.article p{margin:13px 0}
+.article a{color:var(--accent)}
+.article code{background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-family:"Cascadia Code","SF Mono",Consolas,ui-monospace,monospace;font-size:13px}
+.article ul{margin:12px 0;padding-left:22px}
+.article li{margin:8px 0}
+.article hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+.article table{border-collapse:collapse;width:100%;margin:16px 0}
+.article td,.article th{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:24px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat .v{font-size:24px;color:var(--accent)}
+.stat .l{font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body>
+<main class="wrap article">
+<header>
+  <div>
+    <div class="eyebrow"><a href="index.html">← dashboard</a> · case study · rendered from <a href="https://github.com/evanderpool/artificial-management/blob/main/CASE-STUDY.md">CASE-STUDY.md</a></div>
+  </div>
+  <div class="eyebrow built-row"><span class="num">built 2026-08-15 00:03 UTC</span> · <a href="https://github.com/evanderpool/artificial-management">view the repo</a></div>
+</header>
+<h1>Artificial Management: an AI operating system that runs like a company</h1>
+<p><strong>A solo operator's business, run the way a Fortune 500 runs departments — by ten specialized AI agents working against one governed source of truth, with every decision logged, every change tracked, and a public dashboard that proves the system is alive.</strong></p>
+<p>Built and directed by <strong>Erick Vanderpool</strong> · <a href="https://github.com/evanderpool/artificial-management">repository</a> · <a href="https://evanderpool.github.io/artificial-management/"><strong>live dashboard →</strong></a></p>
+<div class="stats"><div class="stat"><div class="v num">10</div><div class="l">specialized agents, each with a written spec</div></div><div class="stat"><div class="v num">10</div><div class="l">operational skills (reusable workflows)</div></div><div class="stat"><div class="v num">88</div><div class="l">decisions in an append-only log</div></div><div class="stat"><div class="v num">317</div><div class="l">changes tracked in the change log</div></div><div class="stat"><div class="v num">$0</div><div class="l">per month to host — the whole system is markdown, git, and a static page</div></div></div>
+<hr>
+<h2>The problem</h2>
+<p>A solo business has the same moving parts as a large one — strategy, project management, documentation, data quality, change control, cost tracking — but one person doing all of it. AI can do real work in every one of those functions, but AI work has a failure mode of its own: <strong>it evaporates.</strong> A session produces something useful, the session ends, and a week later nobody — human or AI — can say what was built, what changed, what's current, and what's stale. Tools that are individually powerful stay collectively amnesiac.</p>
+<p>The premise of this system: treat that as an <em>operations</em> problem, not a tooling problem. Give the AI workforce what a real company gives employees — <strong>departments, job descriptions, a shared filing system, change management, and an audit trail</strong> — and the work stops evaporating.</p>
+<h2>The system</h2>
+<p>Everything lives in one git repository of plain markdown files. That repository <em>is</em> the company:</p>
+<ul><li><strong>Ten agents, modeled as departments</strong> — Chief of Staff, Project Manager, Documentation, Data Integrity, Change Management, Cost Tracking, Portfolio, Client Services, AI Engineering Build, and the Master Operating System that connects them. Every agent has a written spec — purpose, inputs, outputs, dependencies, success criteria — and a registry entry. <strong>No undocumented agents, no rogue workflows</strong> is a written rule, and an audit script enforces it.</li><li><strong>Ten operational skills</strong> — repeatable workflows an agent runs on demand: daily briefs, weekly executive summaries, session-to-documentation capture, integrity audits, change logging, cost reviews. Workflows earn skill status by recurring; nothing is automated on speculation.</li><li><strong>A source-of-truth hierarchy</strong> — when documents disagree, a written priority order says which one wins, and the conflict is flagged rather than silently resolved. One topic, one authoritative document.</li><li><strong>Two append-only logs</strong> — every meaningful decision (88 so far) goes in the decision log with its reasoning and context; every system change (317 so far) goes in the change log. Past entries are never edited. The logs are why a session that starts cold can reconstruct <em>why</em> the system is the way it is, not just <em>what</em> it is.</li><li><strong>MCP integrations</strong> wire the agents to the real world: Gmail, Google Calendar, Google Drive, Microsoft 365, GitHub, and a scoped filesystem server.</li></ul>
+<h2>Governance is code, not vibes</h2>
+<p>The standards document is short and blunt: cite the source, flag what's stale, log every change, don't assume — verify. But rules that live only in prose decay, so the load-bearing ones became mechanisms:</p>
+<ul><li><strong><code>scripts/audit.js</code> counts; the agent interprets.</strong> Integrity audits originally asked a language model to do arithmetic across ~30 documents — slow, and two runs could score the same file differently. The audit is now a deterministic script producing identical results every run. Its very first run caught a real violation: a skill in active use that had never been registered.</li><li><strong>The dashboard cross-checks the trackers.</strong> Registry says one thing, the project tracker says another? The build detects the conflict and displays it, because the standards say conflicts get flagged, not papered over.</li><li><strong>The echo loop was cut.</strong> The Chief of Staff agent once read its own prior briefs as input — a hallucination-amplification path where a summary could summarize a summary. Human session records and agent-generated reports now live in separate directories, and agents read only the human side.</li></ul>
+<h2>The dashboard: proof of life, not a second database</h2>
+<p>The <a href="https://evanderpool.github.io/artificial-management/">public dashboard</a> is a static page generated from the markdown repo by one build script — no database, no backend, no separate write path. That was a deliberate refusal: a dashboard with its own store would be a second source of truth, and drift between two sources is exactly the disease this system exists to cure. The page shows the agent roster, the skill registry, the project portfolio with computed progress and deadline countdowns, recent decisions, and change activity — every figure derived at build time from the same files the agents read and write.</p>
+<p>Two details worth noticing: a <strong>daily CI rebuild</strong> recomputes the page even on days nobody works, so staleness is visible rather than hidden; and a <strong>heartbeat</strong> turns silence into a status — seven days without a commit shows QUIET, fourteen shows STALE, on the public internet, where it can't be ignored.</p>
+<h2>The failure that built the heartbeat</h2>
+<p>This case study would be fiction without this section. The v1 build sprinted: a seven-week build plan's themes were delivered in the first four days, ahead of schedule, fully documented. Then the system went <strong>dark for 77 days</strong> — no commits, no sessions, no outcomes — and nothing noticed. Every safeguard was pull-based: the logs, trackers, and audits all worked perfectly <em>when asked</em>, and silence never asks.</p>
+<p>The restart began with a written retrospective in the decision log, closing the original deadline as <strong>partial: build succeeded, outcomes missed</strong> — and the diagnosis was operational, not architectural. The system needed a push-based liveness signal that fails loudly in public. That's what the heartbeat is: the system's most useful feature, built directly out of its worst failure. The gap itself is documented in the logs rather than smoothed over, because an operating system for real work has to survive contact with real life — including the operator's.</p>
+<h2>Remote control without remote code execution</h2>
+<p>The system can be driven from a phone — but a phone that can inject instructions into an AI agent with filesystem access is a remote-code-execution hole with a nice UI. The mobile bridge was adversarially reviewed <em>before</em> implementation, and the design that survived is deliberately narrow:</p>
+<ul><li><strong>Structured intents only.</strong> The phone sends typed actions — proceed, status, brief, answer — never freeform prompts. Free text arrives labeled as untrusted data describing a request, never as instructions with authority.</li><li><strong>Server-templated writes.</strong> The server composes every markdown line written; phone text is sanitized data inside a template. The repo stays the single canonical store.</li><li><strong>Signed queue, private network.</strong> Requests travel over a WireGuard-based private network (Tailscale) and are HMAC-signed; the agent ignores anything the verifying watcher didn't list.</li><li><strong>A hard forbidden list.</strong> Bridge-originated work cannot push to GitHub, send email, delete files, touch configuration, or read secrets. Publishing is a human act at the keyboard, by rule.</li></ul>
+<p>The same posture governed the repository itself: when resume content, pricing, and outreach material were found in the public repo, they were moved to a private repo and <strong>purged from public git history</strong> — and the split became a written rule with a whitelist enforced in the dashboard build.</p>
+<h2>Proof it works: the system ships systems</h2>
+<p>The strongest evidence is what the operating system produced when pointed at a real project. <strong><a href="https://github.com/evanderpool/uplink">Uplink</a></strong> — a private, self-hosted RAG system whose every answer must prove where it came from — went from first commit to a deployed, security-reviewed <a href="https://github.com/evanderpool/uplink-demo">public demo</a> in days, <em>through this system's process</em>: registered in the tracker with milestones and owner agents, every architecture call in the decision log, adversarial review before every surface shipped, retrieval quality measured against golden fixtures instead of asserted, and a two-agent security review gating the launch. Uplink has <a href="https://github.com/evanderpool/uplink-demo/blob/main/CASE-STUDY.md">its own case study</a>; the method it was built with is the product described in this one.</p>
+<p>The pattern generalizes: the dashboard, the bridge, and the audit tooling were each built the same way — scoped, decided, logged, reviewed, shipped, tracked. The operating system is self-hosting: it manages the projects that improve it.</p>
+<h2>How it was built</h2>
+<p>I directed the build; AI sessions executed it. The division of labor is the same one Uplink's case study describes, because it <em>is</em> the house method:</p>
+<ul><li><strong>I own the decisions</strong> — the governance model, what becomes a rule versus a mechanism, what's public versus private, the security posture, the cost ceiling, and every scope call. All 88 of those decisions are in the log with their reasoning.</li><li><strong>AI sessions own the keystrokes</strong> — implementation, documentation, auditing — inside the governance the system itself defines. Agents cite sources, flag staleness, and log their own changes, because the standards bind the workforce that wrote them.</li><li><strong>Nothing ships on trust.</strong> The dashboard, the bridge, and every major surface got adversarial review passes — sessions instructed to attack the design — and findings became fixes, and fixes became rules.</li></ul>
+<h2>Check everything on this page</h2>
+<p>The system's first rule is <em>cite the source</em>. This document follows it — every claim above is inspectable:</p>
+<ul><li><strong>The agents and skills</strong> — specs in <a href="https://github.com/evanderpool/artificial-management/tree/main/projects"><code>projects/</code></a>, registry at <a href="https://github.com/evanderpool/artificial-management/blob/main/projects/master-operating-system/ai-system-registry.md"><code>ai-system-registry.md</code></a></li><li><strong>The 88 decisions, reasoning included</strong> — <a href="https://github.com/evanderpool/artificial-management/blob/main/decisions/log.md"><code>decisions/log.md</code></a> (the 77-day gap and its retrospective are entries like any other)</li><li><strong>The 317 changes</strong> — <a href="https://github.com/evanderpool/artificial-management/blob/main/logs/changes.md"><code>logs/changes.md</code></a></li><li><strong>The governance rules</strong> — <a href="https://github.com/evanderpool/artificial-management/blob/main/.claude/rules/ai-system-standards.md"><code>ai-system-standards.md</code></a></li><li><strong>The audit script</strong> — <a href="https://github.com/evanderpool/artificial-management/blob/main/scripts/audit.js"><code>scripts/audit.js</code></a></li><li><strong>The dashboard generator</strong> — one readable file, <a href="https://github.com/evanderpool/artificial-management/blob/main/dashboard/build.js"><code>dashboard/build.js</code></a>, and <a href="https://evanderpool.github.io/artificial-management/">the page it builds</a></li><li><strong>The system it shipped</strong> — <a href="https://github.com/evanderpool/uplink">Uplink</a> and <a href="https://github.com/evanderpool/uplink-demo/blob/main/CASE-STUDY.md">its case study</a></li></ul>
+<hr>
+<p><strong>Erick Vanderpool</strong> — data analyst and AI engineer. Artificial Management is both the portfolio and the factory that builds it. <a href="https://github.com/evanderpool">github.com/evanderpool</a></p>
+<footer style="margin-top:40px;border-top:1px solid var(--line);padding-top:14px" class="eyebrow">
+  Generated by <span class="mono">dashboard/build.js</span> from CASE-STUDY.md — the markdown is the source of truth; this page cannot drift from it.
+</footer>
+</main>
+</body>
+</html>

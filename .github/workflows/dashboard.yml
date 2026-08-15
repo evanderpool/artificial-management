@@ -34,6 +34,7 @@ jobs:
         run: |
           mkdir -p _site
           cp dashboard/index.html _site/
+          if [ -f dashboard/case-study.html ]; then cp dashboard/case-study.html _site/; fi
           if [ -d dashboard/projects ]; then cp -r dashboard/projects _site/projects; fi
           if [ -d dashboard/assets ]; then cp -r dashboard/assets _site/assets; fi
       - uses: actions/upload-pages-artifact@v3
