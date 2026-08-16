@@ -1,6 +1,6 @@
 # Master Project Tracker
 
-**Last Updated:** 2026-08-11 (cloud-network-lab scrapped at Erick's direction — VMs, networks, files, and docs all removed; slate slot reopened)
+**Last Updated:** 2026-08-15 (GridPulse registered — planned externally 2026-08-15, fills the reopened slate slot; build starts at Phase 0)
 **Owner:** Erick Vanderpool
 **Source of truth for:** the portfolio of real project work.
 
@@ -50,6 +50,7 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | AI OS v2 — Canonical Store | ai-os-v2-canonical-store | System upgrade | Public | In Progress | 2026-09-30 | 2026-08-06 | Create the Supabase project + connect MCP, then schema design (audit.js parsers now exist to feed the migration) |
 | Uplink — Local RAG | uplink | Portfolio build | Public | In Progress | 2026-09-20 | 2026-08-08 | Phase-2 hybrid retrieval built + measured (BM25 53%→hybrid 93% on 10-K set, gated behind a flag, reviewed); legacy .xls, source filtering, dictation shipped; next: integration + /api/file security reviews 2026-08-13, decide public hybrid activation |
 | Uplink Public Demo | uplink-demo | Portfolio build | Public | Deployed — unshared | 2026-08-20 | 2026-08-07 | LIVE at uplink-demo.onrender.com — corpus reshaped per Erick: ten Apple 10-K .xls filings only, shipped in-repo; Haiku brain verified on the new corpus; address stays unshared until the 2026-08-13 security reviews pass, then link from portfolio |
+| GridPulse — EIA Grid Data Product | gridpulse | Portfolio build | Public | In Progress | 2026-09-07 | 2026-08-16 | 🚢 MVP SHIPPED — LIVE at evanderpool.github.io/gridpulse (22 days ahead of the 09-07 deadline). Phases 0–3 all complete: 2×/day Actions cron runs ingest→transform→derive→report, commits data to the orphan branch, republishes Pages; v1.0-baseline tagged (improvement-loop baseline frozen). 72 tests, both workflows green. One live CI failure caught+fixed same-run (offline stages demanded the key). 13-MONTH BACKFILL LIVE 2026-08-16: 9,686 hours on the public page, 359k rows, 0 quarantined, bronze gzipped (132→48MB), REAL YoY (ERCOT renewables +10.1 pts). P3 review agent died on session limit — riskiest items hand-verified, 1 finding fixed+pinned (auto_window clamp). Next: stretch slate in order (dashboard → quality panel → pandas backend → weather → AI notes → suggestions) + add GridPulse to resume v2.0 |
 
 ---
 
@@ -157,6 +158,47 @@ view (`node dashboard/build.js --private`). Client work is never Public.
 | Phase 2 hybrid retrieval, eval-gated | AI Engineering Build Agent | Planning | 2026-09-10 |
 | Eval review of phase 2 numbers | Data Integrity Agent | Planning | 2026-09-12 |
 | Case study, README polish, demo recording | Portfolio Agent | Planning | 2026-09-20 |
+
+### GridPulse — EIA Grid Data Product — Detail
+
+**Description:** Portfolio data product — hourly US electricity demand and fuel mix by balancing authority from the EIA open-data API v2, run through a bronze/silver/gold pipeline (httpx, Pydantic v2, Polars, SQLite + Parquet, DuckDB) whose centerpiece is a deterministic conversion tool with quarantine, quality flags, and a per-run metrics ledger. Published as an auto-regenerated GitHub Pages HTML report (primary) + Streamlit dashboard (stretch). Answers exactly 3 business questions (renewables share YoY, regional peak/demand curves, duck-curve depth/ramp). Deliberately NO Airflow/Docker/Postgres — right-sizing stated as a design decision. Planning completed externally 2026-08-15 (two-agent brainstorm + red-team stress test); authoritative plan and red-team report live as claude.ai artifacts — links in `projects/gridpulse/README.md`.
+**Priority:** High
+**Start:** 2026-08-15 (planning locked; no code yet)
+**Client:** Internal (Artificial Management)
+**Links:** [Handoff folder](file:///C:/Users/Erick/Desktop/GridPulse-Handoff) · plan + red-team artifacts (see project README)
+**Risks/Blockers:**
+- EIA API key not yet requested — gates everything (Erick action; free registration)
+- Q3 duck-curve solar data availability unvalidated — red-team says validate all 3 questions BEFORE creating the repo
+- Data must live on an orphan `data` branch, never main (git bloat)
+- GitHub Actions cron auto-disables after ~60 days of repo inactivity — same liveness trap the AM heartbeat exists for
+- Laptop CPU-fan fault makes push-every-session mandatory
+
+### GridPulse — EIA Grid Data Product — Milestones
+
+| Milestone | Target | Status |
+|---|---|---|
+| Phase 0 — 8 gates: EIA key, data validation, repo hygiene, branch strategy, CI skeleton, fixtures, README skeleton | 2026-08-18 | Complete |
+| Phase 1 — vertical slice: ingest → bronze → validate → convert → SQLite, idempotency proven by test | 2026-08-22 | Complete |
+| Phase 2 — conversion depth: backends interface, quality flags, quarantine, structured logs, metrics ledger | 2026-08-29 | Complete |
+| Phase 3 — gold aggregates, HTML report, Actions cron 2×/day, Pages live, v1.0-baseline tag — MVP SHIP | 2026-09-07 | Complete |
+| Stretch (strict order): dashboard → quality panel → pandas backend → weather join → AI notes → suggestion engine | 2026-09-30 | Planning |
+
+### GridPulse — EIA Grid Data Product — Tasks
+
+| Task | Owner | Status | Due |
+|---|---|---|---|
+| Request free EIA API key (human act — Erick's email) | Erick | Complete | 2026-08-16 |
+| Exploratory pulls validating all 3 questions (Q3 duck-curve solar is the risky one) | AI Engineering Build Agent | Complete | 2026-08-18 |
+| Repo creation: MIT license, LF .gitattributes, orphan `data` branch, CI skeleton (ruff + pytest only pre-ship) | AI Engineering Build Agent | Complete | 2026-08-18 |
+| Capture real EIA payloads (incl. malformed) as case-named test fixtures | Data Integrity Agent | Complete | 2026-08-18 |
+| README skeleton + architecture diagram — written first, it is the spec | Documentation Agent | Complete | 2026-08-18 |
+| Phase 1 vertical slice | AI Engineering Build Agent | Complete | 2026-08-22 |
+| Phase 1 sequential reviews (logic 9 findings, code 12) — all fixed + pinned | Data Integrity Agent | Complete | 2026-08-22 |
+| Phase 2 conversion suite + metrics ledger (git SHA per run) | AI Engineering Build Agent | Complete | 2026-08-29 |
+| Phase 2 sequential reviews (logic 5 findings incl. 1 HIGH, code 3 MED + LOWs) — all fixed + pinned | Data Integrity Agent | Complete | 2026-08-29 |
+| Phase 3 report + cron + Pages + baseline tag | AI Engineering Build Agent | Complete | 2026-09-07 |
+| 13-month backfill (one-time, enables YoY on the report) | AI Engineering Build Agent | Complete | 2026-08-20 |
+| Case study + LinkedIn post | Portfolio Agent | Planning | 2026-09-14 |
 
 ## Removed / Archived Projects
 
